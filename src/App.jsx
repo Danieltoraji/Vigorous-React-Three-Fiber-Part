@@ -1,8 +1,13 @@
 import { Canvas } from "@react-three/fiber"
+import { OrbitControls } from "@react-three/drei"
 
 function App() {
   return(
-    <Canvas>
+    <Canvas 
+    camera={{
+      position: [3,3,3]
+    }}>
+      <OrbitControls />
       <mesh>
         <boxGeometry />
         <meshNormalMaterial />

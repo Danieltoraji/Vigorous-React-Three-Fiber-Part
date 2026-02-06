@@ -12,6 +12,7 @@ export default defineConfig([
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
+      'plugin:@react-three/recommended',
     ],
     languageOptions: {
       ecmaVersion: 2020,
