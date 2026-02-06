@@ -3,7 +3,7 @@
 这里将会是我们的Web3D部分的源代码。（当然目前还没有，我刚刚从Create App转到Vite）
 我们的主项目中看到的Web3D部分其实是编译后的，因此需要将编译前的源代码开一个仓库，放在这里。
 ## 技术路线
-我们使用的Web3D技术是Three.js。使用React框架构建前端。我们使用React-three-fiber作为threejs的React渲染器。
+我们使用的Web3D技术是Three.js。使用React框架构建前端。我们使用React-three-fiber作为threejs的React渲染器。我们还使用了Drei库来辅助我们的开发。
 使用Vite作为前端构建工具。在用来开发的电脑上，使用yarn进行包管理（当然我个人觉得npm也可以）。
 ## 本项目的创建、开发
 本项目的创建依赖于以下命令：

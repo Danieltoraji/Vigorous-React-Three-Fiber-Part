@@ -1,28 +1,17 @@
-import { Canvas } from "@react-three/fiber"
-import { OrbitControls } from "@react-three/drei"
-import * as THREE from 'three'
+import ModelPage from './modelpage.jsx'
 
 function App() {
   return(
-    <Canvas camera={{position: [3,3,3]}}>
-      <OrbitControls />
-      <mesh position-x={-0.9}>
-        <boxGeometry />
-        <meshStandardMaterial color={0x00ff00} side={THREE.FrontSide} />
-      </mesh>
-       <mesh position-x={-0.9} position-z={-2}>
-        <boxGeometry />
-        <meshStandardMaterial color={0x00ff00} side={THREE.BackSide} />
-      </mesh>
-      <mesh position-x={0.6} position-z={1}>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshStandardMaterial color={0xff0000} />
-      </mesh>
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[1, 1, 1]} intensity={0.5} />
-      <directionalLight position={[0, 0, 2]} intensity={0.5} />
-    </Canvas>
+    <div>
+      <h1>模型展示页面</h1>
+      <p>这是我们的第一个React Three Fiber场景！<br></br>
+        使用说明：
+        1. 鼠标左键拖动可以旋转模型。
+        2. 鼠标右键拖动可以平移模型。
+        3. 鼠标滚轮可以缩放模型。
+      </p>
+      <ModelPage />
+    </div>
   )
 }
-
 export default App
