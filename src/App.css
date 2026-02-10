@@ -40,3 +40,35 @@
 .read-the-docs {
   color: #888;
 }
+
+/* App布局样式 */
+.app-container {
+  width: 100%;
+}
+
+.app-content {
+  display: flex;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 250px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-content {
+    flex-direction: column;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    margin-top: 0;
+  }
+}

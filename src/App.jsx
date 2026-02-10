@@ -1,16 +1,27 @@
+import './App.css'
 import ModelPage from './modelpage.jsx'
+import Apphead from './Apphead/Apphead.jsx'
+import Appbottom from './Appbottom/Appbottom.jsx'
+import AddModelOnLeft from './AddModelOnLeft/AddModelOnLeft.jsx'
+import React, { useState } from 'react';
 
 function App() {
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+
+  const handleHeaderToggle = (visible) => {
+    setIsHeaderVisible(visible);
+  };
+
   return(
-    <div>
-      <h1>模型展示页面</h1>
-      <p>这是我们的第一个React Three Fiber场景！<br></br>
-        使用说明：
-        1. 鼠标左键拖动可以旋转模型。
-        2. 鼠标右键拖动可以平移模型。
-        3. 鼠标滚轮可以缩放模型。
-      </p>
-      <ModelPage />
+    <div className="app-container">
+      <Apphead ProjectName="测试项目" onToggle={handleHeaderToggle} />
+      <div className="app-content">
+        <AddModelOnLeft isHeaderVisible={isHeaderVisible} />
+        <div className="main-content">
+          <ModelPage />
+        </div>
+      </div>
+      <Appbottom />
     </div>
   )
 }
