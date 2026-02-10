@@ -8,6 +8,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 function Apphead({ProjectName}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const overlayRef = useRef(null);
   const contentRef = useRef(null);
 
@@ -27,6 +28,10 @@ function Apphead({ProjectName}) {
     }, 300);
   };
 
+  const toggleHeader = () => {
+    setIsHeaderVisible(!isHeaderVisible);
+  };
+
   useEffect(() => {
     if (isModalOpen && overlayRef.current && contentRef.current) {
       // 触发重排，确保动画能够正常执行
@@ -37,13 +42,31 @@ function Apphead({ProjectName}) {
   }, [isModalOpen]);
 
   return(
-    <div>
-      <h1>{ProjectName}</h1>
-        <p class = "description">【模型编辑器】
-        <button className="instructions-button" onClick={openModal}>
-          查看使用说明
+    <>
+      <div className={`app-header ${isHeaderVisible ? 'visible' : 'hidden'}`}>
+        <div className="header-content">
+          <div className="header-left">
+            <h1>{ProjectName}</h1>
+            <div className="header-controls">
+              <p className="description">【模型编辑器】</p>
+              <button className="instructions-button" onClick={openModal}>
+                查看使用说明
+              </button>
+            </div>
+          </div>
+          <div className="header-right">
+            <button className="toggle-header-button" onClick={toggleHeader}>
+              {isHeaderVisible ? '隐藏头部' : '显示头部'}
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      {!isHeaderVisible && (
+        <button className="header-toggle-float" onClick={toggleHeader}>
+          显示头部
         </button>
-      </p>
+      )}
 
       {isModalOpen && (
         <div ref={overlayRef} className="modal-overlay" onClick={closeModal}>
@@ -64,7 +87,7 @@ function Apphead({ProjectName}) {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
 export default Apphead
