@@ -4,7 +4,7 @@ import * as THREE from 'three'
 
 function ModelPage() {
   return(
-    <Canvas style={{ width: '100%', height: '80vh' }}>
+    <Canvas style={{ width: '100%', height: '75vh' }}>
       <perspectiveCamera position={[3,3,3]} near={0.1} far={100} />
       <OrbitControls />
       <group>
