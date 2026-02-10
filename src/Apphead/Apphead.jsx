@@ -6,7 +6,7 @@
 import './Apphead.css';
 import React, { useState, useEffect, useRef } from 'react';
 
-function Apphead({ProjectName}) {
+function Apphead({ProjectName, onToggle}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const overlayRef = useRef(null);
@@ -29,7 +29,11 @@ function Apphead({ProjectName}) {
   };
 
   const toggleHeader = () => {
-    setIsHeaderVisible(!isHeaderVisible);
+    const newVisibility = !isHeaderVisible;
+    setIsHeaderVisible(newVisibility);
+    if (onToggle) {
+      onToggle(newVisibility);
+    }
   };
 
   useEffect(() => {
