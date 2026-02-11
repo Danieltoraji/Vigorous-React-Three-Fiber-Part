@@ -3,13 +3,15 @@ import ModelPage from './modelpage.jsx'
 import Apphead from './Apphead/Apphead.jsx'
 import Appbottom from './Appbottom/Appbottom.jsx'
 import AddModelOnLeft from './AddModelOnLeft/AddModelOnLeft.jsx'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ProjectProvider, useProject } from './contexts/ProjectContext.jsx';
 
 // 主应用组件包装器
 function AppWrapper() {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const { projectData, updateProjectInfo, addModelToProject } = useProject();
+  const projectNameRef = useRef();
+  const projectDescRef = useRef();
 
   const handleHeaderToggle = (visible) => {
     setIsHeaderVisible(visible);
@@ -32,33 +34,134 @@ function AppWrapper() {
 
   // 3D场景中的对象列表
   const [sceneObjects, setSceneObjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState({ text: '', type: '' });
 
-  // 监听表单变化并同步到项目数据
-  useEffect(() => {
-    const projectNameInput = document.getElementById('projectName');
-    const projectDescInput = document.getElementById('projectDescription');
+  // 保存项目到API的函数
+  const saveProjectToAPI = async (projectInfo) => {
+    try {
+      setIsLoading(true);
+      setMessage({ text: '', type: '' });
 
-    if (projectNameInput && projectDescInput) {
-      const handleNameChange = () => {
-        if (projectData) {
-          updateProjectInfo({ name: projectNameInput.value });
-        }
-      };
+      // 发送API请求
+      const response = await fetch('/api/test/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          projectId: projectData?.id || null,
+          projectName: projectInfo.name,
+          projectDescription: projectInfo.description,
+          models: sceneObjects,
+          createdAt: projectData?.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        })
+      });
 
-      const handleDescChange = () => {
-        if (projectData) {
-          updateProjectInfo({ description: projectDescInput.value });
-        }
-      };
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-      projectNameInput.addEventListener('input', handleNameChange);
-      projectDescInput.addEventListener('input', handleDescChange);
+      const result = await response.json();
 
-      return () => {
-        projectNameInput.removeEventListener('input', handleNameChange);
-        projectDescInput.removeEventListener('input', handleDescChange);
-      };
+      // 显示成功消息
+      setMessage({ text: '项目保存成功！', type: 'success' });
+
+      // 更新项目数据
+      if (result.projectId && !projectData?.id) {
+        updateProjectInfo({ id: result.projectId });
+      }
+
+      return result;
+    } catch (error) {
+      console.error('保存项目失败:', error);
+
+      // 显示错误消息
+      setMessage({ text: '保存项目失败，请稍后重试', type: 'error' });
+
+      throw error;
+    } finally {
+      setIsLoading(false);
+      // 3秒后清除消息
+      setTimeout(() => {
+        setMessage({ text: '', type: '' });
+      }, 3000);
     }
+  };
+
+  // 表单提交处理函数
+  const handleSaveProject = async (e) => {
+    e.preventDefault();
+
+    // 获取表单数据
+    const projectName = projectNameRef.current?.value || projectData?.name || "新建项目";
+    const projectDescription = projectDescRef.current?.value || projectData?.description || "";
+
+    // 更新项目信息
+    if (projectData) {
+      updateProjectInfo({
+        name: projectName,
+        description: projectDescription
+      });
+    }
+
+    // 准备要发送的数据
+    const projectInfo = {
+      name: projectName,
+      description: projectDescription
+    };
+
+    // 调用API保存
+    try {
+      await saveProjectToAPI(projectInfo);
+    } catch (error) {
+      // 错误已在saveProjectToAPI中处理
+      console.error('保存操作失败:', error);
+    }
+  };
+
+
+  // 设置表单初始值并监听变化
+  useEffect(() => {
+    if (projectNameRef.current && projectData?.name) {
+      projectNameRef.current.value = projectData.name;
+    }
+    if (projectDescRef.current && projectData?.description) {
+      projectDescRef.current.value = projectData.description;
+    }
+
+    // 添加事件监听器
+    const handleNameChange = () => {
+      if (projectData && projectNameRef.current) {
+        updateProjectInfo({ name: projectNameRef.current.value });
+      }
+    };
+
+    const handleDescChange = () => {
+      if (projectData && projectDescRef.current) {
+        updateProjectInfo({ description: projectDescRef.current.value });
+      }
+    };
+
+    const nameInput = projectNameRef.current;
+    const descInput = projectDescRef.current;
+
+    if (nameInput) {
+      nameInput.addEventListener('input', handleNameChange);
+    }
+    if (descInput) {
+      descInput.addEventListener('input', handleDescChange);
+    }
+
+    return () => {
+      if (nameInput) {
+        nameInput.removeEventListener('input', handleNameChange);
+      }
+      if (descInput) {
+        descInput.removeEventListener('input', handleDescChange);
+      }
+    };
   }, [projectData, updateProjectInfo]);
 
   return (
@@ -90,16 +193,18 @@ function AppWrapper() {
             <h2 className="project-title">📋 项目信息</h2>
           </div>
           <div className="project-form">
-            <form id="projectEditorForm">
+            <form id="projectEditorForm" onSubmit={handleSaveProject}>
               <div className="form-group">
                 <label htmlFor="projectName" className="form-label">项目名称</label>
                 <input
                   type="text"
                   id="projectName"
                   name="projectName"
-                  value={projectData?.name || "新建项目"}
+                  ref={projectNameRef}
+                  defaultValue={projectData?.name || "新建项目"}
                   placeholder="请输入项目名称"
                   className="form-input"
+                  disabled={isLoading}
                 />
               </div>
 
@@ -108,23 +213,28 @@ function AppWrapper() {
                 <textarea
                   id="projectDescription"
                   name="projectDescription"
+                  ref={projectDescRef}
                   placeholder="请输入项目描述"
                   className="form-textarea"
                   defaultValue={projectData?.description || ""}
+                  disabled={isLoading}
                 />
               </div>
 
               <div className="button-group">
-                <button type="submit" id="saveProjectBtn" className="btn btn-primary">
-                  <span className="btn-text">保存项目</span>
-                  <span className="spinner" style={{ display: 'none' }}></span>
+                <button type="submit" id="saveProjectBtn" className="btn btn-primary" disabled={isLoading}>
+                  <span className="btn-text">{isLoading ? '保存中...' : '保存项目'}</span>
+                  <span className="spinner" style={{ display: isLoading ? 'inline-block' : 'none' }}></span>
                 </button>
-                <button type="button" id="deleteProjectBtn" className="btn btn-danger" style={{ display: projectData?.id ? 'flex' : 'none' }}>
+                <button type="button" id="deleteProjectBtn" className="btn btn-danger" style={{ display: projectData?.id ? 'flex' : 'none' }} disabled={isLoading}>
                   <span className="btn-text">删除项目</span>
                 </button>
               </div>
-              <div id="successMessage" className="message message-success"></div>
-              <div id="errorMessage" className="message message-error"></div>
+              {message.text && (
+                <div className={`message message-${message.type} show`}>
+                  {message.text}
+                </div>
+              )}
             </form>
           </div>
         </div>

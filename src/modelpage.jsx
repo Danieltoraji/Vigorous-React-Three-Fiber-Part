@@ -58,16 +58,13 @@ function ModelPage({ objects = [] }) {
   const handleObjectSelect = useCallback((objectId) => {
     setSelectedObjectId(objectId);
     console.log('点击了对象ID:', objectId);
-  }, [selectedObjectId]);
+  }, []);
 
   // 构建选中对象数组用于Outline效果
   const selectedObjects = [];
 
   // 收集所有可选中的对象
-  const allSelectableObjects = [
-    ...objects,
 
-  ];
 
   return (
     <div style={{
@@ -87,14 +84,7 @@ function ModelPage({ objects = [] }) {
 
         <group>
           {/* 渲染动态对象 - 带点击功能 */}
-          {objects.map((object) => (
-            <SceneObject
-              key={object.id}
-              object={object}
-              isSelected={selectedObjectId === object.id}
-              onSelect={handleObjectSelect}
-            />
-          ))}
+
 
 
 
@@ -117,7 +107,7 @@ function ModelPage({ objects = [] }) {
 
             {objects.map(obj => (
               <Select key={obj.id} enabled={obj.id === selectedObjectId}>
-                <SceneObject object={obj} />
+                <SceneObject object={obj} onSelect={handleObjectSelect} />
               </Select>
             ))}
           </Selection>
