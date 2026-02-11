@@ -70,7 +70,6 @@ function ModelPage({ objects = [] }) {
     <div style={{
       width: '100%',
       height: '100%',
-      backgroundColor: '#1a1a1a'
     }}>
       <Canvas
         style={{ width: '100%', height: '100%' }}
@@ -80,7 +79,7 @@ function ModelPage({ objects = [] }) {
         <OrbitControls />
 
         {/* 设置场景背景 */}
-        <color attach="background" args={['#140076']} />
+        <color attach="background" args={['#525252']} />
 
         <group>
           {/* 渲染动态对象 - 带点击功能 */}
@@ -96,7 +95,8 @@ function ModelPage({ objects = [] }) {
               <Outline
                 selectionLayer={10}
                 edgeStrength={20}  // 降低edgeStrength值避免边缘破碎
-                visibleEdgeColor={0xffff00}
+                visibleEdgeColor="rgba(255, 64, 0, 1)"
+                hiddenEdgeColor="rgba(255, 64, 0, 1)"
                 blur
                 blurPassRadius={20}  // 降低模糊半径
                 blurPassIterations={1}  // 减少迭代次数
