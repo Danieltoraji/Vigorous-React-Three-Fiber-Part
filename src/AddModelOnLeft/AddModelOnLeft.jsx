@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './AddModelOnLeft.css';
 
-const AddModelOnLeft = ({ isHeaderVisible }) => {
+const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [isWindowMode, setIsWindowMode] = useState(false);
@@ -12,42 +12,35 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
 
   const containerRef = useRef(null);
 
-  // 发送模型创建请求
-  const sendModelRequest = async (shapeType) => {
+  // 创建3D对象并添加到场景
+  const create3DObject = (shapeType) => {
     setLoading(true);
     setFeedback({ type: '', message: '' });
 
     try {
-      // 构建请求数据
-      const requestData = {
-        operation: '创建形状',
-        shape_type: shapeType,
-        parameters: {
-          ...getDefaultParameters(shapeType),
-          position: { x: 0, y: 0, z: 0 },
-          color: '#ffffff'
-        },
-        timestamp: new Date().toISOString()
+      // 生成随机位置
+      const randomPosition = {
+        x: (Math.random() - 0.5) * 4,
+        y: (Math.random() - 0.5) * 4,
+        z: (Math.random() - 0.5) * 4
       };
 
-      // 发送HTTP请求
-      const response = await fetch('/api/generator/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        body: JSON.stringify(requestData)
-      });
+      // 生成随机颜色
+      const randomColor = Math.floor(Math.random() * 16777215);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      // 构建对象数据
+      const newObject = {
+        type: shapeType,
+        position: randomPosition,
+        color: randomColor,
+        ...getDefaultParameters(shapeType)
+      };
 
-      const data = await response.json();
+      // 调用父组件的回调函数
+      onAddObject(newObject);
+
       setFeedback({ type: 'success', message: `成功创建${getShapeName(shapeType)}` });
-      console.log('请求成功:', data);
+      console.log('对象已创建:', newObject);
 
       // 3秒后清除反馈信息
       setTimeout(() => {
@@ -56,7 +49,7 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
 
     } catch (error) {
       setFeedback({ type: 'error', message: `创建失败: ${error.message}` });
-      console.error('请求失败:', error);
+      console.error('创建失败:', error);
 
       // 3秒后清除错误信息
       setTimeout(() => {
@@ -207,7 +200,7 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
             <button
               key={button.id}
               className={`model-button ${loading ? 'loading' : ''}`}
-              onClick={() => sendModelRequest(button.shapeType)}
+              onClick={() => create3DObject(button.shapeType)}
               disabled={loading}
             >
               <div className="button-icon">
