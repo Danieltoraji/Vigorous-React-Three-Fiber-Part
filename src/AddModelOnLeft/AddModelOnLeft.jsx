@@ -9,7 +9,7 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 20, y: 100 });
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  
+
   const containerRef = useRef(null);
 
   // 发送模型创建请求
@@ -31,12 +31,12 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
       };
 
       // 发送HTTP请求
-      const response = await fetch('http://localhost:8000/api/shapes/', {
+      const response = await fetch('/api/generator/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
+          'X-Requested-With': 'XMLHttpRequest',
         },
         body: JSON.stringify(requestData)
       });
@@ -147,7 +147,7 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
-      
+
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
@@ -194,13 +194,13 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
         } : {}}
       >
         {/* 标题栏 */}
-        <h2 
+        <h2
           className="add-model-title"
           onMouseDown={handleMouseDown}
         >
           添加模型
         </h2>
-        
+
         {/* 按钮容器 */}
         <div className="button-container">
           {buttons.map((button) => (
@@ -228,14 +228,14 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
         {/* 控制按钮 */}
         <div className="control-buttons">
           {isWindowMode && (
-            <button 
+            <button
               className="control-button"
               onClick={switchToLeftMode}
             >
               居左显示
             </button>
           )}
-          <button 
+          <button
             className="control-button primary"
             onClick={hidePanel}
           >
@@ -246,7 +246,7 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
 
       {/* 显示按钮（当面板隐藏时） */}
       {isHidden && (
-        <button 
+        <button
           className="show-panel-button"
           onClick={showPanel}
         >
