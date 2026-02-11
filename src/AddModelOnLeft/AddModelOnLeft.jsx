@@ -7,7 +7,7 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
   const [isWindowMode, setIsWindowMode] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ x: 20, y: 100 });
+  const [position, setPosition] = useState({ x: 20, y: 80 });
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   const containerRef = useRef(null);
@@ -121,7 +121,7 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
   // 切换到居左模式
   const switchToLeftMode = () => {
     setIsWindowMode(false);
-    setPosition({ x: 20, y: 100 });
+    setPosition({ x: 20, y: 80 });
   };
 
   // 隐藏面板
@@ -186,15 +186,7 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
           top: `${position.y}px`
         } : {}}
       >
-        {/* 标题栏 */}
-        <h2
-          className="add-model-title"
-          onMouseDown={handleMouseDown}
-        >
-          添加模型
-        </h2>
-
-        {/* 按钮容器 */}
+        {/* 按钮容器 - 只渲染按钮，标题由App组件提供 */}
         <div className="button-container">
           {buttons.map((button) => (
             <button
@@ -225,7 +217,7 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
               className="control-button"
               onClick={switchToLeftMode}
             >
-              居左显示
+              固定左侧
             </button>
           )}
           <button

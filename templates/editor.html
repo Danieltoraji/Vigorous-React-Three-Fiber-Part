@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if project_data and project_data != 'null' %}{{ project_data.name }} - {% endif %}3D模型编辑器</title>
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            overflow: hidden;
+        }
+        
+        /* 返回按钮样式 */
+        .exit-button-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        
+        .exit-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .exit-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        /* 主布局 */
+        .main-layout {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            height: calc(100vh - 40px);
+            box-sizing: border-box;
+        }
+        
+        /* 左侧3D编辑器区域 */
+        .editor-area {
+            flex: 1;
+            min-width: 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .editor-header {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        #root {
+            width: 100%;
+            height: calc(100% - 60px);
+        }
+        
+        /* 右侧项目信息区域 */
+        .project-info-area {
+            width: 350px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            max-height: 100%;
+        }
+        
+        .project-info-area h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .button-group {
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* 消息提示 */
+        .message {
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .message-success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* 加载状态 */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 返回主页面按钮 -->
+    <div class="exit-button-container">
+        <a href="#" id="exitButton" class="exit-button">
+            ← 返回主页
+        </a>
+    </div>
+    
+    <!-- 主要内容区域 - 左右分栏布局 -->
+    <div class="main-layout">
+        <!-- 左侧：3D编辑器区域 -->
+        <div class="editor-area">
+            <div class="editor-header">3D模型编辑器</div>
+            <div id="root"></div>
+        </div>
+        
+        <!-- 右侧：项目信息编辑区域 -->
+        <div class="project-info-area">
+            <h2>项目信息</h2>
+            <form id="projectEditorForm">
+                <div class="form-group">
+                    <label for="projectName" class="form-label">项目名称：</label>
+                    <input type="text" id="projectName" name="projectName" 
+                           value="{% if project_data and project_data != 'null' %}{{ project_data.name }}{% else %}新建项目{% endif %}" 
+                           placeholder="请输入项目名称"
+                           class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectDescription" class="form-label">项目描述：</label>
+                    <textarea id="projectDescription" name="projectDescription" 
+                              placeholder="请输入项目描述"
+                              class="form-textarea">{% if project_data and project_data != 'null' %}{{ project_data.description }}{% endif %}</textarea>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" id="saveProjectBtn" class="btn btn-primary">保存项目信息</button>
+                    <button type="button" id="deleteProjectBtn" class="btn btn-danger">删除项目</button>
+                </div>
+                <div id="successMessage" class="message message-success"></div>
+                <div id="errorMessage" class="message message-error"></div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 添加项目信息处理的JavaScript -->
+    <script>
+        // 处理传入的项目信息
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化脏标记变量
+            let isDirty = false;
+            
+            // 从模板获取项目数据（模拟Django模板变量）
+            const projectDataJson = '{% if project_data %}{{ project_data|escapejs }}{% else %}null{% endif %}';
+            let projectData = null;
+            
+            if (projectDataJson && projectDataJson !== 'null') {
+                try {
+                    projectData = JSON.parse(projectDataJson);
+                } catch (e) {
+                    console.error('❌ 解析项目数据失败:', e);
+                }
+            }
+            
+            // 设置表单初始值
+            const projectNameInput = document.getElementById('projectName');
+            const projectDescInput = document.getElementById('projectDescription');
+            
+            if (projectData) {
+                projectNameInput.value = projectData.name || '';
+                projectDescInput.value = projectData.description || '';
+                
+                console.log('🎨 已加载项目信息:', projectData);
+            }
+            
+            // 监听表单输入变化，标记为脏数据
+            function markAsDirty() {
+                isDirty = true;
+                console.log('📝 项目已修改，标记为未保存状态');
+            }
+            
+            projectNameInput.addEventListener('input', markAsDirty);
+            projectDescInput.addEventListener('input', markAsDirty);
+            
+            // 表单元素
+            const form = document.getElementById('projectEditorForm');
+            const saveBtn = document.getElementById('saveProjectBtn');
+            const deleteBtn = document.getElementById('deleteProjectBtn');
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            // 根据项目状态设置按钮文本和显示删除按钮
+            if (projectData && projectData.id) {
+                saveBtn.textContent = '保存项目更改';
+                deleteBtn.style.display = 'block';
+            } else {
+                saveBtn.textContent = '创建新项目';
+                deleteBtn.style.display = 'none';
+            }
+            
+            // 隐藏消息函数
+            function hideMessages() {
+                successMsg.style.display = 'none';
+                errorMsg.style.display = 'none';
+            }
+            
+            // 显示成功消息
+            function showSuccess(message) {
+                successMsg.textContent = message;
+                successMsg.style.display = 'block';
+                setTimeout(() => hideMessages(), 3000);
+            }
+            
+            // 显示错误消息
+            function showError(message) {
+                errorMsg.textContent = message;
+                errorMsg.style.display = 'block';
+                setTimeout(() => hideMessages(), 5000);
+            }
+            
+            // 模拟保存项目函数（前端演示用）
+            function saveProject() {
+                return new Promise((resolve, reject) => {
+                    // 获取表单数据
+                    const formData = {
+                        name: projectNameInput.value.trim(),
+                        description: projectDescInput.value.trim(),
+                        projectId: projectData ? projectData.id : null,
+                        parameters: {} // 这里可以添加实际的3D模型参数
+                    };
+                    
+                    // 简单验证
+                    if (!formData.name) {
+                        showError('请输入项目名称');
+                        reject(new Error('项目名称不能为空'));
+                        return;
+                    }
+                    
+                    // 更新保存按钮状态
+                    saveBtn.disabled = true;
+                    saveBtn.textContent = '保存中...';
+                    saveBtn.classList.add('loading');
+                    
+                    // 模拟API调用延迟
+                    setTimeout(() => {
+                        try {
+                            // 模拟保存成功
+                            if (!projectData) {
+                                // 新项目
+                                projectData = {
+                                    id: Date.now(),
+                                    name: formData.name,
+                                    description: formData.description,
+                                    created_at: new Date().toISOString(),
+                                    edited_at: new Date().toISOString()
+                                };
+                                deleteBtn.style.display = 'block';
+                            } else {
+                                // 更新现有项目
+                                projectData.name = formData.name;
+                                projectData.description = formData.description;
+                                projectData.edited_at = new Date().toISOString();
+                            }
+                            
+                            // 更新页面标题
+                            document.title = formData.name + ' - 3D模型编辑器';
+                            
+                            // 重置脏标记
+                            isDirty = false;
+                            showSuccess('项目信息保存成功！');
+                            console.log('✅ 项目信息已保存:', projectData);
+                            
+                            // 更新按钮文本
+                            saveBtn.textContent = '保存项目更改';
+                            
+                            resolve(projectData);
+                        } catch (error) {
+                            showError('保存失败');
+                            reject(error);
+                        } finally {
+                            // 恢复按钮状态
+                            saveBtn.disabled = false;
+                            saveBtn.classList.remove('loading');
+                        }
+                    }, 1000);
+                });
+            }
+            
+            // 退出前检查函数
+            function checkBeforeExit() {
+                if (isDirty) {
+                    // 项目有未保存的更改，询问用户
+                    const projectName = projectNameInput.value.trim() || '未命名项目';
+                    const userChoice = confirm(
+                        `项目 "${projectName}" 有未保存的更改。\n\n` +
+                        `退出前是否保留这些更改？`
+                    );
+                    
+                    if (userChoice) {
+                        // 用户选择保存并退出
+                        saveProject()
+                            .then(() => {
+                                console.log('✅ 项目已保存，正在退出...');
+                                // 这里可以添加实际的页面跳转逻辑
+                                alert('项目已保存！（演示模式）');
+                            })
+                            .catch((error) => {
+                                console.error('❌ 保存失败，无法退出:', error);
+                                alert('保存失败，无法退出。请检查网络连接或稍后重试。');
+                            });
+                        return false; // 阻止默认导航
+                    } else {
+                        // 用户选择放弃更改并直接退出
+                        console.log('ℹ️ 用户选择放弃更改并退出');
+                        // 重置表单到初始状态
+                        if (projectData) {
+                            projectNameInput.value = projectData.name || '';
+                            projectDescInput.value = projectData.description || '';
+                        } else {
+                            projectNameInput.value = '新建项目';
+                            projectDescInput.value = '';
+                        }
+                        isDirty = false; // 重置脏标记
+                        return true; // 允许退出
+                    }
+                } else {
+                    // 没有未保存的更改，直接退出
+                    console.log('✅ 项目无更改，直接退出');
+                    return true; // 允许默认导航
+                }
+            }
+            
+            // 为退出按钮添加事件监听器
+            const exitButton = document.getElementById('exitButton');
+            exitButton.addEventListener('click', function(e) {
+                e.preventDefault(); // 阻止默认链接行为
+                
+                if (checkBeforeExit()) {
+                    // 如果checkBeforeExit返回true，说明可以直接退出
+                    alert('返回主页功能（演示模式）');
+                    // 实际项目中这里应该是: window.location.href = '/home';
+                }
+                // 如果返回false，则checkBeforeExit已经处理了退出逻辑
+            });
+            
+            // 处理浏览器的beforeunload事件（关闭标签页/窗口时）
+            window.addEventListener('beforeunload', function(e) {
+                if (isDirty) {
+                    // 现代浏览器通常忽略自定义消息，但仍会显示通用警告
+                    e.preventDefault();
+                    e.returnValue = ''; // Chrome需要这个
+                    return ''; // 其他浏览器
+                }
+            });
+            
+            // 表单提交事件
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                hideMessages();
+                saveProject();
+            });
+            
+            // 删除项目按钮事件处理
+            deleteBtn.addEventListener('click', function() {
+                // 二次确认
+                const projectName = projectNameInput.value.trim() || '未命名项目';
+                const confirmMessage = `确定要删除项目 "${projectName}" 吗？此操作不可撤销！`;
+                
+                if (confirm(confirmMessage)) {
+                    // 用户确认删除
+                    hideMessages();
+                    deleteBtn.disabled = true;
+                    deleteBtn.textContent = '删除中...';
+                    deleteBtn.classList.add('loading');
+                    
+                    // 模拟删除操作
+                    setTimeout(() => {
+                        try {
+                            // 模拟删除成功
+                            projectData = null;
+                            projectNameInput.value = '新建项目';
+                            projectDescInput.value = '';
+                            deleteBtn.style.display = 'none';
+                            saveBtn.textContent = '创建新项目';
+                            isDirty = false;
+                            
+                            showSuccess('项目删除成功！');
+                            console.log('✅ 项目已删除');
+                        } catch (error) {
+                            showError('删除失败');
+                        } finally {
+                            // 恢复按钮状态
+                            deleteBtn.disabled = false;
+                            deleteBtn.textContent = '删除项目';
+                            deleteBtn.classList.remove('loading');
+                        }
+                    }, 800);
+                }
+            });
+            
+            // 实时更新页面标题
+            projectNameInput.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    document.title = this.value.trim() + ' - 3D模型编辑器';
+                }
+            });
+            
+            if (projectData) {
+                // 将项目信息存储到全局变量中供其他脚本使用
+                window.currentProject = projectData;
+                console.log('✅ 项目信息已成功加载到编辑器');
+            } else {
+                console.log('ℹ️ 未检测到传入的项目信息，将以新项目模式启动');
+            }
+        });
+    </script>
+    
+    <!-- React应用脚本 -->
+    <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
