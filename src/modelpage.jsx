@@ -1,11 +1,11 @@
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls } from "@react-three/drei"
 import * as THREE from 'three'
-import React, { useMemo } from 'react'
-import { Selection, Select, EffectComposer, Outline } from '@react-three/postprocessing'
+import React, { useMemo, useState, useCallback } from 'react'
+import { Selection, EffectComposer, Outline, Select } from '@react-three/postprocessing'
 
-// 3D对象组件
-const SceneObject = ({ object }) => {
+// 3D对象组件 - 添加点击功能
+const SceneObject = ({ object, isSelected, onSelect }) => {
   const geometry = useMemo(() => {
     switch (object.type) {
       case 'sphere':
@@ -24,18 +24,51 @@ const SceneObject = ({ object }) => {
     }
   }, [object]);
 
+  const handleClick = useCallback((event) => {
+    event.stopPropagation();
+    onSelect(object.id);
+  }, [object.id, onSelect]);
+
   return (
     <mesh
       position={[object.position.x, object.position.y, object.position.z]}
       rotation={[0, 0, 0]}
+      onClick={handleClick}
+      onPointerOver={(e) => {
+        document.body.style.cursor = 'pointer';
+        e.stopPropagation();
+      }}
+      onPointerOut={(e) => {
+        document.body.style.cursor = 'auto';
+        e.stopPropagation();
+      }}
     >
       {geometry}
-      <meshStandardMaterial color={object.color} />
+      <meshStandardMaterial
+        color={object.color}
+      />
     </mesh>
   );
 };
 
+
 function ModelPage({ objects = [] }) {
+  const [selectedObjectId, setSelectedObjectId] = useState(null);
+
+  const handleObjectSelect = useCallback((objectId) => {
+    setSelectedObjectId(objectId);
+    console.log('点击了对象ID:', objectId);
+  }, [selectedObjectId]);
+
+  // 构建选中对象数组用于Outline效果
+  const selectedObjects = [];
+
+  // 收集所有可选中的对象
+  const allSelectableObjects = [
+    ...objects,
+
+  ];
+
   return (
     <div style={{
       width: '100%',
@@ -44,6 +77,7 @@ function ModelPage({ objects = [] }) {
     }}>
       <Canvas
         style={{ width: '100%', height: '100%' }}
+        onPointerMissed={() => setSelectedObjectId(null)} // 点击空白处取消选中
       >
         <perspectiveCamera position={[3, 3, 3]} near={0.1} far={100} />
         <OrbitControls />
@@ -52,48 +86,43 @@ function ModelPage({ objects = [] }) {
         <color attach="background" args={['#140076']} />
 
         <group>
-          {/* 渲染动态对象 */}
+          {/* 渲染动态对象 - 带点击功能 */}
           {objects.map((object) => (
-            <SceneObject key={object.id} object={object} />
+            <SceneObject
+              key={object.id}
+              object={object}
+              isSelected={selectedObjectId === object.id}
+              onSelect={handleObjectSelect}
+            />
           ))}
+
+
 
           {/* 包裹 Selection 组件，可以理解为一个大选区，存放着准备操作的对象 */}
           <Selection>
-            {/* 后处理合成器，它先画出原始场景，然后交由内部的“效果器”进行加工 */}
+            {/* 后处理合成器，它先画出原始场景，然后交由内部的"效果器"进行加工 */}
             <EffectComposer multisampling={0} autoClear={false}>
               {/* 描边效果器配置 */}
               <Outline
-                selection={[...objects]}// 指定要选中的对象数组
-                selectionLayer={10}     // 指定一个特定的图层编号，只对其后处理
-                edgeStrength={400}
-                visibleEdgeColor={0xffff00}// 指定描边颜色
+                selectionLayer={10}
+                edgeStrength={20}  // 降低edgeStrength值避免边缘破碎
+                visibleEdgeColor={0xffff00}
                 blur
-                blurPassRadius={50}
-                blurPassIterations={2}
+                blurPassRadius={20}  // 降低模糊半径
+                blurPassIterations={1}  // 减少迭代次数
                 blurPassDepthThreshold={0.01}
                 blurPassDepthAwareUpsampling
               />
-
-              {/* 此处选择了一个物体作为示例 */}
-              <Select enabled={true}>
-                <mesh position-x={0.6} position-z={1} scale={[1, 1, 1]}>
-                  <sphereGeometry args={[1, 32, 32]} />
-                  <meshStandardMaterial color={0xff0000} />
-                </mesh>
-              </Select>
-
             </EffectComposer>
+
+            {objects.map(obj => (
+              <Select key={obj.id} enabled={obj.id === selectedObjectId}>
+                <SceneObject object={obj} />
+              </Select>
+            ))}
           </Selection>
 
-          {/* 原有的静态对象作为示例 */}
-          <mesh position={[-3, 2, 5]} scale={[2, 2, 2]} rotation={[THREE.MathUtils.degToRad(45), Math.PI / 4, 0]}>
-            <boxGeometry />
-            <meshStandardMaterial color={0x00ff00} />
-          </mesh>
-          <mesh position-x={-0.9} position-z={-2} scale={[0.5, 0.5, 4]}>
-            <boxGeometry />
-            <meshStandardMaterial color={0x00ff00} />
-          </mesh>
+
 
           <ambientLight intensity={0.5} />
           <directionalLight position={[1, 1, 1]} intensity={0.5} />
