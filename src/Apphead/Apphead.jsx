@@ -5,6 +5,7 @@
  */
 import './Apphead.css';
 import React, { useState, useEffect, useRef } from 'react';
+import ReturnHome from './ReturnHome/ReturnHome.jsx';
 
 function Apphead({ProjectName, onToggle}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,6 +51,7 @@ function Apphead({ProjectName, onToggle}) {
       <div className={`app-header ${isHeaderVisible ? 'visible' : 'hidden'}`}>
         <div className="header-content">
           <div className="header-left">
+            <ReturnHome />
             <h1>{ProjectName}</h1>
             <div className="header-controls">
               <p className="description">【模型编辑器】</p>
