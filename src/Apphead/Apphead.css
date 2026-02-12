@@ -35,7 +35,6 @@
 .header-right {
   display: flex;
   align-items: center;
-  gap: 10px;
 }
 
 .header-content h1 {
@@ -69,22 +68,6 @@
 
 .instructions-button:hover {
   color: darkblue;
-}
-
-.edit-project-button {
-  background-color: #1890ff;
-  border: 1px solid #1890ff;
-  border-radius: 4px;
-  padding: 6px 12px;
-  font-size: 14px;
-  color: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.edit-project-button:hover {
-  background-color: #40a9ff;
-  border-color: #40a9ff;
 }
 
 .toggle-header-button {

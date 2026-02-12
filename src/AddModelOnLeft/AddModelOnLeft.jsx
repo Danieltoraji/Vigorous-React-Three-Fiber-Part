@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './AddModelOnLeft.css';
-import { useProject } from '../context/ProjectContext.jsx';
 
-const AddModelOnLeft = ({ isHeaderVisible, onToggle }) => {
-  const { getProjectId } = useProject();
+const AddModelOnLeft = ({ isHeaderVisible }) => {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [isWindowMode, setIsWindowMode] = useState(false);
@@ -20,31 +18,25 @@ const AddModelOnLeft = ({ isHeaderVisible, onToggle }) => {
     setFeedback({ type: '', message: '' });
 
     try {
-      // 获取当前项目ID
-      const projectId = getProjectId();
-      
       // 构建请求数据
       const requestData = {
         operation: '创建形状',
         shape_type: shapeType,
-        project_id: projectId,
         parameters: {
           ...getDefaultParameters(shapeType),
           position: { x: 0, y: 0, z: 0 },
           color: '#ffffff'
         },
         timestamp: new Date().toISOString()
-        
       };
 
       // 发送HTTP请求
-      const response = await fetch('/api/add-model/', {
+      const response = await fetch('http://localhost:8000/api/shapes/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRFToken': getCookie('csrftoken')
+          'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify(requestData)
       });
@@ -90,21 +82,7 @@ const AddModelOnLeft = ({ isHeaderVisible, onToggle }) => {
     }
   };
 
-  const getCookie = (name) => {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  };
-
+  // 获取形状的中文名称
   const getShapeName = (shapeType) => {
     switch (shapeType) {
       case 'sphere':
@@ -157,17 +135,11 @@ const AddModelOnLeft = ({ isHeaderVisible, onToggle }) => {
   const hidePanel = () => {
     setIsWindowMode(false); // 先切换到居左模式，以便隐藏样式生效
     setIsHidden(true);
-    if (onToggle) {
-      onToggle(true);
-    }
   };
 
   // 显示面板
   const showPanel = () => {
     setIsHidden(false);
-    if (onToggle) {
-      onToggle(false);
-    }
   };
 
   // 全局鼠标事件监听
