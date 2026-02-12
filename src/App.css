@@ -1,5 +1,5 @@
 #root {
-  max-width: 1280px;
+  max-width: none;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
@@ -55,10 +55,18 @@
   margin-left: 250px;
 }
 
+.main-content.full-width {
+  margin-left: 0;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .main-content {
     margin-left: 200px;
+  }
+  
+  .main-content.full-width {
+    margin-left: 0;
   }
 }
 
