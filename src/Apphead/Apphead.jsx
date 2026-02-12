@@ -6,15 +6,21 @@
 import './Apphead.css';
 import React, { useState, useEffect, useRef } from 'react';
 import ReturnHome from './ReturnHome/ReturnHome.jsx';
+import EditProjectInfo from './EditProjectInfo/EditProjectInfo.jsx';
 
 function Apphead({ProjectName, onToggle}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [isEditProjectOpen, setIsEditProjectOpen] = useState(false);
   const overlayRef = useRef(null);
   const contentRef = useRef(null);
 
   const openModal = () => {
     setIsModalOpen(true);
+  };
+
+  const openEditProjectModal = () => {
+    setIsEditProjectOpen(true);
   };
 
   const closeModal = () => {
@@ -61,6 +67,9 @@ function Apphead({ProjectName, onToggle}) {
             </div>
           </div>
           <div className="header-right">
+            <button className="edit-project-button" onClick={openEditProjectModal}>
+              编辑项目信息
+            </button>
             <button className="toggle-header-button" onClick={toggleHeader}>
               {isHeaderVisible ? '隐藏头部' : '显示头部'}
             </button>
@@ -93,6 +102,11 @@ function Apphead({ProjectName, onToggle}) {
           </div>
         </div>
       )}
+
+      <EditProjectInfo 
+        isOpen={isEditProjectOpen} 
+        onClose={() => setIsEditProjectOpen(false)} 
+      />
     </>
   )
 }
