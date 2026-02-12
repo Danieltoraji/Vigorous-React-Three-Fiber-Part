@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './AddModelOnLeft.css';
 
-const AddModelOnLeft = ({ isHeaderVisible }) => {
+const AddModelOnLeft = ({ isHeaderVisible, onToggle }) => {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [isWindowMode, setIsWindowMode] = useState(false);
@@ -135,11 +135,17 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
   const hidePanel = () => {
     setIsWindowMode(false); // 先切换到居左模式，以便隐藏样式生效
     setIsHidden(true);
+    if (onToggle) {
+      onToggle(true);
+    }
   };
 
   // 显示面板
   const showPanel = () => {
     setIsHidden(false);
+    if (onToggle) {
+      onToggle(false);
+    }
   };
 
   // 全局鼠标事件监听
