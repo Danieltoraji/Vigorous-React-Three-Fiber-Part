@@ -1,53 +1,46 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './AddModelOnLeft.css';
 
-const AddModelOnLeft = ({ isHeaderVisible }) => {
+const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [isWindowMode, setIsWindowMode] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ x: 20, y: 100 });
+  const [position, setPosition] = useState({ x: 20, y: 80 });
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  
+
   const containerRef = useRef(null);
 
-  // 发送模型创建请求
-  const sendModelRequest = async (shapeType) => {
+  // 创建3D对象并添加到场景
+  const create3DObject = (shapeType) => {
     setLoading(true);
     setFeedback({ type: '', message: '' });
 
     try {
-      // 构建请求数据
-      const requestData = {
-        operation: '创建形状',
-        shape_type: shapeType,
-        parameters: {
-          ...getDefaultParameters(shapeType),
-          position: { x: 0, y: 0, z: 0 },
-          color: '#ffffff'
-        },
-        timestamp: new Date().toISOString()
+      // 生成随机位置
+      const randomPosition = {
+        x: (Math.random() - 0.5) * 4,
+        y: (Math.random() - 0.5) * 4,
+        z: (Math.random() - 0.5) * 4
       };
 
-      // 发送HTTP请求
-      const response = await fetch('http://localhost:8000/api/shapes/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify(requestData)
-      });
+      // 生成随机颜色
+      const randomColor = Math.floor(Math.random() * 16777215);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      // 构建对象数据
+      const newObject = {
+        type: shapeType,
+        position: randomPosition,
+        color: randomColor,
+        ...getDefaultParameters(shapeType)
+      };
 
-      const data = await response.json();
+      // 调用父组件的回调函数
+      onAddObject(newObject);
+
       setFeedback({ type: 'success', message: `成功创建${getShapeName(shapeType)}` });
-      console.log('请求成功:', data);
+      console.log('对象已创建:', newObject);
 
       // 3秒后清除反馈信息
       setTimeout(() => {
@@ -56,7 +49,7 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
 
     } catch (error) {
       setFeedback({ type: 'error', message: `创建失败: ${error.message}` });
-      console.error('请求失败:', error);
+      console.error('创建失败:', error);
 
       // 3秒后清除错误信息
       setTimeout(() => {
@@ -128,7 +121,7 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
   // 切换到居左模式
   const switchToLeftMode = () => {
     setIsWindowMode(false);
-    setPosition({ x: 20, y: 100 });
+    setPosition({ x: 20, y: 80 });
   };
 
   // 隐藏面板
@@ -147,7 +140,7 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
-      
+
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
@@ -193,21 +186,13 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
           top: `${position.y}px`
         } : {}}
       >
-        {/* 标题栏 */}
-        <h2 
-          className="add-model-title"
-          onMouseDown={handleMouseDown}
-        >
-          添加模型
-        </h2>
-        
-        {/* 按钮容器 */}
+        {/* 按钮容器 - 只渲染按钮，标题由App组件提供 */}
         <div className="button-container">
           {buttons.map((button) => (
             <button
               key={button.id}
               className={`model-button ${loading ? 'loading' : ''}`}
-              onClick={() => sendModelRequest(button.shapeType)}
+              onClick={() => create3DObject(button.shapeType)}
               disabled={loading}
             >
               <div className="button-icon">
@@ -228,14 +213,14 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
         {/* 控制按钮 */}
         <div className="control-buttons">
           {isWindowMode && (
-            <button 
+            <button
               className="control-button"
               onClick={switchToLeftMode}
             >
-              居左显示
+              固定左侧
             </button>
           )}
-          <button 
+          <button
             className="control-button primary"
             onClick={hidePanel}
           >
@@ -246,7 +231,7 @@ const AddModelOnLeft = ({ isHeaderVisible }) => {
 
       {/* 显示按钮（当面板隐藏时） */}
       {isHidden && (
-        <button 
+        <button
           className="show-panel-button"
           onClick={showPanel}
         >

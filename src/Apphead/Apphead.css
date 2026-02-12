@@ -3,10 +3,14 @@
   top: 0;
   left: 0;
   right: 0;
+  height: 60px;
   background-color: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 999;
+  z-index: 1000;
   transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
 }
 
 .app-header.visible {
@@ -21,9 +25,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
   width: 100%;
-  box-sizing: border-box;
 }
 
 .header-left {
@@ -39,8 +41,9 @@
 
 .header-content h1 {
   margin: 0;
-  font-size: 24px;
-  color: #333;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
 }
 
 .header-controls {
@@ -51,57 +54,62 @@
 
 .description {
   margin: 0;
-  font-size: 16px;
-  color: #666;
+  font-size: 0.875rem;
+  color: #64748b;
 }
 
 .instructions-button {
-  font-weight: bold;
+  font-weight: 500;
   text-decoration: underline;
   background: none;
   border: none;
-  color: blue;
+  color: #3b82f6;
   cursor: pointer;
   padding: 0;
-  font-size: 16px;
+  font-size: 0.875rem;
 }
 
 .instructions-button:hover {
-  color: darkblue;
+  color: #2563eb;
 }
 
 .toggle-header-button {
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 6px 12px;
-  font-size: 14px;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .toggle-header-button:hover {
-  background-color: #e0e0e0;
+  background-color: #e2e8f0;
+  border-color: #94a3b8;
 }
 
 .header-toggle-float {
   position: fixed;
-  top: 10px;
-  right: 10px;
-  background-color: #333;
+  top: 12px;
+  right: 12px;
+  background-color: #334155;
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 14px;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
   z-index: 998;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
 }
 
 .header-toggle-float:hover {
-  background-color: #555;
+  background-color: #1e293b;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.15);
 }
 
 .modal-overlay {
@@ -121,11 +129,11 @@
 
 .modal-content {
   background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  width: 400px;
+  border-radius: 12px;
+  padding: 24px;
+  width: 450px;
   max-width: 90%;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   opacity: 0;
   transform: scale(0.9);
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -144,33 +152,43 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 16px;
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
 }
 
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 1.5rem;
   cursor: pointer;
-  color: #666;
+  color: #64748b;
   padding: 0;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 4px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
 .modal-close:hover {
-  background-color: #f0f0f0;
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+.modal-body {
+  font-size: 0.875rem;
+  color: #334155;
+  line-height: 1.6;
 }
 
 .modal-body ol {
@@ -179,36 +197,47 @@
 }
 
 .modal-body li {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
-.add-model-container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  transform: translateX(0);
-  transition: transform 0.2s ease;
-  z-index: 1000;
-}
-
-.add-model-container.window-mode {
-  transform: translate(var(--x, 0), var(--y, 0));
-  cursor: move;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.add-model-container.dragging {
-  z-index: 1001;
-  opacity: 0.95;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-  transition: none;
-}
-
-.add-model-title {
-  cursor: move;
-  user-select: none;
-  padding: 10px;
-  margin: 0;
-  background: #f5f5f5;
-  border-bottom: 1px solid #ddd;
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 16px;
+    height: 56px;
+  }
+  
+  .header-content h1 {
+    font-size: 1.125rem;
+  }
+  
+  .description {
+    font-size: 0.75rem;
+  }
+  
+  .toggle-header-button {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+  
+  .header-toggle-float {
+    top: 10px;
+    right: 10px;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+  
+  .modal-content {
+    padding: 20px;
+    width: calc(100% - 32px);
+  }
+  
+  .modal-header {
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.125rem;
+  }
 }
