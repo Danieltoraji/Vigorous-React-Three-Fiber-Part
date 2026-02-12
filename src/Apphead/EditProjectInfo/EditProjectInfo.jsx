@@ -43,29 +43,58 @@ function EditProjectInfo({ isOpen, onClose }) {
     e.preventDefault();
     try {
       const projectId = projectData?.id;
-      if (!projectId) {
-        throw new Error('项目ID不存在');
-      }
 
-      const response = await fetch(`/api/projects/${projectId}`, {
-        method: 'PUT',
+      const response = await fetch('/api/save-project/', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          projectId: projectId,
+          name: formData.name,
+          description: formData.description,
+          parameters: projectData?.parameters || {}
+        })
       });
 
       if (!response.ok) {
-        throw new Error('更新项目信息失败');
+        throw new Error('保存项目信息失败');
       }
 
-      const updatedData = await response.json();
-      updateProjectData(updatedData);
-      onClose();
+      const result = await response.json();
+      if (result.success) {
+        updateProjectData({
+          id: result.project_id,
+          name: formData.name,
+          description: formData.description,
+          parameters: projectData?.parameters || {},
+          status: 'draft',
+          created_at: result.created_at || projectData?.created_at
+        });
+        onClose();
+      } else {
+        throw new Error(result.error || '保存失败');
+      }
     } catch (error) {
-      console.error('更新项目信息时出错:', error);
-      alert('更新失败，请重试');
+      console.error('保存项目信息时出错:', error);
+      alert('保存失败，请重试');
     }
+  };
+
+  const getCookie = (name) => {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
   };
 
   if (!isOpen) return null;
@@ -74,7 +103,7 @@ function EditProjectInfo({ isOpen, onClose }) {
     <div ref={overlayRef} className="edit-project-overlay" onClick={onClose}>
       <div ref={contentRef} className="edit-project-content" onClick={(e) => e.stopPropagation()}>
         <div className="edit-project-header">
-          <h2>编辑项目信息</h2>
+          <h2>{projectData?.id ? '编辑项目信息' : '创建新项目'}</h2>
           <button className="edit-project-close" onClick={onClose}>
             ×
           </button>

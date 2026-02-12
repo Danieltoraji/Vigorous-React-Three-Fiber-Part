@@ -7,8 +7,10 @@ import './Apphead.css';
 import React, { useState, useEffect, useRef } from 'react';
 import ReturnHome from './ReturnHome/ReturnHome.jsx';
 import EditProjectInfo from './EditProjectInfo/EditProjectInfo.jsx';
+import { useProject } from '../context/ProjectContext.jsx';
 
 function Apphead({ProjectName, onToggle}) {
+  const { projectData } = useProject();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [isEditProjectOpen, setIsEditProjectOpen] = useState(false);
@@ -68,7 +70,7 @@ function Apphead({ProjectName, onToggle}) {
           </div>
           <div className="header-right">
             <button className="edit-project-button" onClick={openEditProjectModal}>
-              编辑项目信息
+              {projectData?.id ? '编辑项目信息' : '创建新项目'}
             </button>
             <button className="toggle-header-button" onClick={toggleHeader}>
               {isHeaderVisible ? '隐藏头部' : '显示头部'}

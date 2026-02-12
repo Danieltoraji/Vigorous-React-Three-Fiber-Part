@@ -38,12 +38,13 @@ const AddModelOnLeft = ({ isHeaderVisible, onToggle }) => {
       };
 
       // 发送HTTP请求
-      const response = await fetch('http://localhost:8000/api/add-model/', {
+      const response = await fetch('/api/add-model/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': getCookie('csrftoken')
         },
         body: JSON.stringify(requestData)
       });
@@ -89,7 +90,21 @@ const AddModelOnLeft = ({ isHeaderVisible, onToggle }) => {
     }
   };
 
-  // 获取形状的中文名称
+  const getCookie = (name) => {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  };
+
   const getShapeName = (shapeType) => {
     switch (shapeType) {
       case 'sphere':
