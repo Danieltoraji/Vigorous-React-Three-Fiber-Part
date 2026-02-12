@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './AddModelOnLeft.css';
+import { useProject } from '../context/ProjectContext.jsx';
 
 const AddModelOnLeft = ({ isHeaderVisible, onToggle }) => {
+  const { getProjectId } = useProject();
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [isWindowMode, setIsWindowMode] = useState(false);
@@ -18,20 +20,25 @@ const AddModelOnLeft = ({ isHeaderVisible, onToggle }) => {
     setFeedback({ type: '', message: '' });
 
     try {
+      // 获取当前项目ID
+      const projectId = getProjectId();
+      
       // 构建请求数据
       const requestData = {
         operation: '创建形状',
         shape_type: shapeType,
+        project_id: projectId,
         parameters: {
           ...getDefaultParameters(shapeType),
           position: { x: 0, y: 0, z: 0 },
           color: '#ffffff'
         },
         timestamp: new Date().toISOString()
+        
       };
 
       // 发送HTTP请求
-      const response = await fetch('http://localhost:8000/api/shapes/', {
+      const response = await fetch('http://localhost:8000/api/add-model/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
