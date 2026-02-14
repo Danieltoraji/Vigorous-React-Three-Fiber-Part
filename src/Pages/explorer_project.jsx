@@ -5,7 +5,7 @@
 import { useContext } from 'react'
 import { UserContext } from '../contexts/UserContext.jsx'
 
-function ExplorerProgram() {
+function ExplorerProject() {
   const { userData } = useContext(UserContext)
   return (
     <div>
@@ -14,4 +14,4 @@ function ExplorerProgram() {
     </div>
   )
 }
-export default ExplorerProgram
+export default ExplorerProject
