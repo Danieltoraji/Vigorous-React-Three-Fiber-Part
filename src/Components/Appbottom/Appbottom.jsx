@@ -8,7 +8,7 @@ import './Appbottom.css';
 function Appbottom() {
   return(
     <div className="app-bottom">
-      <p>衡有锦深团队</p>
+      <p>by 衡有锦深团队 2026</p>
     </div>
   )
 }
