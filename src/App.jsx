@@ -8,7 +8,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import ExplorerProgram from './Pages/explorer_program.jsx'
 import ExplorerTexture from './Pages/explorer_texture.jsx'
 import Test from './Pages/test.jsx'
-import Explorer_models from './Pages/explorer_models.jsx'
+import Explorer_templates from './Pages/explorer_templates.jsx'
 import AppBottom from './Components/Appbottom/Appbottom.jsx'
 
 function App() {
@@ -21,7 +21,7 @@ function App() {
             <Link to="/">功能菜单</Link> | 
             <Link to="/explorer-program">项目资源管理器</Link> | 
             <Link to="/explorer-texture">贴图资源管理器</Link> | 
-            <Link to="/explorer-models">模板资源管理器</Link> | 
+            <Link to="/explorer-templates">模板资源管理器</Link> | 
             <Link to="/test">React Context测试页面</Link>
           </nav>
 
@@ -30,7 +30,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/explorer-program" element={<ExplorerProgram />} />
             <Route path="/explorer-texture" element={<ExplorerTexture />} />
-            <Route path="/explorer-models" element={<Explorer_models />} />
+            <Route path="/explorer-templates" element={<Explorer_templates />} />
             <Route path="/test" element={<Test />} />
           </Routes>
         </div>
