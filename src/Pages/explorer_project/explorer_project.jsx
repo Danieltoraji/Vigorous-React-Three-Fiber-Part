@@ -26,7 +26,7 @@ function ExplorerProject() {
       created_at: '无数据',
       edited_at: '无数据',
       status: '无数据',
-      tags: []
+      project_tags: []
     }
   })
 

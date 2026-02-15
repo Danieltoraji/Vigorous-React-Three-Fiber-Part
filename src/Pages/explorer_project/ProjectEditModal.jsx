@@ -6,7 +6,7 @@ function ProjectEditModal({ project, onClose, onUpdate }) {
     name: '',
     description: '',
     status: '',
-    tags: []
+    project_tags: []
   })
 
   useEffect(() => {
@@ -15,7 +15,7 @@ function ProjectEditModal({ project, onClose, onUpdate }) {
         name: project.name,
         description: project.description,
         status: project.status,
-        tags: Array.isArray(project.tags) ? [...project.tags] : [project.tags].filter(Boolean)
+        project_tags: Array.isArray(project.project_tags) ? [...project.project_tags] : [project.project_tags].filter(Boolean)
       })
     }
   }, [project])
@@ -29,10 +29,10 @@ function ProjectEditModal({ project, onClose, onUpdate }) {
   }
 
   const handleTagChange = (e) => {
-    const tags = e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag)
+    const project_tags = e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag)
     setFormData(prev => ({
       ...prev,
-      tags
+      project_tags
     }))
   }
 
@@ -101,7 +101,7 @@ function ProjectEditModal({ project, onClose, onUpdate }) {
               id="tags" 
               name="tags" 
               className="form-input" 
-              value={formData.tags.join(', ')} 
+              value={formData.project_tags.join(', ')} 
               onChange={handleTagChange} 
             />
           </div>
