@@ -1,0 +1,40 @@
+.explorer-project {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.explorer-header {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.explorer-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.explorer-header p {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .explorer-project {
+    padding: 16px;
+  }
+
+  .explorer-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .explorer-header p {
+    font-size: 0.875rem;
+  }
+}
