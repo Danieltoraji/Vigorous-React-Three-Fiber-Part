@@ -1,8 +1,8 @@
-import { createContext, useState } from 'react'
+import { useState, useContext, createContext } from 'react';
 
-const ChessContext = createContext(null)
+const ChessContext = createContext(null);
 
-export function ChessContextProvider({ children }) {
+export function ChessProvider({ children }) {
   const [chessData, setChessData] = useState({
     id: 'Hajimi-2023-10-10-10-10-10',
     name: 'Vigorous-Test-Chess',
@@ -14,11 +14,19 @@ export function ChessContextProvider({ children }) {
     shape: '矩形',
     size: '100',
     tags: ['测试类别1', '测试类别2'],
-  })
+  });
+
   return (
     <ChessContext.Provider value={{ chessData, setChessData }}>
       {children}
     </ChessContext.Provider>
-  )
+  );
 }
-export { ChessContext }
+
+export function useChess() {
+  const context = useContext(ChessContext);
+  if (!context) {
+    throw new Error('useChess must be used within a ChessProvider');
+  }
+  return context;
+}
