@@ -75,3 +75,22 @@ function Explorer_templates() {
 }
 export default Explorer_templates
 ```
+**注意**
+- 在20260215更新中，我们采用了Hook的方式来定义Context，这是React推荐的方式。
+- 以后在使用Context时，建议使用Hook的方式来获取Context值，而不是使用Context.Consumer。
+- 示例代码：
+```jsx
+import { useProject } from '../../hooks/useProject.jsx'
+function AAA(){
+  const projects = userData.projects.map(projectId => {
+    // 根据 projectId 从 ProjectContext 获取详细信息
+    return projectData[projectId] || {
+      // 在这里写：无返回的默认值时，返回的对象
+    }
+  })
+
+  return(
+    <p>当前项目：{currentProject.name}</p>
+  )
+}
+```

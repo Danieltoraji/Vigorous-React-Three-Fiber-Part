@@ -1,0 +1,37 @@
+.project-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-secondary {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+  background-color: #e2e8f0;
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .project-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .project-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+}

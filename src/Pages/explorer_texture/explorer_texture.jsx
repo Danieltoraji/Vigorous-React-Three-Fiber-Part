@@ -3,11 +3,10 @@
  * 贴图
  * 纹理
  */
-import { useContext } from 'react'
-import { UserContext } from '../../contexts/UserContext.jsx'
+import { useUser } from '../../hooks/useUser.jsx'
 
 function ExplorerTexture() {
-  const { userData } = useContext(UserContext)
+  const { userData } = useUser()
   return (
     <div>
       <h1>贴图资源管理器</h1>

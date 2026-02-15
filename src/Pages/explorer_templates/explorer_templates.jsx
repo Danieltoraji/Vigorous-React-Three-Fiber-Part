@@ -1,11 +1,10 @@
 /**
  * 模板资源管理器
  */
-import { useContext } from 'react'
-import { UserContext } from '../../contexts/UserContext.jsx'
+import { useUser } from '../../hooks/useUser.jsx'
 
 function Explorer_templates() {
-  const { userData } = useContext(UserContext)
+  const { userData } = useUser()
   return(
     <div className="explorer-templates">
       <h1>模板资源管理器</h1>

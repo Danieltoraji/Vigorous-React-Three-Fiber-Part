@@ -2,15 +2,77 @@
  * 资源管理器，用于管理：
  * 项目
  */
-import { useContext } from 'react'
-import { UserContext } from '../../contexts/UserContext.jsx'
+import { useState } from 'react'
+import { useUser } from '../../hooks/useUser.jsx'
+import { useProject } from '../../hooks/useProject.jsx'
+import ProjectList from './ProjectList.jsx'
+import ProjectEditModal from './ProjectEditModal.jsx'
+import ExplorerBottom from './ExplorerBottom.jsx'
+import './explorer_project.css'
 
 function ExplorerProject() {
-  const { userData } = useContext(UserContext)
+  const { userData } = useUser()
+  const { projectData, setProjectData } = useProject()
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [currentProject, setCurrentProject] = useState(null)
+  
+  // 从 ProjectContext 获取项目数据
+  const projects = userData.projects.map(projectId => {
+    // 根据 projectId 从 ProjectContext 获取详细信息
+    return projectData[projectId] || {
+      id: projectId,
+      name: '未知项目',
+      description: '暂无描述',
+      user: '未知',
+      created_at: '无数据',
+      edited_at: '无数据',
+      status: '无数据',
+      project_tags: []
+    }
+  })
+
+  const handleEditProject = (project) => {
+    setCurrentProject(project)
+    setIsEditModalOpen(true)
+  }
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false)
+    setCurrentProject(null)
+  }
+
+  const handleUpdateProject = (updatedProject) => {
+    // 更新 ProjectContext 中的项目数据
+    setProjectData(prev => ({
+      ...prev,
+      [updatedProject.id]: updatedProject
+    }))
+    console.log('Updated project:', updatedProject)
+    setIsEditModalOpen(false)
+    setCurrentProject(null)
+  }
+
   return (
-    <div>
-      <h1>项目资源管理器</h1>
-      <p>当前用户：{userData.username}</p>
+    <div className="explorer-project">
+      <div className="explorer-header">
+        <h1>项目资源管理器</h1>
+        <p>欢迎您！{userData.username}</p>
+      </div>
+      
+      <ProjectList 
+        projects={projects} 
+        onEditProject={handleEditProject} 
+      />
+      
+      {isEditModalOpen && currentProject && (
+        <ProjectEditModal 
+          project={currentProject} 
+          onClose={handleCloseEditModal} 
+          onUpdate={handleUpdateProject} 
+        />
+      )}
+      
+      <ExplorerBottom />
     </div>
   )
 }
