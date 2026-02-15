@@ -2,7 +2,7 @@
  * 模板资源管理器
  */
 import { useContext } from 'react'
-import { UserContext } from '../contexts/UserContext.jsx'
+import { UserContext } from '../../contexts/UserContext.jsx'
 
 function Explorer_templates() {
   const { userData } = useContext(UserContext)

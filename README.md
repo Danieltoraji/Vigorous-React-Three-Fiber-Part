@@ -12,7 +12,7 @@
     - explorer_project.jsx: 项目资源管理器。
     - explorer_templates.jsx: 模板资源管理器。
     - explorer_texture.jsx: 贴图资源管理器。
-  - Components/：包含了项目的所有可复用组件。
+  - Components/：包含了项目的所有**可复用**组件。**<u>不可复用的组件请存放在对应页面的文件夹下。</u>**
   - Contexts/：包含了项目的所有上下文（Context），是状态管理、信息交流的重要途径，也是未来和后端交互的重要接口。
     - UserContext.jsx: 用户上下文，用于存储和管理当前登录用户的用户层级的信息。比如：用户名，用户名下的项目清单。
     - ProjectContext.jsx: 项目上下文，用于存储和管理当前项目的信息。比如：项目名，项目下辖的棋子清单。
