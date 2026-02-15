@@ -3,12 +3,12 @@
  * 这里是我们的主页面。
  */
 import './App.css'
-import Home from './Pages/home.jsx'
+import Home from './Pages/home/home.jsx'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
-import ExplorerProject from './Pages/explorer_project.jsx'
-import ExplorerTexture from './Pages/explorer_texture.jsx'
+import ExplorerProject from './Pages/explorer_project/explorer_project.jsx'
+import ExplorerTexture from './Pages/explorer_texture/explorer_texture.jsx'
+import ExplorerTemplates from './Pages/explorer_templates/explorer_templates.jsx'
 import Test from './Pages/test.jsx'
-import Explorer_templates from './Pages/explorer_templates.jsx'
 import AppBottom from './Components/Appbottom/Appbottom.jsx'
 
 function App() {
@@ -30,7 +30,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/explorer-project" element={<ExplorerProject />} />
             <Route path="/explorer-texture" element={<ExplorerTexture />} />
-            <Route path="/explorer-templates" element={<Explorer_templates />} />
+            <Route path="/explorer-templates" element={<ExplorerTemplates />} />
             <Route path="/test" element={<Test />} />
           </Routes>
         </div>

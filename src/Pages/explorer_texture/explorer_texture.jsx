@@ -4,7 +4,7 @@
  * 纹理
  */
 import { useContext } from 'react'
-import { UserContext } from '../contexts/UserContext.jsx'
+import { UserContext } from '../../contexts/UserContext.jsx'
 
 function ExplorerTexture() {
   const { userData } = useContext(UserContext)

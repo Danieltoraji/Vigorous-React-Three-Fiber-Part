@@ -3,7 +3,7 @@
  */
 
 import { useContext } from 'react'
-import { UserContext } from '../contexts/UserContext.jsx'
+import { UserContext } from '../../contexts/UserContext.jsx'
 
 function Home() {
   const { userData } = useContext(UserContext)

@@ -3,7 +3,7 @@
  * 项目
  */
 import { useContext } from 'react'
-import { UserContext } from '../contexts/UserContext.jsx'
+import { UserContext } from '../../contexts/UserContext.jsx'
 
 function ExplorerProject() {
   const { userData } = useContext(UserContext)
