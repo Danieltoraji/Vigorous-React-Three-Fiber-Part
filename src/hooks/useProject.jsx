@@ -9,8 +9,8 @@ export function ProjectProvider({ children }) {
     'Hajimi-123456': {
       name: 'Vigorous-Test-Project',
       user: 'Hajimi',
-      created_at: '创建时间不明',
-      edited_at: '修改时间也不明',
+      created_at: 'date1',
+      edited_at: 'date2',
       id: 'Hajimi-123456',
       description: 'Oiiaioiiiiai',
       status: 'editable',
@@ -23,8 +23,8 @@ export function ProjectProvider({ children }) {
     'Hajimi-456789': {
       name: 'Vigorous-Test-Project',
       user: 'Hajimi',
-      created_at: '创建时间不明',
-      edited_at: '修改时间也不明',
+      created_at: 'date3',
+      edited_at: 'date4',
       id: 'Hajimi-456789',
       description: '第二个测试项目',
       status: 'archived',

@@ -7,6 +7,7 @@ import { useUser } from '../../hooks/useUser.jsx'
 import { useProject } from '../../hooks/useProject.jsx'
 import ProjectList from './ProjectList.jsx'
 import ProjectEditModal from './ProjectEditModal.jsx'
+import ExplorerBottom from './ExplorerBottom.jsx'
 import './explorer_project.css'
 
 function ExplorerProject() {
@@ -70,6 +71,8 @@ function ExplorerProject() {
           onUpdate={handleUpdateProject} 
         />
       )}
+      
+      <ExplorerBottom />
     </div>
   )
 }

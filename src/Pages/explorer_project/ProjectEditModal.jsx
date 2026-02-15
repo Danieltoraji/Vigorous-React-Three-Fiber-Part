@@ -84,14 +84,17 @@ function ProjectEditModal({ project, onClose, onUpdate }) {
           
           <div className="form-group">
             <label htmlFor="status" className="form-label">项目状态</label>
-            <input 
-              type="text" 
+            <select 
               id="status" 
               name="status" 
               className="form-input" 
               value={formData.status} 
               onChange={handleChange} 
-            />
+            >
+              <option value="Editable">Editable</option>
+              <option value="Archieved">Archieved</option>
+              <option value="Protected">Protected</option>
+            </select>
           </div>
           
           <div className="form-group">

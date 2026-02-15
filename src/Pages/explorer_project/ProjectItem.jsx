@@ -38,8 +38,10 @@ function ProjectItem({ project, onEditProject }) {
               <span key={index} className="project-tag">{tag}</span>
             ))
           ) : (
-            project.tags ? (
-              <span className="project-tag">{project.tags}</span>
+            project.project_tags ? (
+              project.project_tags.map((tag, index) => (
+                <span key={index} className="project-tag">{tag}</span>
+              ))
             ) : (
               <span className="project-tag">无标签</span>
             )
