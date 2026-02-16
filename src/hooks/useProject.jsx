@@ -66,7 +66,7 @@ export function ProjectProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }
   //B2' 组件加载时自动运行B2获取数据
   useEffect(() => {
     fetchProjects();
