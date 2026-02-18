@@ -46,7 +46,12 @@ export function ProjectProvider({ children }) {
     try {
       //B21 向后端请求
       setLoading(true);
-      const response = await fetch('/api/projects'); // TODO:你的后端接口地址
+      const response = await fetch('/api/projects/', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       if (!response.ok) throw new Error('获取项目失败');
       const data = await response.json();
       //B22 数据处理
@@ -146,7 +151,7 @@ export function ProjectProvider({ children }) {
       });
 */
 
-  //B5 方法：更新项目（向后端发送）
+  //B5 方法：更新项目（修改项目字段后向后端发送）
   const updateProject = async (projectId, updatedData) => {
     // 先保存旧值（万一失败要恢复）
     const oldData = projectData[projectId];
@@ -162,9 +167,9 @@ export function ProjectProvider({ children }) {
     
     try {
       const response = await fetch(`/api/projects/${projectId}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedData)
+        body: JSON.stringify(updatedData)//这里粗暴地将所有字段都发送给后端，无论改没改
       });
       
       if (!response.ok) throw new Error('更新项目失败');
