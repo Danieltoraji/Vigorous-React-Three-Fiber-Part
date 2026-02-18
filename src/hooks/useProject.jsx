@@ -48,9 +48,6 @@ export function ProjectProvider({ children }) {
       setLoading(true);
       const response = await fetch('/api/projects/', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
       });
       if (!response.ok) throw new Error('获取项目失败');
       const data = await response.json();
