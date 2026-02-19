@@ -4,12 +4,17 @@ import './index.css'
 import App from './App.jsx'
 import { UserProvider } from './hooks/useUser.jsx'
 import { ProjectProvider } from './hooks/useProject.jsx'
+import { ChessProvider } from './hooks/useChess.jsx'
+
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <UserProvider>
       <ProjectProvider>
-        <App />
+        <ChessProvider>
+          <App />
+        </ChessProvider>
       </ProjectProvider>
     </UserProvider>
   </StrictMode>,
