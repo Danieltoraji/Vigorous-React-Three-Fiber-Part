@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './chess_editor.css';
 import { useChess } from '../../hooks/useChess.jsx';
-import ModelRendor from './modelrendor/modelrendor.jsx';
+import ModelRenderer from './modelrendor/modelrenderer.jsx';
 
 function ChessEditor() {
   const { chessData, updateChess, setChessData } = useChess();
@@ -553,7 +553,7 @@ function ChessEditor() {
 
         {/* 中间预览区域 */}
         <main className="preview-area">
-          <ModelRendor chess={currentChess} />
+          <ModelRenderer chess={currentChess} />
         </main>
         
         {/* 右侧拖拽手柄 */}
