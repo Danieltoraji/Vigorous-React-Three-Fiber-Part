@@ -1,49 +1,166 @@
 import { useState, useContext, useEffect, createContext } from 'react';
+import useProject from './useProject.jsx';
+const { projectData } = useProject();
 const ChessContext = createContext(null);
 
 export function ChessProvider({ children }) {
 
   // A 初始化棋子数据。现在是模拟数据。以后会设为空对象。
   const [chessData, setChessData] = useState({
-    '1': {
-      name: '测试棋子1',
-      project: 1,
-      type: 'pawn',
-      created_at: 'date1',
-      edited_at: 'date2',
-      id: 1,
-      description: '这是一个测试棋子',
-      feature: {
-        shape: 'circle',
-        size: 5,
-      },
-      parts: {
-        body: 'part-001',
-        head: 'part-002'
-      },
-      piece_tags: ['type1', 'type2'],
-      user: 1,
-    },
-    '2': {
-      name: '测试棋子2',
-      project: 1,
-      type: 'knight',
-      created_at: 'date3',
-      edited_at: 'date4',
-      id: 2,
-      description: '第二个测试棋子',
-      feature: {
-        shape: 'triangle',
-        size: 8,
-      },
-      parts: {
-        body: 'part-003',
-        head: 'part-004'
-      },
-      piece_tags: ['type3', 'type4'],
-      user: 1,
-    },
-  });
+    20001:{
+      name:"测试棋子1",
+      user:"Hajimi",
+      created_at:"2024-01-01",
+      edited_at:"2024-01-02",
+      id:20001,
+      project_id:"Hajimi-123456",
+      type:"type1",
+      piece_tags:["tag1","tag2"],
+      parts:{
+        '1':{
+          Appear:"True",
+          Shape:{
+            type:"circle",
+            size1:15,
+            size2:15,
+            height:1,
+            color:"FF0000",
+            position:{
+              x:0,
+              y:0,
+              z:0
+            }
+          },
+          Texture:{
+            file:"",
+            position:{
+              x:0,
+              y:0,
+              z:0
+            },
+            zoom:1,
+
+          },
+          Text:{
+            content:"THU",
+            size:10,
+            position:{
+              x:0,
+              y:0,
+            },
+            Color:"FFFFFF",
+            height:1,
+          }
+        },
+        '2':{
+          Appear:"True",
+          Shape:{
+            type:"circle",
+            size1:15,
+            size2:15,
+            height:1,
+            color:"FF0000",
+            position:{
+              x:0,
+              y:0,
+              z:0
+            }
+          },
+          Texture:{
+            file:"",
+            position:{
+              x:0,
+              y:0,
+              z:0
+            },
+            zoom:1,
+
+          },
+          Text:{
+            content:"THU",
+            size:10,
+            position:{
+              x:0,
+              y:0,
+            },
+            Color:"FFFFFF",
+            height:1,
+          }
+        },
+        '3':{
+          Appear:"True",
+          Shape:{
+            type:"circle",
+            size1:15,
+            size2:15,
+            height:1,
+            color:"FF0000",
+            position:{
+              x:0,
+              y:0,
+              z:0
+            }
+          },
+          Texture:{
+            file:"",
+            position:{
+              x:0,
+              y:0,
+              z:0
+            },
+            zoom:1,
+
+          },
+          Text:{
+            content:"THU",
+            size:10,
+            position:{
+              x:0,
+              y:0,
+            },
+            Color:"FFFFFF",
+            height:1,
+          }
+        },
+        '4':{
+          Appear:"True",
+          Shape:{
+            type:"circle",
+            size1:15,
+            size2:15,
+            height:1,
+            color:"FF0000",
+            position:{
+              x:0,
+              y:0,
+              z:0
+            }
+          },
+          Texture:{
+            file:"",
+            position:{
+              x:0,
+              y:0,
+              z:0
+            },
+            zoom:1,
+
+          },
+          Text:{
+            content:"THU",
+            size:10,
+            position:{
+              x:0,
+              y:0,
+            },
+            Color:"FFFFFF",
+            height:1,
+          }
+        },
+      }
+    }
+  })
+
 
   //B 这里要写逻辑和方法，从后端获取棋子数据，向后端同步数据。
   //B1 设置状态管理，包括加载中、错误、最后更新时间。默认：加载中、无错误、无最后更新时间
@@ -56,8 +173,7 @@ export function ChessProvider({ children }) {
     try {
       //B21 向后端请求
       setLoading(true);
-      const queryString = new URLSearchParams(params).toString();
-      const url = `/api/pieces/${queryString ? `?${queryString}` : ''}`;
+      const url = `/api/pieces/?project=${projectData['Hajimi-123456'].id}`;
       const response = await fetch(url, {
         method: 'GET',
       });
@@ -114,64 +230,6 @@ export function ChessProvider({ children }) {
       throw err;
     }
   };
-  /*B4 注释
-  发送到后端的请求格式
-      POST /api/pieces/
-      Content-Type: application/json
-      {
-        "name": "棋子名称",          // 必填
-        "project": 1,                // 必填，所属项目ID
-        "type": "pawn",             // 可选
-        "description": "棋子描述",     // 可选
-        "feature": {                 // 可选，JSON格式
-          "shape": "circle",
-          "size": 5
-        },
-        "parts": {                   // 可选，JSON格式
-          "body": "part-001",
-          "head": "part-002"
-        },
-        "piece_tags": ["type1", "type2"]  // 可选，字符串数组
-      }
-  后端返回的数据格式
-      {
-        id: 1,                          // 后端生成的唯一ID，Integer
-        name: '棋子名称',
-        project: 1,                     // 所属项目ID
-        type: 'pawn',
-        description: '棋子描述',
-        feature: {
-          shape: 'circle',
-          size: 5,
-        },
-        parts: {
-          body: 'part-001',
-          head: 'part-002'
-        },
-        piece_tags: ['type1', 'type2'],
-        user: 1,                        // 自动绑定当前登录用户ID
-        created_at: '2024-01-01T00:00:00Z',  // 后端生成的时间戳
-        edited_at: '2024-01-01T00:00:00Z',   // 后端生成的时间戳
-      }
-  在添加新棋子时，只需要提供新棋子的详细信息，后端会生成唯一ID、用户ID、创建时间、编辑时间。
-  而且无需连带既有棋子。
-  比如：
-      createChess({
-        name: '新棋子-2024',
-        project: 1,                   // 必填
-        type: 'pawn',
-        description: '这是一个新创建的棋子',
-        feature: {
-          shape: 'circle',
-          size: 5
-        },
-        parts: {
-          body: 'part-001',
-          head: 'part-002'
-        },
-        piece_tags: ['new', 'test']
-      });
-*/
 
   //B5 方法：更新棋子（修改棋子字段后向后端发送）
   const updateChess = async (chessId, updatedData) => {
