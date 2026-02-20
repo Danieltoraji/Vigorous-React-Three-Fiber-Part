@@ -19,11 +19,11 @@ function App() {
         <div>
           {/* 2. 导航菜单 - 像饭店的菜单列表 */}
           <nav>
-            <Link to="/">功能菜单</Link> | 
-            <Link to="/explorer-project">项目资源管理器</Link> | 
-            <Link to="/explorer-texture">贴图资源管理器</Link> | 
-            <Link to="/explorer-templates">模板资源管理器</Link> | 
-            <Link to="/chess-editor">棋子编辑器</Link> | 
+            <Link to="/">功能菜单</Link> |
+            <Link to="/explorer-project">项目资源管理器</Link> |
+            <Link to="/explorer-texture">贴图资源管理器</Link> |
+            <Link to="/explorer-templates">模板资源管理器</Link> |
+            <Link to="/chess-editor">棋子编辑器</Link> |
             <Link to="/test">React Context测试页面</Link>
           </nav>
 

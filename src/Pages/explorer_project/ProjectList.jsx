@@ -15,13 +15,14 @@ function ProjectList({ projects, onEditProject }) {
           添加新项目
         </button>
       </div>
-      
+
       <div className="project-grid">
-        {projects.map(project => (
-          <ProjectItem 
-            key={project.id} 
-            project={project} 
-            onEditProject={onEditProject} 
+        {/* 问号保证projects不存在时不报错 */}
+        {projects?.map(project => (
+          <ProjectItem
+            key={project.id}
+            project={project}
+            onEditProject={onEditProject}
           />
         ))}
       </div>

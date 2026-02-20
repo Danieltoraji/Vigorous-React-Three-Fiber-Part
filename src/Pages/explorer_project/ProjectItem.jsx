@@ -13,10 +13,10 @@ function ProjectItem({ project, onEditProject }) {
         <h3 className="project-name">{project.name}</h3>
         <span className="project-status">{project.status}</span>
       </div>
-      
+
       <div className="project-item-body">
         <p className="project-description">{project.description}</p>
-        
+
         <div className="project-meta">
           <div className="project-meta-item">
             <span className="meta-label">项目ID：</span>
@@ -31,29 +31,27 @@ function ProjectItem({ project, onEditProject }) {
             <span className="meta-value">{project.edited_at}</span>
           </div>
         </div>
-        
+
         <div className="project-tags">
-          {Array.isArray(project.tags) ? (
-            project.tags.map((tag, index) => (
-              <span key={index} className="project-tag">{tag}</span>
-            ))
-          ) : (
-            project.project_tags ? (
+          {
+            Array.isArray(project.project_tags) ? (
               project.project_tags.map((tag, index) => (
                 <span key={index} className="project-tag">{tag}</span>
               ))
             ) : (
               <span className="project-tag">无标签</span>
             )
-          )}
+
+          }
+
         </div>
       </div>
-      
+
       <div className="project-item-footer">
-        <ProjectActions 
-          onEdit={() => onEditProject(project)} 
-          onOpen={handleOpenProject} 
-          onDelete={() => console.log('Delete project:', project.id)} 
+        <ProjectActions
+          onEdit={() => onEditProject(project)}
+          onOpen={handleOpenProject}
+          onDelete={() => console.log('Delete project:', project.id)}
         />
       </div>
     </div>
