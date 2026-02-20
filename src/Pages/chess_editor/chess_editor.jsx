@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './chess_editor.css';
 import { useChess } from '../../hooks/useChess.jsx';
-import ModelRenderer from './modelrendor/modelrenderer.jsx';
+import ModelRenderer from './modelrenderer/modelrenderer.jsx';
 
 function ChessEditor() {
   const { chessData, updateChess, setChessData } = useChess();
