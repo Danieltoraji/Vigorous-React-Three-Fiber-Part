@@ -1,7 +1,7 @@
 import ProjectActions from './ProjectActions.jsx'
 import './ProjectItem.css'
 
-function ProjectItem({ project, onEditProject }) {
+function ProjectItem({ project, onEditProject, onDeleteProject }) {
   const handleOpenProject = () => {
     // 这里应该实现打开项目的逻辑
     alert('Testing')
@@ -73,7 +73,7 @@ function ProjectItem({ project, onEditProject }) {
         <ProjectActions
           onEdit={() => onEditProject(project)}
           onOpen={handleOpenProject}
-          onDelete={() => console.log('Delete project:', project.id)}
+          onDelete={() => onDeleteProject(project.id)}
         />
       </div>
     </div>

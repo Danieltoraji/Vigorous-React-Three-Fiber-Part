@@ -1,7 +1,7 @@
 import ProjectItem from './ProjectItem.jsx'
 import './ProjectList.css'
 
-function ProjectList({ projects, onEditProject }) {
+function ProjectList({ projects, onEditProject, onDeleteProject }) {
   const handleAddProject = () => {
     // 这里应该实现添加新项目的逻辑
     console.log('Add new project')
@@ -23,6 +23,7 @@ function ProjectList({ projects, onEditProject }) {
             key={project.id}
             project={project}
             onEditProject={onEditProject}
+            onDeleteProject={onDeleteProject}
           />
         ))}
       </div>
