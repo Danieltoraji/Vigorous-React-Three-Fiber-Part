@@ -17,7 +17,7 @@ function getCookie(name) {
 }
 
 // 创建axios实例
-const api = axios.create({
+const csrfapi = axios.create({
   baseURL: '/api',
   timeout: 10000,
   headers: {
@@ -28,7 +28,7 @@ const api = axios.create({
 });
 
 // 请求拦截器 - 自动添加CSRF token
-api.interceptors.request.use(
+csrfapi.interceptors.request.use(
   (config) => {
     const csrfToken = getCookie('csrftoken');
     if (csrfToken) {
@@ -42,7 +42,7 @@ api.interceptors.request.use(
 );
 
 // 响应拦截器 - 统一错误处理
-api.interceptors.response.use(
+csrfapi.interceptors.response.use(
   (response) => {
     return response;
   },
@@ -52,4 +52,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default csrfapi;

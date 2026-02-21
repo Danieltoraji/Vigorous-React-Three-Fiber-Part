@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect, createContext } from 'react';
-import api from '../utils/api.js';
+import csrfapi from '../utils/csrfapi.js';
 import { useProject } from './useProject.jsx';
 
 const ChessContext = createContext(null);
@@ -158,7 +158,7 @@ export function ChessProvider({ children }) {
       //B21 向后端请求
       setLoading(true);
       const projectId = projectData['Hajimi-123456']?.id;
-      const response = await api.get(`/pieces/?project=${projectId}`);
+      const response = await csrfapi.get(`/pieces/?project=${projectId}`);
       const data = response.data;
       //B22 数据处理
       // 后端返回的数据格式假设是：[{ id: '...', name: '...' }, ...]
@@ -191,7 +191,7 @@ export function ChessProvider({ children }) {
   //B4 方法：创建棋子（向后端发送）
   const createChess = async (chessData) => {
     try {
-      const response = await api.post('/pieces/', chessData);
+      const response = await csrfapi.post('/pieces/', chessData);
       const newChess = response.data;
 
       // 后端返回的新棋子应该包含 id
@@ -222,7 +222,7 @@ export function ChessProvider({ children }) {
     }));
 
     try {
-      const response = await api.patch(`/pieces/${chessId}/`, updatedData);
+      const response = await csrfapi.patch(`/pieces/${chessId}/`, updatedData);
 
       // 后端可能返回更新后的完整数据
       const updatedFromServer = response.data;
@@ -261,7 +261,7 @@ export function ChessProvider({ children }) {
     });
 
     try {
-      await api.delete(`/pieces/${chessId}/`);
+      await csrfapi.delete(`/pieces/${chessId}/`);
       setLastUpdated(new Date().toISOString());
     } catch (err) {
       // 失败：恢复被删除的棋子

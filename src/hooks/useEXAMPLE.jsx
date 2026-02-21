@@ -3,7 +3,7 @@
  */
 
 import { useState, useContext, useEffect, createContext } from 'react';
-import api from '../utils/api.js';
+import csrfapi from '../utils/csrfapi.js';
 
 // 创建Context
 const ExampleContext = createContext(null);
@@ -20,11 +20,11 @@ export function ExampleProvider({ children }) {
     try {
       setLoading(true);
       setError(null);
-      
+
       // 使用axios替代fetch
-      const response = await api.get('/projects');
+      const response = await csrfapi.get('/projects');
       setData(response.data);
-      
+
     } catch (err) {
       setError(err.message);
       console.error('获取数据失败:', err);
@@ -38,11 +38,11 @@ export function ExampleProvider({ children }) {
     try {
       setLoading(true);
       setError(null);
-      
+
       // 使用axios替代fetch
-      const response = await api.get(`/projects/${projectId}`);
+      const response = await csrfapi.get(`/projects/${projectId}`);
       return response.data;
-      
+
     } catch (err) {
       setError(err.message);
       console.error('获取项目详情失败:', err);
@@ -57,15 +57,15 @@ export function ExampleProvider({ children }) {
     try {
       setLoading(true);
       setError(null);
-      
+
       // 使用axios替代fetch
-      const response = await api.post('/projects', projectData);
+      const response = await csrfapi.post('/projects', projectData);
       const newProject = response.data;
-      
+
       // 更新本地数据
       setData(prev => [...prev, newProject]);
       return newProject;
-      
+
     } catch (err) {
       setError(err.message);
       console.error('创建项目失败:', err);
@@ -80,20 +80,20 @@ export function ExampleProvider({ children }) {
     try {
       setLoading(true);
       setError(null);
-      
+
       // 使用axios替代fetch
-      const response = await api.patch(`/projects/${projectId}`, updatedData);
+      const response = await csrfapi.patch(`/projects/${projectId}`, updatedData);
       const updatedProject = response.data;
-      
+
       // 更新本地数据
-      setData(prev => 
-        prev.map(item => 
+      setData(prev =>
+        prev.map(item =>
           item.id === projectId ? updatedProject : item
         )
       );
-      
+
       return updatedProject;
-      
+
     } catch (err) {
       setError(err.message);
       console.error('更新项目失败:', err);
@@ -108,13 +108,13 @@ export function ExampleProvider({ children }) {
     try {
       setLoading(true);
       setError(null);
-      
+
       // 使用axios替代fetch
-      await api.delete(`/projects/${projectId}`);
-      
+      await csrfapi.delete(`/projects/${projectId}`);
+
       // 更新本地数据
       setData(prev => prev.filter(item => item.id !== projectId));
-      
+
     } catch (err) {
       setError(err.message);
       console.error('删除项目失败:', err);
@@ -160,7 +160,7 @@ import { useProject } from './hooks/useProject'
 
 function ProjectList() {
   // 现在 useProject 返回的东西变多了！
-  const { 
+  const {
     projectData,      // 所有项目
     loading,          // 是否在加载
     error,            // 错误信息
@@ -172,15 +172,15 @@ function ProjectList() {
 
   // 处理加载中
   if (loading) return <div>加载中...</div>;
-  
+
   // 处理错误
   if (error) return <div>出错了：{error}</div>;
 
   // 修改项目
   const handleUpdate = (id) => {
-    updateProject(id, { 
+    updateProject(id, {
       name: '新名字',
-      status: '已完成' 
+      status: '已完成'
     });
   };
 
@@ -197,7 +197,7 @@ function ProjectList() {
     <div>
       <button onClick={refreshProjects}>刷新</button>
       <button onClick={handleCreate}>新建项目</button>
-      
+
       {Object.values(projectData).map(project => (
         <div key={project.id}>
           <h3>{project.name}</h3>

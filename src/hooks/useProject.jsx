@@ -1,21 +1,11 @@
-import axios from 'axios';
-
-// 创建 axios 实例
-const api = axios.create({
-  baseURL: '/api', // 所有请求都会加上这个前缀
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-export default api;
 import { useState, useContext, useEffect, createContext } from 'react';
+import csrfapi from '../utils/csrfapi.js';
+
 const ProjectContext = createContext(null);
-import api from '../utils/api';
 
 export function ProjectProvider({ children }) {
 
-  // A 初始化项目数据。现在是模拟数据。以后会设为空对象。
+  // A 初始化项目数据。现在初始化为空对象，等待从后端获取数据
   const [projectData, setProjectData] = useState({});
 
   //B 这里要写逻辑和方法，从后端获取项目数据，向后端同步数据。
@@ -30,7 +20,7 @@ export function ProjectProvider({ children }) {
       //B21 向后端请求
       setLoading(true);
       console.log('开始获取项目数据...');
-      const response = await api.get('/projects/');
+      const response = await csrfapi.get('/projects/');
       const data = response.data;
       //B22 数据处理
       // 后端返回的数据格式假设是：[{ id: '...', name: '...' }, ...]
@@ -63,7 +53,7 @@ export function ProjectProvider({ children }) {
   //B4 方法：创建项目（向后端发送）
   const createProject = async (projectData) => {
     try {
-      const response = await api.post('/projects', projectData);
+      const response = await csrfapi.post('/projects/', projectData);
       const newProject = response.data;
 
       // 后端返回的新项目应该包含 id
@@ -122,7 +112,7 @@ export function ProjectProvider({ children }) {
         },
         project_tags: ['new', 'test']
       });
-  */
+*/
 
   //B5 方法：更新项目（修改项目字段后向后端发送）
   const updateProject = async (projectId, updatedData) => {
@@ -140,9 +130,8 @@ export function ProjectProvider({ children }) {
     }));
 
     try {
+      const response = await csrfapi.patch(`/projects/${projectId}/`, updatedData);
 
-      const response = await api.patch(`/projects/${projectId}`, updatedData);
-      
       // 后端可能返回更新后的完整数据
       const updatedFromServer = response.data;
 
@@ -180,8 +169,7 @@ export function ProjectProvider({ children }) {
     });
 
     try {
-      await api.delete(`/projects/${projectId}`);
-
+      await csrfapi.delete(`/projects/${projectId}/`);
       setLastUpdated(new Date().toISOString());
     } catch (err) {
       // 失败：恢复被删除的项目

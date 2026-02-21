@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, createContext, use } from 'react';
-import api from '../utils/api.js';
+import csrfapi from '../utils/csrfapi.js';
 
 const UserContext = createContext(null);
 
@@ -12,7 +12,7 @@ export function UserProvider({ children }) {
 
   useEffect(() => {
     // 从后端获取用户数据
-    api.get('/getuser/')
+    csrfapi.get('/getuser/')
       .then(response => {
         setUserData(response.data);
         setLoading(false);

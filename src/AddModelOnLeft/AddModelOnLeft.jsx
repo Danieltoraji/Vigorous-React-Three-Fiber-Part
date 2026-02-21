@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './AddModelOnLeft.css';
-import api from '../utils/api.js';
+import csrfapi from '../utils/csrfapi.js';
 
 const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
   const [loading, setLoading] = useState(false);
@@ -11,7 +11,7 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
   const [position, setPosition] = useState({ x: 20, y: 100 });
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [useMockMode, setUseMockMode] = useState(true); // Mock mode toggle
-  
+
   const containerRef = useRef(null);
 
   // Mock API delay simulation
@@ -48,7 +48,7 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
         const result = await mockApiCall(shapeType);
         setFeedback({ type: 'success', message: result.message });
         console.log('模拟请求成功:', result.data);
-        
+
         // 模拟添加到场景
         if (onAddObject) {
           onAddObject({
@@ -77,9 +77,9 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
         console.log('请求数据:', requestData);
 
         // 发送HTTP请求
-        const response = await api.post('/generator/', requestData);
+        const response = await csrfapi.post('/generator/', requestData);
         const data = response.data;
-        
+
         setFeedback({ type: 'success', message: `成功创建${getShapeName(shapeType)}` });
         console.log('请求成功:', data);
 
@@ -90,16 +90,16 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
             position: { x: 0, y: 0, z: 0 },
             color: '#ffffff',
             ...(shapeType === 'sphere' && { radius: data.parameters?.radius || 1 }),
-            ...(shapeType === 'box' && { 
-              width: data.parameters?.width || 2, 
-              height: data.parameters?.height || 2, 
-              depth: data.parameters?.depth || 2 
+            ...(shapeType === 'box' && {
+              width: data.parameters?.width || 2,
+              height: data.parameters?.height || 2,
+              depth: data.parameters?.depth || 2
             }),
-            ...(shapeType === 'cylinder' && { 
-              radiusTop: data.parameters?.radiusTop || 1, 
-              radiusBottom: data.parameters?.radiusBottom || 1, 
-              height: data.parameters?.height || 2, 
-              radialSegments: data.parameters?.radialSegments || 32 
+            ...(shapeType === 'cylinder' && {
+              radiusTop: data.parameters?.radiusTop || 1,
+              radiusBottom: data.parameters?.radiusBottom || 1,
+              height: data.parameters?.height || 2,
+              radialSegments: data.parameters?.radialSegments || 32
             })
           });
         }
@@ -112,9 +112,9 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
 
     } catch (error) {
       console.error('请求失败详情:', error);
-      
+
       let errorMessage = '创建失败: ';
-      
+
       if (error.message.includes('Network Error')) {
         errorMessage += '无法连接到服务器，请确保后端服务正在运行';
       } else if (error.response) {
@@ -123,9 +123,9 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
       } else {
         errorMessage += error.message;
       }
-      
+
       setFeedback({ type: 'error', message: errorMessage });
-      
+
       // 提供更多调试信息
       console.group('调试信息');
       console.log('目标URL:', '/generator/');
@@ -230,7 +230,7 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
   ].filter(Boolean).join(' ');
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className={containerClasses}
       style={isWindowMode ? { left: `${position.x}px`, top: `${position.y}px` } : {}}
@@ -252,13 +252,13 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
       <div className="add-model-content">
         {/* 模式切换按钮 */}
         <div className="mode-toggle">
-          <button 
+          <button
             className={`mode-btn ${useMockMode ? 'active' : ''}`}
             onClick={toggleMockMode}
           >
             模拟模式
           </button>
-          <button 
+          <button
             className={`mode-btn ${!useMockMode ? 'active' : ''}`}
             onClick={toggleMockMode}
           >
@@ -268,21 +268,21 @@ const AddModelOnLeft = ({ isHeaderVisible, onAddObject }) => {
 
         {/* 形状按钮 */}
         <div className="shape-buttons">
-          <button 
+          <button
             className="shape-btn sphere"
             onClick={() => sendModelRequest('sphere')}
             disabled={loading}
           >
             🟠 球体
           </button>
-          <button 
+          <button
             className="shape-btn box"
             onClick={() => sendModelRequest('box')}
             disabled={loading}
           >
             🔷 长方体
           </button>
-          <button 
+          <button
             className="shape-btn cylinder"
             onClick={() => sendModelRequest('cylinder')}
             disabled={loading}
