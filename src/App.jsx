@@ -9,6 +9,7 @@ import ExplorerProject from './Pages/explorer_project/explorer_project.jsx'
 import ExplorerTexture from './Pages/explorer_texture/explorer_texture.jsx'
 import ExplorerTemplates from './Pages/explorer_templates/explorer_templates.jsx'
 import ChessEditor from './Pages/chess_editor/chess_editor.jsx'
+import ProjectEditor from './Pages/project_editor/ProjectEditor.jsx'
 import Test from './Pages/test.jsx'
 import AppBottom from './Components/Appbottom/Appbottom.jsx'
 
@@ -34,6 +35,7 @@ function App() {
             <Route path="/explorer-texture" element={<ExplorerTexture />} />
             <Route path="/explorer-templates" element={<ExplorerTemplates />} />
             <Route path="/chess-editor" element={<ChessEditor />} />
+            <Route path="/project-editor" element={<ProjectEditor />} />
             <Route path="/test" element={<Test />} />
           </Routes>
         </div>

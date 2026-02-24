@@ -1,0 +1,94 @@
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: white;
+  color: #2c3e50;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid #3498db;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.back-button {
+  background-color: #e3f2fd;
+  border: 1px solid #3498db;
+  color: #1976d2;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background-color: #bbdefb;
+  border-color: #1976d2;
+}
+
+.project-name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1976d2;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.save-time {
+  font-size: 14px;
+  color: #666;
+}
+
+.save-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.save-button:hover {
+  background-color: #2980b9;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .header-bar {
+    padding: 12px 16px;
+  }
+  
+  .project-name {
+    font-size: 16px;
+  }
+  
+  .save-time {
+    display: none;
+  }
+  
+  .back-button {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+  
+  .save-button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+}

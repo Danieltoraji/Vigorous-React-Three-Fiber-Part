@@ -1,0 +1,135 @@
+.filter-panel {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.filter-panel-header {
+  margin-bottom: 12px;
+}
+
+.filter-panel-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.filter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tag-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tag-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+}
+
+.tag-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.add-tag-section {
+  display: flex;
+  gap: 8px;
+}
+
+.add-tag-section input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.add-tag-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.add-tag-btn:hover {
+  background-color: #2980b9;
+}
+
+.filter-logic {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-logic label {
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+}
+
+.filter-logic select {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .filter-panel {
+    padding: 12px;
+  }
+  
+  .filter-panel-header h3 {
+    font-size: 14px;
+  }
+  
+  .tag-options {
+    gap: 8px;
+  }
+  
+  .tag-checkbox {
+    font-size: 13px;
+  }
+  
+  .add-tag-section input {
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+  
+  .add-tag-btn {
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+  
+  .filter-logic {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .filter-logic select {
+    width: 100%;
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+}

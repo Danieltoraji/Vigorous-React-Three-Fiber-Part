@@ -1,10 +1,13 @@
 import ProjectActions from './ProjectActions.jsx'
+import { useNavigate } from 'react-router-dom'
 import './ProjectItem.css'
 
 function ProjectItem({ project, onEditProject }) {
+  const navigate = useNavigate()
+  
   const handleOpenProject = () => {
-    // 这里应该实现打开项目的逻辑
-    alert('Testing')
+    // 导航到项目编辑器页面，并传递项目ID
+    navigate('/project-editor', { state: { projectId: project.id } })
   }
 
   return (

@@ -1,0 +1,218 @@
+.card-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.chess-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+  background-color: white;
+}
+
+.chess-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.chess-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.chess-card-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.chess-type {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.chess-card-body {
+  margin-bottom: 16px;
+}
+
+.chess-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.chess-meta span {
+  font-size: 13px;
+  color: #666;
+}
+
+.chess-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chess-tag {
+  background-color: #f1f1f1;
+  color: #555;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.chess-card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-button {
+  flex: 1;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.edit-button {
+  background-color: #3498db;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #2980b9;
+}
+
+.open-button {
+  background-color: #27ae60;
+  color: white;
+}
+
+.open-button:hover {
+  background-color: #229954;
+}
+
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+}
+
+/* 列表视图样式 */
+.list-view {
+  overflow-x: auto;
+}
+
+.chess-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.chess-table th,
+.chess-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.chess-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.chess-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.table-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.table-tag {
+  background-color: #f1f1f1;
+  color: #555;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+.no-tags {
+  color: #999;
+  font-size: 13px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.action-buttons .action-button {
+  flex: none;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .card-view {
+    grid-template-columns: 1fr;
+  }
+  
+  .chess-card {
+    padding: 12px;
+  }
+  
+  .chess-card-header h3 {
+    font-size: 14px;
+  }
+  
+  .chess-meta span {
+    font-size: 12px;
+  }
+  
+  .action-button {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+  
+  .chess-table th,
+  .chess-table td {
+    padding: 8px;
+    font-size: 13px;
+  }
+  
+  .chess-table th:nth-child(4),
+  .chess-table td:nth-child(4),
+  .chess-table th:nth-child(5),
+  .chess-table td:nth-child(5) {
+    display: none;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .action-buttons .action-button {
+    width: 100%;
+  }
+}

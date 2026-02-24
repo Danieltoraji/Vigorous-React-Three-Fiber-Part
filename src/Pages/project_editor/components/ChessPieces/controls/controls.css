@@ -1,0 +1,174 @@
+.view-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.view-button {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.view-button:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.view-button:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.view-button.active {
+  background-color: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.view-button:hover:not(.active) {
+  background-color: #f8f9fa;
+}
+
+/* 排序控件样式 */
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sort-select {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.sort-order-button {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  background-color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.sort-order-button:hover {
+  background-color: #f8f9fa;
+}
+
+/* 分页控件样式 */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.pagination-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination-left span {
+  font-size: 14px;
+  color: #555;
+}
+
+.page-size-select {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.pagination-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.page-button {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  min-width: 32px;
+  text-align: center;
+}
+
+.page-button:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.page-button:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.page-button.active {
+  background-color: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.page-button:hover:not(.active):not(:disabled) {
+  background-color: #f8f9fa;
+}
+
+.page-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .view-button {
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+  
+  .sort-select {
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+  
+  .sort-order-button {
+    padding: 4px 6px;
+    font-size: 13px;
+  }
+  
+  .pagination {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .pagination-left {
+    width: 100%;
+  }
+  
+  .page-size-select {
+    flex: 1;
+  }
+  
+  .pagination-right {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .page-button {
+    padding: 3px 6px;
+    font-size: 13px;
+    min-width: 28px;
+  }
+}
