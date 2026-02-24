@@ -197,6 +197,49 @@ export function ChessProvider({ children }) {
       setLoading(false);
     }
   }
+
+  //B2.1 方法：按项目获取棋子列表
+  const getPiecesByProject = async (projectId, filters = {}) => {
+    try {
+      setLoading(true);
+      // 构建查询参数
+      const queryParams = new URLSearchParams({ project: projectId });
+      if (filters.type) queryParams.append('type', filters.type);
+      if (filters.tags) {
+        filters.tags.forEach(tag => queryParams.append('tags', tag));
+      }
+      if (filters.sortBy) queryParams.append('sort_by', filters.sortBy);
+      if (filters.sortOrder) queryParams.append('sort_order', filters.sortOrder);
+      if (filters.page) queryParams.append('page', filters.page);
+      if (filters.pageSize) queryParams.append('page_size', filters.pageSize);
+
+      const url = `/api/pieces/?${queryParams.toString()}`;
+      const response = await fetch(url, {
+        method: 'GET',
+      });
+      if (!response.ok) throw new Error('获取棋子列表失败');
+      const data = await response.json();
+
+      // 处理数据
+      const chessMap = {};
+      data.forEach(chess => {
+        chessMap[chess.id] = chess;
+      });
+
+      setChessData(chessMap);
+      setLastUpdated(new Date().toISOString());
+      setError(null);
+      return data;
+    } catch (err) {
+      setError(err.message);
+      console.error('获取棋子列表失败:', err);
+      // 过滤本地数据作为 fallback
+      const filteredData = Object.values(chessData).filter(piece => piece.project_id === projectId);
+      return filteredData;
+    } finally {
+      setLoading(false);
+    }
+  }
   //B2' 组件加载时自动运行B2获取数据
   useEffect(() => {
     fetchChess();
@@ -317,6 +360,7 @@ export function ChessProvider({ children }) {
     // 读取方法
     fetchChess,
     refreshChess,
+    getPiecesByProject,
     
     // 修改方法
     createChess,

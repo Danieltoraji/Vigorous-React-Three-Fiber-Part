@@ -1,0 +1,90 @@
+.chess-pieces {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chess-pieces-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.chess-pieces-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.chess-pieces-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.filter-button {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.filter-button:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.chess-pieces-content {
+  flex: 1;
+  min-height: 400px;
+}
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #666;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #999;
+  font-size: 16px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .chess-pieces {
+    padding: 16px;
+  }
+  
+  .chess-pieces-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .chess-pieces-controls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  .chess-pieces-content {
+    min-height: 300px;
+  }
+}

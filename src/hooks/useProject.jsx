@@ -223,6 +223,36 @@ export function ProjectProvider({ children }) {
     }
   };
 
+  // B6 方法：获取单个项目详情
+  const getProjectById = async (projectId) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/projects/${projectId}/`);
+      if (!response.ok) throw new Error('获取项目详情失败');
+      const data = await response.json();
+      
+      // 更新本地状态
+      setProjectData(prev => ({
+        ...prev,
+        [projectId]: data
+      }));
+      
+      setLastUpdated(new Date().toISOString());
+      setError(null);
+      return data;
+    } catch (err) {
+      setError(err.message);
+      console.error('获取项目详情失败:', err);
+      // 如果本地有数据，返回本地数据
+      if (projectData[projectId]) {
+        return projectData[projectId];
+      }
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // B7. 总结：提供给组件的数据和方法
   const value = {
     // 数据
@@ -234,6 +264,7 @@ export function ProjectProvider({ children }) {
     // 读取方法
     fetchProjects,
     refreshProjects,
+    getProjectById,
     
     // 修改方法
     createProject,
