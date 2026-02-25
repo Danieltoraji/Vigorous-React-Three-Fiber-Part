@@ -24,7 +24,6 @@ function App() {
             <Link to="/explorer-project">项目资源管理器</Link> | 
             <Link to="/explorer-texture">贴图资源管理器</Link> | 
             <Link to="/explorer-templates">模板资源管理器</Link> | 
-            <Link to="/chess-editor">棋子编辑器</Link> | 
             <Link to="/test">React Context测试页面</Link>
           </nav>
 

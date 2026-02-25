@@ -20,7 +20,7 @@ export function ProjectProvider({ children }) {
       project_tags: ['type1','type2'],
     },
     'Hajimi-456789': {
-      name: 'Vigorous-Test-Project',
+      name: 'Vigorous-Test-Project002',
       user: 'Hajimi',
       created_at: 'date3',
       edited_at: 'date4',

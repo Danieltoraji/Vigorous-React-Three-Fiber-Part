@@ -12,7 +12,7 @@ import './explorer_project.css'
 
 function ExplorerProject() {
   const { userData } = useUser()
-  const { projectData, setProjectData } = useProject()
+  const { projectData, setProjectData, updateProject } = useProject()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [currentProject, setCurrentProject] = useState(null)
   
@@ -41,15 +41,17 @@ function ExplorerProject() {
     setCurrentProject(null)
   }
 
-  const handleUpdateProject = (updatedProject) => {
-    // 更新 ProjectContext 中的项目数据
-    setProjectData(prev => ({
-      ...prev,
-      [updatedProject.id]: updatedProject
-    }))
-    console.log('Updated project:', updatedProject)
-    setIsEditModalOpen(false)
-    setCurrentProject(null)
+  const handleUpdateProject = async (updatedProject) => {
+    try {
+      // 调用 updateProject 方法向后端同步数据
+      await updateProject(updatedProject.id, updatedProject)
+      console.log('Updated project:', updatedProject)
+      setIsEditModalOpen(false)
+      setCurrentProject(null)
+    } catch (error) {
+      console.error('更新项目失败:', error)
+      alert('更新失败，请重试')
+    }
   }
 
   return (
