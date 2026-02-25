@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useChess } from '../../../../hooks/useChess';
 import CardView from './views/CardView';
 import ListView from './views/ListView';
@@ -12,6 +13,7 @@ import './ChessPieces.css';
 
 const ChessPieces = ({ projectId }) => {
   const { getPiecesByProject, chessData, updateChess, deleteChess, loading } = useChess();
+  const navigate = useNavigate();
   
   // 状态管理
   const [viewMode, setViewMode] = useState('card'); // 'card' 或 'list'
@@ -101,9 +103,11 @@ const ChessPieces = ({ projectId }) => {
     }
   };
 
-  // 打开棋子（弹出提示）
+  // 打开棋子（导航到编辑器）
   const handleOpenPiece = (piece) => {
-    alert(`打开棋子: ${piece.name}`);
+    navigate('/chess-editor', {
+      state: { piece }
+    });
   };
 
   return (
