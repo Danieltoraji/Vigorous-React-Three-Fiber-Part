@@ -12,7 +12,7 @@ import './explorer_project.css'
 
 function ExplorerProject() {
   const { userData, loading } = useUser()
-  const { projectData, setProjectData, updateProject, updateProject, deleteProject, createProject } = useProject()
+  const { projectData, setProjectData, updateProject, deleteProject, createProject } = useProject()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [currentProject, setCurrentProject] = useState(null)
 
