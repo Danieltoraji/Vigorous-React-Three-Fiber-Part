@@ -8,142 +8,310 @@ export function ChessProvider({ children }) {
   const { projectData } = useProject();
   // A 初始化棋子数据。现在是模拟数据。以后会设为空对象。
   const [chessData, setChessData] = useState({
-    '1': {
-      Appear: "True",
-      Shape: {
-        type: "Box",
-        size1: 10,
-        size2: 10,
-        size3: 2,
-        color: "#0000FF",
-        position: {
-          x: 0,
-          y: 0,
-          z: 0
-        }
-      },
-      Texture: {
-        file: "",
-        position: {
-          x: 0,
-          y: 0,
-          z: 0
+    20001: {
+      name: "测试棋子1",
+      user: "Hajimi",
+      created_at: "2024-01-01",
+      edited_at: "2024-01-02",
+      id: 20001,
+      project_id: "Hajimi-123456",
+      type: "type1",
+      piece_tags: ["tag1", "tag2"],
+      parts: {
+        '1': {
+          Appear: "False",
+          Shape: {
+            type: "Circle",
+            size1: 15,
+            size2: 15,
+            height: 1,
+            color: "#FF0000",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            }
+          },
+          Texture: {
+            file: "",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            },
+            zoom: 1,
+
+          },
+          Text: {
+            content: "THU",
+            size: 10,
+            position: {
+              x: 0,
+              y: 0,
+            },
+            color: "#FFFFFF",
+            height: 1,
+          }
         },
-        zoom: 1,
-      },
-      Text: {
-        content: "Tsinghua",
-        size: 15,
-        position: {
-          x: 0,
-          y: 0,
+        '2': {
+          Appear: "False",
+          Shape: {
+            type: "Circle",
+            size1: 15,
+            size2: 15,
+            height: 1,
+            color: "#FF0000",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            }
+          },
+          Texture: {
+            file: "",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            },
+            zoom: 1,
+
+          },
+          Text: {
+            content: "THU",
+            size: 10,
+            position: {
+              x: 0,
+              y: 0,
+            },
+            color: "#FFFFFF",
+            height: 1,
+          }
         },
-        color: "#FFFFFF",
-        height: 1,
+        '3': {
+          Appear: "False",
+          Shape: {
+            type: "Circle",
+            size1: 15,
+            size2: 15,
+            height: 1,
+            color: "#FF0000",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            }
+          },
+          Texture: {
+            file: "",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            },
+            zoom: 1,
+
+          },
+          Text: {
+            content: "THU",
+            size: 10,
+            position: {
+              x: 0,
+              y: 0,
+            },
+            color: "#FFFFFF",
+            height: 1,
+          }
+        },
+        '4': {
+          Appear: "False",
+          Shape: {
+            type: "Circle",
+            size1: 15,
+            size2: 15,
+            height: 1,
+            color: "#FF0000",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            }
+          },
+          Texture: {
+            file: "",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            },
+            zoom: 1,
+
+          },
+          Text: {
+            content: "THU",
+            size: 10,
+            position: {
+              x: 0,
+              y: 0,
+            },
+            color: "#FFFFFF",
+            height: 1,
+          }
+        },
       }
     },
-    '2': {
-      Appear: "False",
-      Shape: {
-        type: "Circle",
-        size1: 15,
-        size2: 15,
-        height: 1,
-        color: "#FF0000",
-        position: {
-          x: 0,
-          y: 0,
-          z: 0
-        }
-      },
-      Texture: {
-        file: "",
-        position: {
-          x: 0,
-          y: 0,
-          z: 0
+    20002: {
+      name: "测试棋子二",
+      user: "Hajimi",
+      created_at: "2026-01-01",
+      edited_at: "2026-02-25",
+      id: 20002,
+      project_id: "Hajimi-123456",
+      type: "type1",
+      piece_tags: ["tag1", "tag2", "tag3", "tag4"],
+      parts: {
+        '1': {
+          Appear: "False",
+          Shape: {
+            type: "Hexagon",
+            size1: 15,
+            size2: 15,
+            height: 1,
+            color: "#FF0000",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            }
+          },
+          Texture: {
+            file: "",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            },
+            zoom: 1,
+
+          },
+          Text: {
+            content: "THU",
+            size: 10,
+            position: {
+              x: 0,
+              y: 0,
+            },
+            color: "#FFFFFF",
+            height: 1,
+          }
         },
-        zoom: 1,
-      },
-      Text: {
-        content: "THU",
-        size: 10,
-        position: {
-          x: 0,
-          y: 0,
+        '2': {
+          Appear: "False",
+          Shape: {
+            type: "Circle",
+            size1: 15,
+            size2: 15,
+            height: 1,
+            color: "#FF0000",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            }
+          },
+          Texture: {
+            file: "",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            },
+            zoom: 1,
+
+          },
+          Text: {
+            content: "THU",
+            size: 10,
+            position: {
+              x: 0,
+              y: 0,
+            },
+            color: "#FFFFFF",
+            height: 1,
+          }
         },
-        color: "#FFFFFF",
-        height: 1,
+        '3': {
+          Appear: "False",
+          Shape: {
+            type: "Circle",
+            size1: 15,
+            size2: 15,
+            height: 1,
+            color: "#FF0000",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            }
+          },
+          Texture: {
+            file: "",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            },
+            zoom: 1,
+
+          },
+          Text: {
+            content: "THU",
+            size: 10,
+            position: {
+              x: 0,
+              y: 0,
+            },
+            color: "#FFFFFF",
+            height: 1,
+          }
+        },
+        '4': {
+          Appear: "False",
+          Shape: {
+            type: "Circle",
+            size1: 15,
+            size2: 15,
+            height: 1,
+            color: "#FF0000",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            }
+          },
+          Texture: {
+            file: "",
+            position: {
+              x: 0,
+              y: 0,
+              z: 0
+            },
+            zoom: 1,
+
+          },
+          Text: {
+            content: "THU",
+            size: 10,
+            position: {
+              x: 0,
+              y: 0,
+            },
+            color: "#FFFFFF",
+            height: 1,
+          }
+        },
       }
-    },
-    '3': {
-      Appear: "True",
-      Shape: {
-        type: "Box",
-        size1: 10,
-        size2: 10,
-        size3: 2,
-        color: "#0000FF",
-        position: {
-          x: 0,
-          y: 0,
-          z: 0
-        }
-      },
-      Texture: {
-        file: "",
-        position: {
-          x: 0,
-          y: 0,
-          z: 0
-        },
-        zoom: 1,
-      },
-      Text: {
-        content: "Tsinghua",
-        size: 15,
-        position: {
-          x: 0,
-          y: 0,
-        },
-        color: "#FFFFFF",
-        height: 1,
-      }
-    },
-    '4': {
-      Appear: "False",
-      Shape: {
-        type: "Circle",
-        size1: 15,
-        size2: 15,
-        height: 1,
-        color: "#FF0000",
-        position: {
-          x: 0,
-          y: 0,
-          z: 0
-        }
-      },
-      Texture: {
-        file: "",
-        position: {
-          x: 0,
-          y: 0,
-          z: 0
-        },
-        zoom: 1,
-      },
-      Text: {
-        content: "THU",
-        size: 10,
-        position: {
-          x: 0,
-          y: 0,
-        },
-        color: "#FFFFFF",
-        height: 1,
-      }
-    },
+    }
   })
 
   //B 这里要写逻辑和方法，从后端获取棋子数据，向后端同步数据。
@@ -174,6 +342,49 @@ export function ChessProvider({ children }) {
     } catch (err) {
       setError(err.message);
       console.error('获取棋子失败:', err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  //B2.1 方法：按项目获取棋子列表
+  const getPiecesByProject = async (projectId, filters = {}) => {
+    try {
+      setLoading(true);
+      // 构建查询参数
+      const queryParams = new URLSearchParams({ project: projectId });
+      if (filters.type) queryParams.append('type', filters.type);
+      if (filters.tags) {
+        filters.tags.forEach(tag => queryParams.append('tags', tag));
+      }
+      if (filters.sortBy) queryParams.append('sort_by', filters.sortBy);
+      if (filters.sortOrder) queryParams.append('sort_order', filters.sortOrder);
+      if (filters.page) queryParams.append('page', filters.page);
+      if (filters.pageSize) queryParams.append('page_size', filters.pageSize);
+
+      const url = `/api/pieces/?${queryParams.toString()}`;
+      const response = await fetch(url, {
+        method: 'GET',
+      });
+      if (!response.ok) throw new Error('获取棋子列表失败');
+      const data = await response.json();
+
+      // 处理数据
+      const chessMap = {};
+      data.forEach(chess => {
+        chessMap[chess.id] = chess;
+      });
+
+      setChessData(chessMap);
+      setLastUpdated(new Date().toISOString());
+      setError(null);
+      return data;
+    } catch (err) {
+      setError(err.message);
+      console.error('获取棋子列表失败:', err);
+      // 过滤本地数据作为 fallback
+      const filteredData = Object.values(chessData).filter(piece => piece.project_id === projectId);
+      return filteredData;
     } finally {
       setLoading(false);
     }
@@ -282,6 +493,7 @@ export function ChessProvider({ children }) {
     // 读取方法
     fetchChess,
     refreshChess,
+    getPiecesByProject,
 
     // 修改方法
     createChess,

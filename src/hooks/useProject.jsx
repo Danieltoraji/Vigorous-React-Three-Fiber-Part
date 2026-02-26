@@ -5,8 +5,37 @@ const ProjectContext = createContext(null);
 
 export function ProjectProvider({ children }) {
 
-  // A 初始化项目数据。现在初始化为空对象，等待从后端获取数据
-  const [projectData, setProjectData] = useState({});
+  // A 初始化项目数据。现在是模拟数据。以后会设为空对象。
+  const [projectData, setProjectData] = useState({
+    'Hajimi-123456': {
+      name: 'Vigorous-Test-Project',
+      user: 'Hajimi',
+      created_at: 'date1',
+      edited_at: 'date2',
+      id: 'Hajimi-123456',
+      description: 'Oiiaioiiiiai',
+      status: 'editable',
+      feature: {
+        shape: 'square',
+        size: 10,
+      },
+      project_tags: ['type1', 'type2'],
+    },
+    'Hajimi-456789': {
+      name: 'Vigorous-Test-Project002',
+      user: 'Hajimi',
+      created_at: 'date3',
+      edited_at: 'date4',
+      id: 'Hajimi-456789',
+      description: '第二个测试项目',
+      status: 'archived',
+      feature: {
+        shape: 'square',
+        size: 10,
+      },
+      project_tags: ['type3', 'type4'],
+    },
+  });
 
   //B 这里要写逻辑和方法，从后端获取项目数据，向后端同步数据。
   //B1 设置状态管理，包括加载中、错误、最后更新时间。默认：加载中、无错误、无最后更新时间
@@ -180,6 +209,36 @@ export function ProjectProvider({ children }) {
     }
   };
 
+  // B6 方法：获取单个项目详情
+  const getProjectById = async (projectId) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/projects/${projectId}/`);
+      if (!response.ok) throw new Error('获取项目详情失败');
+      const data = await response.json();
+
+      // 更新本地状态
+      setProjectData(prev => ({
+        ...prev,
+        [projectId]: data
+      }));
+
+      setLastUpdated(new Date().toISOString());
+      setError(null);
+      return data;
+    } catch (err) {
+      setError(err.message);
+      console.error('获取项目详情失败:', err);
+      // 如果本地有数据，返回本地数据
+      if (projectData[projectId]) {
+        return projectData[projectId];
+      }
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // B7. 总结：提供给组件的数据和方法
   const value = {
     // 数据
@@ -191,6 +250,7 @@ export function ProjectProvider({ children }) {
     // 读取方法
     fetchProjects,
     refreshProjects,
+    getProjectById,
 
     // 修改方法
     createProject,

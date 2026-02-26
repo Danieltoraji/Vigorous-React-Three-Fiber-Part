@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './chess_editor.css';
 import { useChess } from '../../hooks/useChess.jsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ModelRenderer from './modelrenderer/modelrenderer.jsx';
 
 function ChessEditor() {
   const { chessData, updateChess, setChessData } = useChess();
   const navigate = useNavigate();
-  const [currentChess, setCurrentChess] = useState(chessData[20001] || null);
+  const location = useLocation();
+  const [currentChess, setCurrentChess] = useState(location.state?.piece || Object.values(chessData)[0] || null);
   const [selectedPart, setSelectedPart] = useState('1'); // 默认选中
   const [lastSaved, setLastSaved] = useState(new Date().toLocaleString());
   
@@ -20,12 +21,18 @@ function ChessEditor() {
   // 引用
   const editorContentRef = useRef(null);
 
-  // 当chessData变化时更新currentChess
+  // 当chessData或location.state变化时更新currentChess
   useEffect(() => {
-    if (chessData[20001]) {
-      setCurrentChess(chessData[20001]);
+    try {
+      if (!location.state?.piece) {
+        throw new Error('请从项目列表页面打开棋子编辑器');
+      }
+      setCurrentChess(location.state.piece);
+    } catch (error) {
+      alert(error.message);
+      navigate(-1);
     }
-  }, [chessData]);
+  }, [location.state, navigate]);
 
   // 处理部件选择
   const handlePartSelect = (partIndex) => {
@@ -83,7 +90,9 @@ function ChessEditor() {
 
   // 处理返回
   const handleBack = () => {
-    navigate('/');
+    navigate('/project-editor', {
+      state: { projectId: currentChess?.project_id || 'Hajimi-123456' }
+    });
   };
   
   // 拖拽处理函数
