@@ -12,9 +12,9 @@ import DeleteConfirmModal from './modals/DeleteConfirmModal';
 import './ChessPieces.css';
 
 const ChessPieces = ({ projectId }) => {
-  const { getPiecesByProject, chessData, updateChess, deleteChess, loading } = useChess();
+  const { getPiecesByProject, chessData, updateChess, deleteChess, loading, createChess } = useChess();
   const navigate = useNavigate();
-  
+
   // 状态管理
   const [viewMode, setViewMode] = useState('card'); // 'card' 或 'list'
   const [showFilter, setShowFilter] = useState(false);
@@ -34,8 +34,7 @@ const ChessPieces = ({ projectId }) => {
 
   // 过滤和排序棋子
   const filteredAndSortedPieces = useMemo(() => {
-    let pieces = Object.values(chessData).filter(piece => piece.project_id === projectId);
-
+    let pieces = Object.values(chessData);
     // 标签筛选
     if (selectedTags.length > 0) {
       pieces = pieces.filter(piece => {
@@ -115,19 +114,25 @@ const ChessPieces = ({ projectId }) => {
       <div className="chess-pieces-header">
         <h2>棋子管理</h2>
         <div className="chess-pieces-controls">
-          <ViewControls 
-            viewMode={viewMode} 
-            onViewChange={setViewMode} 
+          <button className="create-button" onClick={() => {
+            createChess({
+              name: '新棋子',
+              project: projectId
+            })
+          }}>+ 创建新棋子</button>
+          <ViewControls
+            viewMode={viewMode}
+            onViewChange={setViewMode}
           />
-          <button 
+          <button
             className="filter-button"
             onClick={() => setShowFilter(!showFilter)}
           >
             筛选 {showFilter ? '▼' : '▶'}
           </button>
-          <SortControls 
-            sortBy={sortBy} 
-            sortOrder={sortOrder} 
+          <SortControls
+            sortBy={sortBy}
+            sortOrder={sortOrder}
             onSortChange={(by, order) => {
               setSortBy(by);
               setSortOrder(order);
@@ -137,7 +142,7 @@ const ChessPieces = ({ projectId }) => {
       </div>
 
       {showFilter && (
-        <FilterPanel 
+        <FilterPanel
           selectedTags={selectedTags}
           onTagsChange={setSelectedTags}
           filterLogic={filterLogic}
@@ -151,14 +156,14 @@ const ChessPieces = ({ projectId }) => {
         ) : paginatedPieces.length === 0 ? (
           <div className="empty-state">暂无棋子</div>
         ) : viewMode === 'card' ? (
-          <CardView 
+          <CardView
             pieces={paginatedPieces}
             onEdit={handleEditPiece}
             onOpen={handleOpenPiece}
             onDelete={handleDeletePiece}
           />
         ) : (
-          <ListView 
+          <ListView
             pieces={paginatedPieces}
             onEdit={handleEditPiece}
             onOpen={handleOpenPiece}
@@ -167,7 +172,7 @@ const ChessPieces = ({ projectId }) => {
         )}
       </div>
 
-      <Pagination 
+      <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         pageSize={pageSize}
@@ -176,7 +181,7 @@ const ChessPieces = ({ projectId }) => {
       />
 
       {editingPiece && (
-        <EditChessModal 
+        <EditChessModal
           piece={editingPiece}
           onSave={handleSaveEdit}
           onCancel={() => setEditingPiece(null)}
@@ -184,7 +189,7 @@ const ChessPieces = ({ projectId }) => {
       )}
 
       {deletingPiece && (
-        <DeleteConfirmModal 
+        <DeleteConfirmModal
           piece={deletingPiece}
           onConfirm={handleConfirmDelete}
           onCancel={() => setDeletingPiece(null)}
