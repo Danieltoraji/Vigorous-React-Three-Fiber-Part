@@ -1,16 +1,3 @@
-/* 全局样式 */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
-}
-
 /* 主容器 */
 .chess-editor {
   display: flex;
@@ -26,14 +13,17 @@ body {
   align-items: center;
   padding: 0 20px;
   height: 60px;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--fluent-acrylic);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-bottom: 1px solid var(--fluent-border);
+  box-shadow: var(--fluent-shadow);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
+  transition: var(--fluent-transition);
 }
 
 .header-left {
@@ -44,27 +34,33 @@ body {
 
 .back-button {
   padding: 6px 12px;
-  background-color: #f0f0f0;
-  border: none;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius);
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.2s;
+  transition: var(--fluent-transition);
+  color: var(--fluent-text);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .back-button:hover {
-  background-color: #e0e0e0;
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 .chess-name {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--fluent-text);
 }
 
 .last-saved {
   font-size: 12px;
-  color: #666;
+  color: var(--fluent-text-tertiary);
 }
 
 .header-right {
@@ -75,28 +71,35 @@ body {
 .save-button, .export-button {
   padding: 8px 16px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--fluent-radius);
   cursor: pointer;
   font-size: 14px;
-  transition: all 0.2s;
+  transition: var(--fluent-transition);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
 }
 
 .save-button {
-  background-color: #4CAF50;
+  background-color: #107C10;
   color: white;
 }
 
-.save-button:hover {
-  background-color: #45a049;
+.save-button:hover:not(:disabled) {
+  background-color: #0D6E0D;
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 .export-button {
-  background-color: #2196F3;
+  background-color: var(--fluent-primary);
   color: white;
 }
 
-.export-button:hover {
-  background-color: #0b7dda;
+.export-button:hover:not(:disabled) {
+  background-color: var(--fluent-primary-hover);
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 /* 内容区域 */
@@ -109,55 +112,61 @@ body {
 
 /* 左侧部件选择面板 */
 .part-selector {
-  background-color: #f9f9f9;
-  border-right: 1px solid #e0e0e0;
+  background: var(--fluent-acrylic-sidebar);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-right: 1px solid var(--fluent-border);
   padding: 20px;
   overflow-y: auto;
+  transition: var(--fluent-transition);
 }
 
 /* 右侧数据调节面板 */
 .data-panel {
-  background-color: #fff;
-  border-left: 1px solid #e0e0e0;
+  background: var(--fluent-acrylic-sidebar);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-left: 1px solid var(--fluent-border);
   overflow-y: auto;
   padding: 20px;
+  transition: var(--fluent-transition);
 }
 
 /* 拖拽手柄样式 */
 .resize-handle {
   width: 6px;
   cursor: col-resize;
-  transition: all 0.2s ease;
+  transition: var(--fluent-transition);
   position: relative;
 }
 
 /* 左侧拖拽手柄 */
 .resize-handle-left {
   background-color: transparent;
-  border-right: 1px solid #e0e0e0;
+  border-right: 1px solid var(--fluent-border);
 }
 
 .resize-handle-left:hover {
-  background-color: rgba(33, 150, 243, 0.1);
+  background-color: rgba(0, 120, 212, 0.1);
 }
 
 .resize-handle-left.dragging {
-  background-color: rgba(33, 150, 243, 0.3);
+  background-color: rgba(0, 120, 212, 0.3);
   width: 8px;
 }
 
 /* 右侧拖拽手柄 */
 .resize-handle-right {
   background-color: transparent;
-  border-left: 1px solid #e0e0e0;
+  border-left: 1px solid var(--fluent-border);
 }
 
 .resize-handle-right:hover {
-  background-color: rgba(33, 150, 243, 0.1);
+  background-color: rgba(0, 120, 212, 0.1);
 }
 
 .resize-handle-right.dragging {
-  background-color: rgba(33, 150, 243, 0.3);
+  background-color: rgba(0, 120, 212, 0.3);
   width: 8px;
 }
 
@@ -170,9 +179,9 @@ body {
   transform: translate(-50%, -50%);
   width: 2px;
   height: 40px;
-  background-color: #ccc;
+  background-color: var(--fluent-text-tertiary);
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: var(--fluent-transition);
 }
 
 .resize-handle:hover::before {
@@ -180,7 +189,7 @@ body {
 }
 
 .resize-handle.dragging::before {
-  background-color: #2196F3;
+  background-color: var(--fluent-primary);
   opacity: 1;
 }
 
@@ -201,7 +210,7 @@ body {
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 15px;
-  color: #333;
+  color: var(--fluent-text);
 }
 
 .part-buttons {
@@ -211,57 +220,64 @@ body {
 }
 
 .part-button {
-  padding: 12px;
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius);
   cursor: pointer;
   font-size: 14px;
   text-align: left;
-  transition: all 0.2s;
+  transition: var(--fluent-transition);
+  color: var(--fluent-text-secondary);
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .part-button:hover {
-  background-color: #f0f0f0;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--fluent-text);
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 .part-button.active {
-  background-color: #2196F3;
+  background-color: var(--fluent-primary);
   color: white;
-  border-color: #2196F3;
+  border-color: var(--fluent-primary);
+  box-shadow: 0 2px 6px rgba(0, 120, 212, 0.4);
 }
 
 /* 中间预览区域 */
 .preview-area {
   flex: 1;
-  background-color: #f0f0f0;
+  background: var(--fluent-background-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
+  transition: var(--fluent-transition);
 }
 
 /* 右侧数据调节面板 */
 .data-panel {
   width: 350px;
-  background-color: #fff;
-  border-left: 1px solid #e0e0e0;
-  overflow-y: auto;
-  padding: 20px;
+  transition: var(--fluent-transition);
 }
 
 .data-editor h3 {
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #333;
+  color: var(--fluent-text);
 }
 
 .editor-section {
   margin-bottom: 25px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--fluent-border-light);
+  transition: var(--fluent-transition);
 }
 
 .editor-section:last-child {
@@ -272,20 +288,20 @@ body {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 15px;
-  color: #444;
+  color: var(--fluent-text);
 }
 
 .editor-subsection {
   margin-top: 15px;
   padding-left: 15px;
-  border-left: 2px solid #e0e0e0;
+  border-left: 2px solid var(--fluent-border-light);
 }
 
 .editor-subsection h5 {
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 10px;
-  color: #555;
+  color: var(--fluent-text-secondary);
 }
 
 .editor-item {
@@ -297,9 +313,10 @@ body {
 
 .editor-item label {
   font-size: 13px;
-  color: #666;
+  color: var(--fluent-text-secondary);
   width: 60px;
   flex-shrink: 0;
+  font-weight: 500;
 }
 
 /* 开关样式 */
@@ -323,8 +340,8 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
+  background-color: var(--fluent-text-tertiary);
+  transition: var(--fluent-transition);
   border-radius: 24px;
 }
 
@@ -336,12 +353,13 @@ body {
   left: 3px;
   bottom: 3px;
   background-color: white;
-  transition: .4s;
+  transition: var(--fluent-transition);
   border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 input:checked + .toggle-label {
-  background-color: #2196F3;
+  background-color: var(--fluent-primary);
 }
 
 input:checked + .toggle-label:before {
@@ -353,7 +371,7 @@ input:checked + .toggle-label:before {
   opacity: 1;
   max-height: 500px;
   overflow: hidden;
-  transition: all 0.4s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .editor-section.hidden {
@@ -369,25 +387,41 @@ input:checked + .toggle-label:before {
   max-height: 500px;
   margin-bottom: 25px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--fluent-border-light);
 }
 
 .editor-item input[type="text"],
 .editor-item select {
   flex: 1;
-  padding: 6px 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 13px;
+  padding: 6px 12px;
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius);
+  font-size: 14px;
+  transition: var(--fluent-transition);
+  background: white;
+  color: var(--fluent-text);
+}
+
+.editor-item input[type="text"]:hover,
+.editor-item select:hover {
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+.editor-item input[type="text"]:focus,
+.editor-item select:focus {
+  outline: none;
+  border-color: var(--fluent-primary);
+  box-shadow: 0 0 0 1px var(--fluent-primary);
 }
 
 .editor-item input[type="range"] {
   flex: 1;
   height: 6px;
-  background: #ddd;
+  background: var(--fluent-border);
   border-radius: 3px;
   outline: none;
   -webkit-appearance: none;
+  transition: var(--fluent-transition);
 }
 
 .editor-item input[type="range"]::-webkit-slider-thumb {
@@ -395,18 +429,32 @@ input:checked + .toggle-label:before {
   appearance: none;
   width: 16px;
   height: 16px;
-  background: #2196F3;
+  background: var(--fluent-primary);
   border-radius: 50%;
   cursor: pointer;
+  transition: var(--fluent-transition);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.editor-item input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 4px 8px rgba(0, 120, 212, 0.3);
+  transform: scale(1.1);
 }
 
 .editor-item input[type="range"]::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  background: #2196F3;
+  background: var(--fluent-primary);
   border-radius: 50%;
   cursor: pointer;
   border: none;
+  transition: var(--fluent-transition);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.editor-item input[type="range"]::-moz-range-thumb:hover {
+  box-shadow: 0 4px 8px rgba(0, 120, 212, 0.3);
+  transform: scale(1.1);
 }
 
 .number-input {
@@ -417,10 +465,16 @@ input:checked + .toggle-label:before {
 .color-picker {
   width: 40px;
   height: 30px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius);
   cursor: pointer;
   padding: 0;
+  transition: var(--fluent-transition);
+}
+
+.color-picker:hover {
+  border-color: var(--fluent-primary);
+  box-shadow: 0 0 0 1px var(--fluent-primary);
 }
 
 .color-input {
@@ -442,7 +496,7 @@ input:checked + .toggle-label:before {
     width: 100% !important;
     height: 120px;
     border-right: none;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--fluent-border);
   }
   
   .resize-handle {
@@ -468,6 +522,6 @@ input:checked + .toggle-label:before {
     width: 100% !important;
     height: 300px;
     border-left: none;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--fluent-border);
   }
 }

@@ -1,32 +1,40 @@
 .filter-panel {
-  background-color: #f8f9fa;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  background: var(--fluent-acrylic);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius);
   padding: 16px;
   margin-bottom: 16px;
+  box-shadow: var(--fluent-shadow);
+  transition: var(--fluent-transition);
 }
 
 .filter-panel-header {
   margin-bottom: 12px;
+  transition: var(--fluent-transition);
 }
 
 .filter-panel-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--fluent-text);
+  transition: var(--fluent-transition);
 }
 
 .filter-content {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  transition: var(--fluent-transition);
 }
 
 .tag-options {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  transition: var(--fluent-transition);
 }
 
 .tag-checkbox {
@@ -35,62 +43,107 @@
   gap: 6px;
   cursor: pointer;
   font-size: 14px;
-  color: #555;
+  color: var(--fluent-text-secondary);
+  transition: var(--fluent-transition);
+  padding: 4px 8px;
+  border-radius: var(--fluent-radius);
+}
+
+.tag-checkbox:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--fluent-text);
 }
 
 .tag-checkbox input[type="checkbox"] {
   width: 16px;
   height: 16px;
   cursor: pointer;
+  transition: var(--fluent-transition);
 }
 
 .add-tag-section {
   display: flex;
   gap: 8px;
+  transition: var(--fluent-transition);
 }
 
 .add-tag-section input {
   flex: 1;
-  padding: 6px 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 6px 12px;
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius);
   font-size: 14px;
+  transition: var(--fluent-transition);
+  background: white;
+  color: var(--fluent-text);
+}
+
+.add-tag-section input:hover {
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+.add-tag-section input:focus {
+  outline: none;
+  border-color: var(--fluent-primary);
+  box-shadow: 0 0 0 1px var(--fluent-primary);
 }
 
 .add-tag-btn {
-  background-color: #3498db;
+  background-color: var(--fluent-primary);
   color: white;
   border: none;
   padding: 6px 12px;
-  border-radius: 4px;
+  border-radius: var(--fluent-radius);
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.2s;
+  transition: var(--fluent-transition);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
 }
 
-.add-tag-btn:hover {
-  background-color: #2980b9;
+.add-tag-btn:hover:not(:disabled) {
+  background-color: var(--fluent-primary-hover);
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 .filter-logic {
   display: flex;
   align-items: center;
   gap: 12px;
+  transition: var(--fluent-transition);
 }
 
 .filter-logic label {
   font-size: 14px;
-  color: #555;
+  color: var(--fluent-text-secondary);
   font-weight: 500;
+  transition: var(--fluent-transition);
 }
 
 .filter-logic select {
-  padding: 6px 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 6px 12px;
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius);
   font-size: 14px;
-  background-color: white;
+  background: rgba(255, 255, 255, 0.7);
   cursor: pointer;
+  color: var(--fluent-text);
+  transition: var(--fluent-transition);
+  min-height: 32px;
+}
+
+.filter-logic select:hover {
+  border-color: rgba(0, 0, 0, 0.16);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.filter-logic select:focus {
+  outline: none;
+  border-color: var(--fluent-primary);
+  box-shadow: 0 0 0 1px var(--fluent-primary);
 }
 
 /* 响应式设计 */

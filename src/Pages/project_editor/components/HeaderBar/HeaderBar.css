@@ -3,69 +3,87 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  background-color: white;
-  color: #2c3e50;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--fluent-acrylic);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  color: var(--fluent-text);
+  box-shadow: var(--fluent-shadow);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 2px solid #3498db;
+  border-bottom: 1px solid var(--fluent-border);
+  transition: var(--fluent-transition);
 }
 
 .header-left {
   display: flex;
   align-items: center;
   gap: 16px;
+  transition: var(--fluent-transition);
 }
 
 .back-button {
-  background-color: #e3f2fd;
-  border: 1px solid #3498db;
-  color: #1976d2;
-  font-size: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--fluent-border);
+  color: var(--fluent-primary);
+  font-size: 14px;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: all 0.2s;
+  padding: 8px 16px;
+  border-radius: var(--fluent-radius);
+  transition: var(--fluent-transition);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
 }
 
-.back-button:hover {
-  background-color: #bbdefb;
-  border-color: #1976d2;
+.back-button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: var(--fluent-primary);
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 .project-name {
   margin: 0;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
-  color: #1976d2;
+  color: var(--fluent-primary);
+  transition: var(--fluent-transition);
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 20px;
+  transition: var(--fluent-transition);
 }
 
 .save-time {
   font-size: 14px;
-  color: #666;
+  color: var(--fluent-text-secondary);
+  transition: var(--fluent-transition);
 }
 
 .save-button {
-  background-color: #3498db;
+  background-color: var(--fluent-primary);
   color: white;
   border: none;
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: var(--fluent-radius);
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: background-color 0.2s;
+  transition: var(--fluent-transition);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.save-button:hover {
-  background-color: #2980b9;
+.save-button:hover:not(:disabled) {
+  background-color: var(--fluent-primary-hover);
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 /* 响应式设计 */
@@ -75,7 +93,7 @@
   }
   
   .project-name {
-    font-size: 16px;
+    font-size: 14px;
   }
   
   .save-time {
@@ -84,7 +102,7 @@
   
   .back-button {
     font-size: 14px;
-    padding: 6px 10px;
+    padding: 6px 12px;
   }
   
   .save-button {

@@ -1,13 +1,17 @@
 .project-item {
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: var(--fluent-acrylic);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-radius: var(--fluent-radius);
+  box-shadow: var(--fluent-shadow);
+  border: 1px solid var(--fluent-border);
   padding: 20px;
-  transition: all 0.3s ease;
+  transition: var(--fluent-transition);
+  overflow: hidden;
 }
 
 .project-item:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--fluent-shadow-hover);
   transform: translateY(-2px);
 }
 
@@ -19,20 +23,21 @@
 }
 
 .project-name {
-  font-size: 1.125rem;
+  font-size: 16px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--fluent-text);
   margin: 0;
   flex: 1;
 }
 
 .project-status {
   padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  border-radius: var(--fluent-radius-full);
+  font-size: 12px;
   font-weight: 500;
-  background-color: #f1f5f9;
-  color: #64748b;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--fluent-text-secondary);
+  transition: var(--fluent-transition);
 }
 
 .project-item-body {
@@ -40,8 +45,8 @@
 }
 
 .project-description {
-  font-size: 0.875rem;
-  color: #64748b;
+  font-size: 14px;
+  color: var(--fluent-text-secondary);
   margin-bottom: 16px;
   line-height: 1.4;
 }
@@ -51,17 +56,18 @@
 }
 
 .project-meta-item {
-  font-size: 0.75rem;
+  font-size: 12px;
   margin-bottom: 4px;
 }
 
 .meta-label {
-  color: #94a3b8;
+  color: var(--fluent-text-tertiary);
   margin-right: 4px;
+  font-weight: 500;
 }
 
 .meta-value {
-  color: #64748b;
+  color: var(--fluent-text-secondary);
 }
 
 .project-tags {
@@ -72,15 +78,24 @@
 
 .project-tag {
   padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  background-color: #e0f2fe;
-  color: #0284c7;
+  border-radius: var(--fluent-radius-full);
+  font-size: 12px;
+  background: rgba(0, 120, 212, 0.1);
+  color: var(--fluent-primary);
+  transition: var(--fluent-transition);
+}
+
+.project-tag:hover {
+  background: rgba(0, 120, 212, 0.2);
 }
 
 .project-item-footer {
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--fluent-border-light);
   padding-top: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  margin: -20px -20px 0 -20px;
+  padding: 16px 20px;
+  transition: var(--fluent-transition);
 }
 
 /* 响应式设计 */
@@ -94,11 +109,11 @@
   }
 
   .project-name {
-    font-size: 1rem;
+    font-size: 14px;
   }
 
   .project-description {
-    font-size: 0.75rem;
+    font-size: 14px;
     margin-bottom: 12px;
   }
 
@@ -107,6 +122,7 @@
   }
 
   .project-item-footer {
-    padding-top: 12px;
+    padding: 12px 16px;
+    margin: -16px -16px 0 -16px;
   }
 }
