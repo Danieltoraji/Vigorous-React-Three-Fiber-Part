@@ -1,53 +1,70 @@
 .project-details {
-  background-color: white;
-  border-radius: 8px;
+  background: var(--fluent-acrylic);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-radius: var(--fluent-radius);
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--fluent-shadow);
+  border: 1px solid var(--fluent-border);
   flex: 0 0 350px;
   max-width: 350px;
+  transition: var(--fluent-transition);
 }
 
 .project-details h2 {
   margin-top: 0;
   margin-bottom: 20px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--fluent-text);
+  transition: var(--fluent-transition);
 }
 
 .project-details-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  transition: var(--fluent-transition);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  transition: var(--fluent-transition);
 }
 
 .form-group label {
   font-size: 14px;
   font-weight: 500;
-  color: #555;
+  color: var(--fluent-text-secondary);
+  transition: var(--fluent-transition);
 }
 
 .form-group input,
 .form-group textarea,
 .form-group select {
   padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius);
   font-size: 14px;
-  transition: border-color 0.2s;
+  transition: var(--fluent-transition);
+  background: white;
+  color: var(--fluent-text);
+}
+
+.form-group input:hover,
+.form-group textarea:hover,
+.form-group select:hover {
+  border-color: rgba(0, 0, 0, 0.16);
 }
 
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: var(--fluent-primary);
+  box-shadow: 0 0 0 1px var(--fluent-primary);
 }
 
 .form-group textarea {
@@ -59,29 +76,36 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  transition: var(--fluent-transition);
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  transition: var(--fluent-transition);
 }
 
 .tag {
   display: flex;
   align-items: center;
   gap: 6px;
-  background-color: #e3f2fd;
-  color: #1976d2;
+  background: rgba(0, 120, 212, 0.1);
+  color: var(--fluent-primary);
   padding: 4px 8px;
-  border-radius: 12px;
+  border-radius: var(--fluent-radius-full);
   font-size: 12px;
+  transition: var(--fluent-transition);
+}
+
+.tag:hover {
+  background: rgba(0, 120, 212, 0.2);
 }
 
 .tag-remove {
-  background: none;
+  background: transparent;
   border: none;
-  color: #1976d2;
+  color: var(--fluent-primary);
   font-size: 14px;
   cursor: pointer;
   padding: 0;
@@ -91,16 +115,17 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background-color 0.2s;
+  transition: var(--fluent-transition);
 }
 
 .tag-remove:hover {
-  background-color: rgba(25, 118, 210, 0.1);
+  background: rgba(0, 120, 212, 0.2);
 }
 
 .tag-input-wrapper {
   display: flex;
   gap: 8px;
+  transition: var(--fluent-transition);
 }
 
 .tag-input-wrapper input {
@@ -108,35 +133,47 @@
 }
 
 .add-tag-button {
-  background-color: #3498db;
+  background-color: var(--fluent-primary);
   color: white;
   border: none;
   padding: 8px 12px;
-  border-radius: 4px;
+  border-radius: var(--fluent-radius);
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.2s;
+  transition: var(--fluent-transition);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
 }
 
-.add-tag-button:hover {
-  background-color: #2980b9;
+.add-tag-button:hover:not(:disabled) {
+  background-color: var(--fluent-primary-hover);
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 .form-save-button {
-  background-color: #27ae60;
+  background-color: #107C10;
   color: white;
   border: none;
-  padding: 10px 16px;
-  border-radius: 4px;
+  padding: 8px 16px;
+  border-radius: var(--fluent-radius);
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: background-color 0.2s;
+  transition: var(--fluent-transition);
   margin-top: 8px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.form-save-button:hover {
-  background-color: #229954;
+.form-save-button:hover:not(:disabled) {
+  background-color: #0D6E0D;
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 /* 响应式设计 */
@@ -153,18 +190,18 @@
   }
   
   .project-details h2 {
-    font-size: 16px;
+    font-size: 14px;
   }
   
   .form-group input,
   .form-group textarea,
   .form-group select {
-    padding: 6px 10px;
-    font-size: 13px;
+    padding: 6px 12px;
+    font-size: 14px;
   }
   
   .form-save-button {
-    padding: 8px 14px;
-    font-size: 13px;
+    padding: 6px 12px;
+    font-size: 14px;
   }
 }

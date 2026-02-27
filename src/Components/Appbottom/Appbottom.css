@@ -1,17 +1,21 @@
 .app-bottom {
   padding: 16px;
   text-align: center;
-  font-size: 0.875rem;
-  color: #64748b;
-  border-top: 1px solid #e2e8f0;
-  background: white;
+  font-size: 14px;
+  color: var(--fluent-text-secondary);
+  border-top: 1px solid var(--fluent-border);
+  background: var(--fluent-acrylic);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
   margin-top: auto;
+  transition: var(--fluent-transition);
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.08);
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
   .app-bottom {
     padding: 12px;
-    font-size: 0.75rem;
+    font-size: 12px;
   }
 }

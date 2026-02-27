@@ -1,23 +1,4 @@
-/* 全局样式重置 */
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #f8fafc;
-  color: #334155;
-  overflow: hidden;
-  height: 100vh;
-}
-
-#root {
-  width: 100%;
-  height: 100%;
-  outline: none;
-}
+/* Fluent 2.0 应用样式 */
 
 /* 应用容器 */
 .app-container {
@@ -27,26 +8,30 @@ body {
   flex-direction: column;
 }
 
-/* 头部样式 */
+/* 头部样式 - Mica 效果 */
 .app-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 60px;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--fluent-acrylic);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-bottom: 1px solid var(--fluent-border);
+  box-shadow: var(--fluent-shadow);
   z-index: 1000;
   display: flex;
   align-items: center;
   padding: 0 24px;
+  transition: var(--fluent-transition);
 }
 
 .app-header h1 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 16px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--fluent-text);
 }
 
 /* 主要内容区域 */
@@ -54,7 +39,6 @@ body {
   display: flex;
   flex: 1;
   margin-top: 60px;
-  /* 为固定头部留出空间 */
   height: calc(100vh - 60px);
   width: 100%;
 }
@@ -62,13 +46,13 @@ body {
 /* 左侧控制面板 - 已移除，由浮动组件替代 */
 
 .panel-header {
-  padding: 20px;
+  padding: 20px 16px 12px 16px;
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 20px;
   font-weight: 600;
-  color: #1e293b;
-  border-bottom: 1px solid #e2e8f0;
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: var(--fluent-text);
+  border-bottom: 1px solid var(--fluent-border-light);
+  background: var(--fluent-background-gradient);
 }
 
 /* 中间编辑区域 */
@@ -76,25 +60,28 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #f8fafc;
+  background: var(--fluent-background);
   width: 100%;
 }
 
 .editor-header {
   padding: 16px 24px;
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  background: var(--fluent-acrylic);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-bottom: 1px solid var(--fluent-border);
+  box-shadow: var(--fluent-shadow);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: var(--fluent-transition);
 }
 
 .editor-title {
   margin: 0;
-  font-size: 1.125rem;
+  font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--fluent-text);
 }
 
 .canvas-container {
@@ -107,22 +94,25 @@ body {
 /* 右侧项目信息面板 */
 .project-panel {
   width: 320px;
-  background: white;
-  border-left: 1px solid #e2e8f0;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  background: var(--fluent-acrylic-sidebar);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: var(--fluent-shadow);
   display: flex;
   flex-direction: column;
   z-index: 100;
+  transition: var(--fluent-transition);
 }
 
 .project-header {
-  padding: 20px;
+  padding: 20px 16px 12px 16px;
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 20px;
   font-weight: 600;
-  color: #1e293b;
-  border-bottom: 1px solid #e2e8f0;
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: var(--fluent-text);
+  border-bottom: 1px solid var(--fluent-border-light);
+  background: var(--fluent-background-gradient);
 }
 
 .project-form {
@@ -140,27 +130,33 @@ body {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: #334155;
-  font-size: 0.875rem;
+  color: var(--fluent-text-secondary);
+  font-size: 14px;
 }
 
 .form-input,
 .form-textarea {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius);
   font-family: inherit;
-  font-size: 0.875rem;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 14px;
+  transition: var(--fluent-transition);
   background: white;
+  color: var(--fluent-text);
+}
+
+.form-input:hover,
+.form-textarea:hover {
+  border-color: rgba(0, 0, 0, 0.16);
 }
 
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--fluent-primary);
+  box-shadow: 0 0 0 1px var(--fluent-primary);
 }
 
 .form-textarea {
@@ -177,17 +173,18 @@ body {
 }
 
 .btn {
-  padding: 12px 20px;
+  padding: 8px 16px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--fluent-radius);
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--fluent-transition);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-size: 0.875rem;
+  font-size: 14px;
+  min-height: 36px;
 }
 
 .btn:disabled {
@@ -196,47 +193,46 @@ body {
 }
 
 .btn-primary {
-  background-color: #3b82f6;
+  background-color: var(--fluent-primary);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #2563eb;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background-color: var(--fluent-primary-hover);
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 .btn-danger {
-  background-color: #ef4444;
+  background-color: #D13438;
   color: white;
 }
 
 .btn-danger:hover:not(:disabled) {
-  background-color: #dc2626;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background-color: #B3272B;
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 /* 消息提示 */
 .message {
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: var(--fluent-radius);
   margin-top: 16px;
-  font-size: 0.875rem;
+  font-size: 14px;
   display: none;
-  animation: slideIn 0.3s ease;
+  animation: slideIn 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
 }
 
 .message-success {
-  background-color: #dcfce7;
-  color: #166534;
-  border: 1px solid #bbf7d0;
+  background-color: #E6F4EA;
+  color: #107C10;
+  border-color: #CAEACD;
 }
 
 .message-error {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
+  background-color: #FCE7E7;
+  color: #D13438;
+  border-color: #F8D0D0;
 }
 
 .message.show {
@@ -258,10 +254,6 @@ body {
 
 /* 响应式设计 */
 @media (max-width: 1200px) {
-  .control-panel {
-    width: 240px;
-  }
-
   .project-panel {
     width: 280px;
   }
@@ -272,20 +264,12 @@ body {
     flex-direction: column;
   }
 
-  .control-panel {
-    width: 100%;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid #e2e8f0;
-  }
-
   .project-panel {
     width: 100%;
     border-left: none;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--fluent-border);
   }
 
-  .panel-content,
   .project-form {
     max-height: 200px;
   }
@@ -305,10 +289,9 @@ body {
   .panel-header,
   .project-header {
     padding: 16px;
-    font-size: 1.125rem;
+    font-size: 18px;
   }
 
-  .panel-content,
   .project-form {
     padding: 16px;
   }
@@ -318,7 +301,7 @@ body {
   }
 
   .btn {
-    padding: 10px 16px;
-    font-size: 0.75rem;
+    padding: 8px 12px;
+    font-size: 14px;
   }
 }

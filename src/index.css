@@ -1,8 +1,42 @@
-#root{
-  width:100vw;
-  height:100vh;
+/* Fluent 2.0 基础样式 */
+:root {
+  --fluent-primary: #0078D4;
+  --fluent-primary-hover: #106EBE;
+  --fluent-secondary: #F2F2F2;
+  --fluent-text: #242424;
+  --fluent-text-secondary: #605E5C;
+  --fluent-text-tertiary: #8A8886;
+  --fluent-border: rgba(0, 0, 0, 0.08);
+  --fluent-border-light: rgba(0, 0, 0, 0.06);
+  --fluent-background: #F2F2F2;
+  --fluent-background-gradient: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
+  --fluent-acrylic: rgba(249, 249, 249, 0.85);
+  --fluent-acrylic-sidebar: rgba(243, 243, 243, 0.7);
+  --fluent-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --fluent-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --fluent-radius: 4px;
+  --fluent-radius-lg: 6px;
+  --fluent-radius-full: 9999px;
+  --fluent-transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-body{
-  margin:0;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  color: var(--fluent-text);
+  background: var(--fluent-background-gradient);
+  line-height: 1.5;
+  overflow: hidden;
+  height: 100vh;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  outline: none;
 }
