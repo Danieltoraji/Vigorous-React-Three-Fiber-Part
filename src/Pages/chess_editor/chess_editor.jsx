@@ -3,6 +3,7 @@ import './chess_editor.css';
 import { useChess } from '../../hooks/useChess.jsx';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import ModelRenderer from './modelrenderer/modelrenderer.jsx';
+import { exportChessModel, generateExportFilename } from '../../utils/modelExporter.js';
 
 function ChessEditor() {
   const { chessData, updateChess, setChessData, getChessById } = useChess();
@@ -95,8 +96,42 @@ function ChessEditor() {
   };
 
   // 处理导出
-  const handleExport = () => {
-    alert('开发中');
+  const handleExport = async () => {
+    if (!currentChess) {
+      alert('当前没有可导出的模型');
+      return;
+    }
+
+    try {
+      // 让用户选择导出格式
+      const format = window.confirm('选择导出格式：\n点击"确定"导出 STL 格式（适合 3D 打印）\n点击"取消"导出 OBJ 格式（适合 3D 建模软件）') 
+        ? 'stl' 
+        : 'obj';
+
+      // 显示加载提示
+      alert(`正在准备导出${format.toUpperCase()}格式，请稍候...`);
+
+      // 导出模型
+      const blob = await exportChessModel(currentChess, format);
+
+      // 生成文件名
+      const filename = generateExportFilename(currentChess.name, format);
+
+      // 创建下载链接
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      alert(`导出成功！文件已下载：${filename}`);
+    } catch (error) {
+      console.error('导出失败:', error);
+      alert('导出失败：' + (error.message || '未知错误'));
+    }
   };
 
   // 处理返回
