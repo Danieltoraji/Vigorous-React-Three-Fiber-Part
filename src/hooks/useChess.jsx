@@ -16,148 +16,48 @@ export function ChessProvider({ children }) {
       project_id:"Hajimi-123456",
       type:"type1",
       piece_tags:["tag1","tag2"],
-      parts:{
-        '1':{
-          Appear:"False",
-          Shape:{
-            type:"Circle",
-            size1:15,
-            size2:15,
-            height:1,
-            color:"#FF0000",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            }
+      components:{
+        "base": {
+          "shape": {
+            "type": "cycle",
+            "size1": 15,
+            "size2": 15,
+            "height": 1
           },
-          Texture:{
-            file:"",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            },
-            zoom:1,
-
+          "material": null,
+          "pattern": {
+            "shape": "text",
+            "position": { "x": 0, "z": 0 },
+            "size": 10,
+            "depth": 1
           },
-          Text:{
-            content:"THU",
-            size:10,
-            position:{
-              x:0,
-              y:0,
-            },
-            color:"#FFFFFF",
-            height:1,
-          }
+          "edge": { "type": "none", "depth": 0 }
         },
-        '2':{
-          Appear:"False",
-          Shape:{
-            type:"Circle",
-            size1:15,
-            size2:15,
-            height:1,
-            color:"#FF0000",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            }
+        "column": {
+          "shape": {
+            "type": "cycle",
+            "size1": 10,
+            "size2": 10,
+            "height": 20
           },
-          Texture:{
-            file:"",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            },
-            zoom:1,
-
+          "material": null,
+          "position": { "x": 0, "y": 1, "z": 0 },
+          "sideTreatment": "none",
+          "pattern": {
+            "shape": "geometry",
+            "position": { "x": 0, "z": 0 },
+            "size": 5,
+            "depth": 0.5
           },
-          Text:{
-            content:"THU",
-            size:10,
-            position:{
-              x:0,
-              y:0,
-            },
-            color:"#FFFFFF",
-            height:1,
-          }
+          "edge": { "type": "smooth", "depth": 0.2 }
         },
-        '3':{
-          Appear:"False",
-          Shape:{
-            type:"Circle",
-            size1:15,
-            size2:15,
-            height:1,
-            color:"#FF0000",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            }
-          },
-          Texture:{
-            file:"",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            },
-            zoom:1,
-
-          },
-          Text:{
-            content:"THU",
-            size:10,
-            position:{
-              x:0,
-              y:0,
-            },
-            color:"#FFFFFF",
-            height:1,
-          }
-        },
-        '4':{
-          Appear:"False",
-          Shape:{
-            type:"Circle",
-            size1:15,
-            size2:15,
-            height:1,
-            color:"#FF0000",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            }
-          },
-          Texture:{
-            file:"",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            },
-            zoom:1,
-
-          },
-          Text:{
-            content:"THU",
-            size:10,
-            position:{
-              x:0,
-              y:0,
-            },
-            color:"#FFFFFF",
-            height:1,
-          }
-        },
-      }
+        "decoration": {
+          "modelId": "",
+          "size": { "size1": 5, "size2": 5, "size3": 5 },
+          "position": { "x": 0, "y": 21, "z": 0 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "material": null
+        }
     },
     20002:{
       name:"测试棋子二",
@@ -168,147 +68,48 @@ export function ChessProvider({ children }) {
       project_id:"Hajimi-123456",
       type:"type1",
       piece_tags:["tag1","tag2","tag3","tag4"],
-      parts:{
-        '1':{
-          Appear:"False",
-          Shape:{
-            type:"Hexagon",
-            size1:15,
-            size2:15,
-            height:1,
-            color:"#FF0000",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            }
+      components:{
+        "base": {
+          "shape": {
+            "type": "polygon",
+            "size1": 20,
+            "size2": 20,
+            "height": 2
           },
-          Texture:{
-            file:"",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            },
-            zoom:1,
-
+          "material": null,
+          "pattern": {
+            "shape": "geometry",
+            "position": { "x": 2, "z": 2 },
+            "size": 8,
+            "depth": 1.5
           },
-          Text:{
-            content:"THU",
-            size:10,
-            position:{
-              x:0,
-              y:0,
-            },
-            color:"#FFFFFF",
-            height:1,
-          }
+          "edge": { "type": "chamfer", "depth": 0.5 }
         },
-        '2':{
-          Appear:"False",
-          Shape:{
-            type:"Circle",
-            size1:15,
-            size2:15,
-            height:1,
-            color:"#FF0000",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            }
+        "column": {
+          "shape": {
+            "type": "cylinder",
+            "size1": 12,
+            "size2": 12,
+            "height": 25
           },
-          Texture:{
-            file:"",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            },
-            zoom:1,
-
+          "material": null,
+          "position": { "x": 0, "y": 2, "z": 0 },
+          "sideTreatment": "groove",
+          "pattern": {
+            "shape": "strange",
+            "position": { "x": 1, "z": 1 },
+            "size": 6,
+            "depth": 0.8
           },
-          Text:{
-            content:"THU",
-            size:10,
-            position:{
-              x:0,
-              y:0,
-            },
-            color:"#FFFFFF",
-            height:1,
-          }
+          "edge": { "type": "none", "depth": 0 }
         },
-        '3':{
-          Appear:"False",
-          Shape:{
-            type:"Circle",
-            size1:15,
-            size2:15,
-            height:1,
-            color:"#FF0000",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            }
-          },
-          Texture:{
-            file:"",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            },
-            zoom:1,
-
-          },
-          Text:{
-            content:"THU",
-            size:10,
-            position:{
-              x:0,
-              y:0,
-            },
-            color:"#FFFFFF",
-            height:1,
-          }
-        },
-        '4':{
-          Appear:"False",
-          Shape:{
-            type:"Circle",
-            size1:15,
-            size2:15,
-            height:1,
-            color:"#FF0000",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            }
-          },
-          Texture:{
-            file:"",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            },
-            zoom:1,
-
-          },
-          Text:{
-            content:"THU",
-            size:10,
-            position:{
-              x:0,
-              y:0,
-            },
-            color:"#FFFFFF",
-            height:1,
-          }
-        },
+        "decoration": {
+          "modelId": "deco_model_001",
+          "size": { "size1": 8, "size2": 8, "size3": 8 },
+          "position": { "x": 0, "y": 27, "z": 0 },
+          "rotation": { "x": 0, "y": 45, "z": 0 },
+          "material": null
+        }
       }
     },
     20003:{
@@ -320,151 +121,51 @@ export function ChessProvider({ children }) {
       project_id:"Hajimi-456789",
       type:"type1",
       piece_tags:["tag1","tag2","tag3","tag4"],
-      parts:{
-        '1':{
-          Appear:"False",
-          Shape:{
-            type:"Hexagon",
-            size1:15,
-            size2:15,
-            height:1,
-            color:"#FF0000",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            }
+      components:{
+        "base": {
+          "shape": {
+            "type": "arc",
+            "size1": 25,
+            "size2": 25,
+            "height": 1.5
           },
-          Texture:{
-            file:"",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            },
-            zoom:1,
-
+          "material": null,
+          "pattern": {
+            "shape": "text",
+            "position": { "x": -2, "z": -2 },
+            "size": 12,
+            "depth": 0.8
           },
-          Text:{
-            content:"THU",
-            size:10,
-            position:{
-              x:0,
-              y:0,
-            },
-            color:"#FFFFFF",
-            height:1,
-          }
+          "edge": { "type": "smooth", "depth": 0.3 }
         },
-        '2':{
-          Appear:"False",
-          Shape:{
-            type:"Circle",
-            size1:15,
-            size2:15,
-            height:1,
-            color:"#FF0000",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            }
+        "column": {
+          "shape": {
+            "type": "special",
+            "size1": 15,
+            "size2": 15,
+            "height": 30
           },
-          Texture:{
-            file:"",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            },
-            zoom:1,
-
+          "material": null,
+          "position": { "x": 0, "y": 1.5, "z": 0 },
+          "sideTreatment": "none",
+          "pattern": {
+            "shape": "geometry",
+            "position": { "x": -1, "z": -1 },
+            "size": 7,
+            "depth": 1.2
           },
-          Text:{
-            content:"THU",
-            size:10,
-            position:{
-              x:0,
-              y:0,
-            },
-            color:"#FFFFFF",
-            height:1,
-          }
+          "edge": { "type": "chamfer", "depth": 0.4 }
         },
-        '3':{
-          Appear:"False",
-          Shape:{
-            type:"Circle",
-            size1:15,
-            size2:15,
-            height:1,
-            color:"#FF0000",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            }
-          },
-          Texture:{
-            file:"",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            },
-            zoom:1,
-
-          },
-          Text:{
-            content:"THU",
-            size:10,
-            position:{
-              x:0,
-              y:0,
-            },
-            color:"#FFFFFF",
-            height:1,
-          }
-        },
-        '4':{
-          Appear:"False",
-          Shape:{
-            type:"Circle",
-            size1:15,
-            size2:15,
-            height:1,
-            color:"#FF0000",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            }
-          },
-          Texture:{
-            file:"",
-            position:{
-              x:0,
-              y:0,
-              z:0
-            },
-            zoom:1,
-
-          },
-          Text:{
-            content:"THU",
-            size:10,
-            position:{
-              x:0,
-              y:0,
-            },
-            color:"#FFFFFF",
-            height:1,
-          }
-        },
+        "decoration": {
+          "modelId": "deco_model_002",
+          "size": { "size1": 10, "size2": 10, "size3": 10 },
+          "position": { "x": 0, "y": 31.5, "z": 0 },
+          "rotation": { "x": 15, "y": 30, "z": 10 },
+          "material": null
+        }
       }
     }
-  })
-
+  }})
 
   //B 这里要写逻辑和方法，从后端获取棋子数据，向后端同步数据。
   //B1 设置状态管理，包括加载中、错误、最后更新时间。默认：加载中、无错误、无最后更新时间
@@ -546,7 +247,9 @@ export function ChessProvider({ children }) {
   }
   //B2' 组件加载时自动运行B2获取数据
   useEffect(() => {
-    fetchChess();
+    // 使用本地模拟数据，设置为已加载状态
+    setLoading(false);
+    setError(null);
   }, []);
 
   //B3 方法：刷新（从后端拉取）棋子数据
