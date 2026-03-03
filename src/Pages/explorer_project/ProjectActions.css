@@ -2,25 +2,30 @@
   display: flex;
   gap: 10px;
   justify-content: flex-end;
+  transition: var(--fluent-transition);
 }
 
 .btn-secondary {
-  background-color: #f1f5f9;
-  color: #334155;
-  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--fluent-text);
+  border: 1px solid var(--fluent-border);
+  transition: var(--fluent-transition);
 }
 
-.btn-secondary:hover {
-  background-color: #e2e8f0;
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 .btn-danger {
-  background-color: #ef4444;
+  background-color: #D13438;
   color: white;
+  transition: var(--fluent-transition);
 }
 
-.btn-danger:hover {
-  background-color: #dc2626;
+.btn-danger:hover:not(:disabled) {
+  background-color: #B3272B;
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 /* 响应式设计 */

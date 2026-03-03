@@ -2,19 +2,23 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
+  transition: var(--fluent-transition);
 }
 
 .chess-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius);
   padding: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s;
-  background-color: white;
+  box-shadow: var(--fluent-shadow);
+  transition: var(--fluent-transition);
+  background: var(--fluent-acrylic);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  overflow: hidden;
 }
 
 .chess-card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--fluent-shadow-hover);
   transform: translateY(-2px);
 }
 
@@ -23,26 +27,30 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+  transition: var(--fluent-transition);
 }
 
 .chess-card-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--fluent-text);
+  transition: var(--fluent-transition);
 }
 
 .chess-type {
-  background-color: #e3f2fd;
-  color: #1976d2;
+  background: rgba(0, 120, 212, 0.1);
+  color: var(--fluent-primary);
   padding: 2px 8px;
-  border-radius: 12px;
+  border-radius: var(--fluent-radius-full);
   font-size: 12px;
   font-weight: 500;
+  transition: var(--fluent-transition);
 }
 
 .chess-card-body {
   margin-bottom: 16px;
+  transition: var(--fluent-transition);
 }
 
 .chess-meta {
@@ -50,125 +58,174 @@
   flex-direction: column;
   gap: 4px;
   margin-bottom: 12px;
+  transition: var(--fluent-transition);
 }
 
 .chess-meta span {
   font-size: 13px;
-  color: #666;
+  color: var(--fluent-text-secondary);
+  transition: var(--fluent-transition);
 }
 
 .chess-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  transition: var(--fluent-transition);
 }
 
 .chess-tag {
-  background-color: #f1f1f1;
-  color: #555;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--fluent-text-secondary);
   padding: 2px 8px;
-  border-radius: 12px;
+  border-radius: var(--fluent-radius-full);
   font-size: 12px;
+  transition: var(--fluent-transition);
+}
+
+.chess-tag:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--fluent-text);
 }
 
 .chess-card-actions {
   display: flex;
   gap: 8px;
+  transition: var(--fluent-transition);
+  background: rgba(255, 255, 255, 0.5);
+  margin: -16px -16px 0 -16px;
+  padding: 16px;
+  border-top: 1px solid var(--fluent-border-light);
 }
 
 .action-button {
   flex: 1;
   padding: 6px 12px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--fluent-radius);
   cursor: pointer;
   font-size: 13px;
-  transition: all 0.2s;
+  transition: var(--fluent-transition);
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
 }
 
 .edit-button {
-  background-color: #3498db;
+  background-color: var(--fluent-primary);
   color: white;
 }
 
-.edit-button:hover {
-  background-color: #2980b9;
+.edit-button:hover:not(:disabled) {
+  background-color: var(--fluent-primary-hover);
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 .open-button {
-  background-color: #27ae60;
+  background-color: #107C10;
   color: white;
 }
 
-.open-button:hover {
-  background-color: #229954;
+.open-button:hover:not(:disabled) {
+  background-color: #0D6E0D;
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 .delete-button {
-  background-color: #e74c3c;
+  background-color: #D13438;
   color: white;
 }
 
-.delete-button:hover {
-  background-color: #c0392b;
+.delete-button:hover:not(:disabled) {
+  background-color: #B3272B;
+  box-shadow: var(--fluent-shadow-hover);
 }
 
 /* 列表视图样式 */
 .list-view {
   overflow-x: auto;
+  transition: var(--fluent-transition);
+  background: var(--fluent-acrylic);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-radius: var(--fluent-radius);
+  box-shadow: var(--fluent-shadow);
+  border: 1px solid var(--fluent-border);
+  overflow: hidden;
 }
 
 .chess-table {
   width: 100%;
   border-collapse: collapse;
+  transition: var(--fluent-transition);
 }
 
 .chess-table th,
 .chess-table td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--fluent-border-light);
+  transition: var(--fluent-transition);
 }
 
 .chess-table th {
-  background-color: #f8f9fa;
+  background: rgba(255, 255, 255, 0.5);
   font-weight: 600;
-  color: #333;
+  color: var(--fluent-text);
   font-size: 14px;
+  transition: var(--fluent-transition);
+}
+
+.chess-table tr {
+  background: rgba(255, 255, 255, 0.3);
+  transition: var(--fluent-transition);
 }
 
 .chess-table tr:hover {
-  background-color: #f5f5f5;
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .table-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+  transition: var(--fluent-transition);
 }
 
 .table-tag {
-  background-color: #f1f1f1;
-  color: #555;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--fluent-text-secondary);
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: var(--fluent-radius-full);
   font-size: 11px;
+  transition: var(--fluent-transition);
+}
+
+.table-tag:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--fluent-text);
 }
 
 .no-tags {
-  color: #999;
+  color: var(--fluent-text-tertiary);
   font-size: 13px;
+  transition: var(--fluent-transition);
 }
 
 .action-buttons {
   display: flex;
   gap: 6px;
+  transition: var(--fluent-transition);
 }
 
 .action-buttons .action-button {
   flex: none;
   padding: 4px 8px;
   font-size: 12px;
+  min-height: 24px;
 }
 
 /* 响应式设计 */
@@ -214,5 +271,10 @@
   
   .action-buttons .action-button {
     width: 100%;
+  }
+  
+  .chess-card-actions {
+    padding: 12px;
+    margin: -12px -12px 0 -12px;
   }
 }

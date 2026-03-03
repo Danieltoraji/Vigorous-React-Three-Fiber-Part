@@ -13,7 +13,8 @@ function Home() {
     <div className="home-container">
       {/* 头部 */}
       <header className="home-header">
-        <h1>欢迎您！{userData.username}</h1>
+        <h1>功能菜单</h1>
+        <p>欢迎您！{userData.username}</p>
       </header>
 
       <div className="home-content">
