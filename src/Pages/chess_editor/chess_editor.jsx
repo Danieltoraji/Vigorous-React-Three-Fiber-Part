@@ -381,6 +381,31 @@ function ChessEditor() {
             </select>
           </div>
           
+          {getSafeValue(pattern.shape, 'text') === 'text' && (
+            <div className="editor-item">
+              <label>文本内容：</label>
+              <input 
+                type="text" 
+                value={getSafeValue(pattern.text, '')} 
+                onChange={(e) => handleDataUpdate('components.base.pattern.text', e.target.value)}
+              />
+            </div>
+          )}
+          
+          {getSafeValue(pattern.shape, 'text') === 'geometry' && (
+            <div className="editor-item">
+              <label>几何形状：</label>
+              <select 
+                value={getSafeValue(pattern.geometryType, 'square')} 
+                onChange={(e) => handleDataUpdate('components.base.pattern.geometryType', e.target.value)}
+              >
+                <option value="square">正方形</option>
+                <option value="circle">圆形</option>
+                <option value="strange">奇异形状</option>
+              </select>
+            </div>
+          )}
+          
           <div className="editor-item">
             <label>尺寸：</label>
             <input 
