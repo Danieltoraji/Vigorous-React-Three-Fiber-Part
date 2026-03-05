@@ -397,7 +397,16 @@ function ModelRenderer({ chess }) {
     <Canvas 
       camera={{ position: [40, 40, 40] }} 
       shadows
-      style={{ background: 'transparent' }}
+      style={{ 
+        width: '100%', 
+        height: '100%', 
+        background: 'transparent',
+        display: 'block',
+        margin: 0,
+        padding: 0,
+        outline: 'none',
+        border: 'none'
+      }}
       gl={{ alpha: true, premultipliedAlpha: false }}
     >
       <OrbitControls />

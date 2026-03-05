@@ -100,11 +100,9 @@ function ChessEditor() {
   const [selectedComponent, setSelectedComponent] = useState('base'); // 默认选中底座组件
   const [lastSaved, setLastSaved] = useState(new Date().toLocaleString());
   
-  // 拖拽相关状态
-  const [leftWidth, setLeftWidth] = useState(200); // 左侧面板宽度
-  const [rightWidth, setRightWidth] = useState(400); // 右侧面板宽度，增加到 400px
-  const [isDraggingLeft, setIsDraggingLeft] = useState(false); // 左侧拖拽状态
-  const [isDraggingRight, setIsDraggingRight] = useState(false); // 右侧拖拽状态
+  // 右侧面板固定宽度
+  const [rightWidth, setRightWidth] = useState(400); // 右侧面板宽度
+  const [isRightPanelCollapsed, setIsRightPanelCollapsed] = useState(false); // 右侧面板收起状态
   
   // 引用
   const editorContentRef = useRef(null);
@@ -162,7 +160,11 @@ function ChessEditor() {
     }
   }, [currentChess, updateChess]);
 
-  // 处理导出
+  // 处理右侧面板收起/展开
+  const handleToggleRightPanel = useCallback(() => {
+    setIsRightPanelCollapsed(prev => !prev);
+  }, []);
+  
   const handleExport = useCallback(() => {
     alert('开发中');
   }, []);
@@ -173,62 +175,6 @@ function ChessEditor() {
       state: { projectId: currentChess?.project_id || 'Hajimi-123456' }
     });
   }, [currentChess, navigate]);
-  
-  // 拖拽处理函数
-  const handleMouseDownLeft = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDraggingLeft(true);
-  }, []);
-  
-  const handleMouseDownRight = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDraggingRight(true);
-  }, []);
-  
-  const handleMouseMove = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!editorContentRef.current) return;
-    
-    const containerRect = editorContentRef.current.getBoundingClientRect();
-    
-    if (isDraggingLeft) {
-      const newWidth = e.clientX - containerRect.left;
-      // 设置最小和最大宽度限制
-      if (newWidth >= 150 && newWidth <= 300) {
-        setLeftWidth(newWidth);
-      }
-    }
-    
-    if (isDraggingRight) {
-      const newWidth = containerRect.right - e.clientX;
-      // 设置最小和最大宽度限制，增加到 500px
-      if (newWidth >= 320 && newWidth <= 500) {
-        setRightWidth(newWidth);
-      }
-    }
-  }, [isDraggingLeft, isDraggingRight]);
-  
-  const handleMouseUp = useCallback(() => {
-    setIsDraggingLeft(false);
-    setIsDraggingRight(false);
-  }, []);
-  
-  // 添加全局鼠标事件监听器
-  useEffect(() => {
-    if (isDraggingLeft || isDraggingRight) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDraggingLeft, isDraggingRight, handleMouseMove, handleMouseUp]);
 
   // 渲染底座组件参数面板 - 使用 useMemo 缓存
   const renderBasePanel = useMemo(() => () => {
@@ -1422,50 +1368,47 @@ function ChessEditor() {
       </header>
 
       <div className="editor-content" ref={editorContentRef}>
-        {/* 左侧组件选择面板 */}
-        <aside className="part-selector" style={{ width: `${leftWidth}px` }}>
-          <h3>组件选择</h3>
-          <div className="part-buttons">
-            <button 
-              className={`part-button ${selectedComponent === 'base' ? 'active' : ''}`}
-              onClick={() => handleComponentSelect('base')}
-            >
-              底座
-            </button>
-            <button 
-              className={`part-button ${selectedComponent === 'column' ? 'active' : ''}`}
-              onClick={() => handleComponentSelect('column')}
-            >
-              柱体
-            </button>
-            <button 
-              className={`part-button ${selectedComponent === 'decoration' ? 'active' : ''}`}
-              onClick={() => handleComponentSelect('decoration')}
-            >
-              装饰
-            </button>
+        {/* 左侧组件选择 - 三个半透明小方块 */}
+        <div className="component-squares">
+          <div 
+            className={`square ${selectedComponent === 'base' ? 'active' : ''}`}
+            onClick={() => handleComponentSelect('base')}
+            title="底座"
+          >
+            <span className="square-label">底座</span>
           </div>
-        </aside>
-        
-        {/* 左侧拖拽手柄 */}
-        <div 
-          className={`resize-handle resize-handle-left ${isDraggingLeft ? 'dragging' : ''}`}
-          onMouseDown={handleMouseDownLeft}
-        ></div>
+          <div 
+            className={`square ${selectedComponent === 'column' ? 'active' : ''}`}
+            onClick={() => handleComponentSelect('column')}
+            title="柱体"
+          >
+            <span className="square-label">柱体</span>
+          </div>
+          <div 
+            className={`square ${selectedComponent === 'decoration' ? 'active' : ''}`}
+            onClick={() => handleComponentSelect('decoration')}
+            title="装饰"
+          >
+            <span className="square-label">装饰</span>
+          </div>
+        </div>
 
         {/* 中间预览区域 */}
         <main className="preview-area">
           <ModelRenderer chess={currentChess} />
         </main>
         
-        {/* 右侧拖拽手柄 */}
-        <div 
-          className={`resize-handle resize-handle-right ${isDraggingRight ? 'dragging' : ''}`}
-          onMouseDown={handleMouseDownRight}
-        ></div>
+        {/* 右侧面板切换按钮 */}
+        <button 
+          className={`toggle-right-panel ${isRightPanelCollapsed ? 'collapsed' : 'expanded'}`}
+          onClick={handleToggleRightPanel}
+          title={isRightPanelCollapsed ? '展开面板' : '收起面板'}
+        >
+          {isRightPanelCollapsed ? '◀' : '▶'}
+        </button>
 
         {/* 右侧数据调节面板 */}
-        <aside className="data-panel" style={{ width: `${rightWidth}px` }}>
+        <aside className={`data-panel ${isRightPanelCollapsed ? 'collapsed' : ''}`} style={{ width: `${isRightPanelCollapsed ? 0 : rightWidth}px` }}>
           {selectedComponent === 'base' && renderBasePanel()}
           {selectedComponent === 'column' && renderColumnPanel()}
           {selectedComponent === 'decoration' && renderDecorationPanel()}
