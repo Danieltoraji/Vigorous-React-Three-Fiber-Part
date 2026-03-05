@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Text } from '@react-three/drei';
+import { OrbitControls, Text, Environment } from '@react-three/drei';
 import { AxesHelper } from 'three';
 import { ModelPreview } from '../../../Components/CustomRevolutionGenerator/CustomRevolutionGenerator.jsx';
 
@@ -188,24 +188,18 @@ function ModelRenderer({ chess }) {
     <Canvas camera={{ position: [40, 40, 40] }} shadows>
       <OrbitControls />
       
-      {/* 增强光照和阴影效果 */}
-      <ambientLight intensity={2} />
+      {/* 基础环境光 */}
+      <ambientLight intensity={0.5} />
+      
+      {/* 使用本地 HDRI 贴图作为环境 */}
+      <Environment files="/stage.hdr" background />
+      
+      {/* 主方向光 */}
       <directionalLight 
         position={[50, 80, 50]} 
-        intensity={3} 
+        intensity={2} 
         castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
-        shadow-camera-left={-100}
-        shadow-camera-right={100}
-        shadow-camera-top={100}
-        shadow-camera-bottom={-100}
       />
-      <directionalLight 
-        position={[-30, 40, -30]} 
-        intensity={1.5}
-      />
-      <pointLight position={[0, 100, 0]} intensity={2} />
       
       <primitive object={new AxesHelper(30)} />
       <Text position={[30.5, 0, 0]} fontSize={0.8} color="red">X</Text>

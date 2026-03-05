@@ -305,8 +305,8 @@ export const ModelPreview = ({ profilePoints, pathPoints }) => {
         
         // 路径曲线坐标转换 (canvas -> (x,z))
         const path3D = pathPoints.map(point => {
-          const x = (point.x - 140) / 8;   // canvas x -> 3D x
-          const z = -(point.y - 75) / 8;   // canvas y -> 3D z
+          const x = (point.x - 140) / 4;   // canvas x -> 3D x
+          const z = -(point.y - 75) / 4;   // canvas y -> 3D z
           return { x, z };
         });
         
