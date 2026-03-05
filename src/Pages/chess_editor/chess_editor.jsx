@@ -34,7 +34,7 @@ const defaultChess = {
         "size": 10,
         "depth": 1
       },
-      "edge": { "type": "none", "depth": 0 },
+      "edge": { "type": "none", "depth": 0, "segments": 4 },
       "position": { "x": 0, "y": 0, "z": 0 }
     },
     "column": {
@@ -57,7 +57,7 @@ const defaultChess = {
         "size": 5,
         "depth": 0.5
       },
-      "edge": { "type": "smooth", "depth": 0.2 }
+      "edge": { "type": "smooth", "depth": 0.2, "segments": 4 }
     },
     "decoration": {
       "modelId": "",
@@ -468,37 +468,66 @@ function ChessEditor() {
           <h4>边缘处理</h4>
           
           <div className="editor-item">
-            <label>类型：</label>
-            <select 
-              value={getSafeValue(edge.type, 'none')} 
-              onChange={(e) => handleDataUpdate('components.base.edge.type', e.target.value)}
+            <button 
+              className={`edge-toggle-button ${edge.type === 'smooth' ? 'active' : ''}`}
+              onClick={() => handleDataUpdate('components.base.edge.type', edge.type === 'smooth' ? 'none' : 'smooth')}
             >
-              <option value="none">无</option>
-              <option value="chamfer">倒角</option>
-              <option value="smooth">平滑</option>
-            </select>
+              {edge.type === 'smooth' ? '✓ 平滑已启用' : '启用平滑'}
+            </button>
+            <button 
+              className={`edge-toggle-button ${edge.type === 'round' ? 'active' : ''}`}
+              onClick={() => handleDataUpdate('components.base.edge.type', edge.type === 'round' ? 'none' : 'round')}
+              style={{ marginLeft: '10px' }}
+            >
+              {edge.type === 'round' ? '✓ 圆滑已启用' : '启用圆滑'}
+            </button>
           </div>
           
-          <div className="editor-item">
-            <label>深度：</label>
-            <input 
-              type="range" 
-              min="0" 
-              max="2" 
-              step="0.1" 
-              value={getSafeValue(edge.depth, 0)} 
-              onChange={(e) => handleDataUpdate('components.base.edge.depth', parseFloat(e.target.value))}
-            />
-            <input 
-              type="number" 
-              min="0" 
-              max="2" 
-              step="0.1" 
-              value={getSafeValue(edge.depth, 0)} 
-              onChange={(e) => handleDataUpdate('components.base.edge.depth', parseFloat(e.target.value))}
-              className="number-input"
-            />
-          </div>
+          {(edge.type === 'smooth' || edge.type === 'round') && (
+            <>
+              <div className="editor-item">
+                <label>深度：</label>
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="0.25" 
+                  step="0.01" 
+                  value={getSafeValue(edge.depth, 0)} 
+                  onChange={(e) => handleDataUpdate('components.base.edge.depth', parseFloat(e.target.value))}
+                />
+                <input 
+                  type="number" 
+                  min="0" 
+                  max="1" 
+                  step="0.04" 
+                  value={(getSafeValue(edge.depth, 0) * 4).toFixed(2)} 
+                  onChange={(e) => handleDataUpdate('components.base.edge.depth', parseFloat(e.target.value) / 4)}
+                  className="number-input"
+                />
+              </div>
+              
+              <div className="editor-item">
+                <label>分段数：</label>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="8" 
+                  step="1" 
+                  value={getSafeValue(edge.segments, 4)} 
+                  onChange={(e) => handleDataUpdate('components.base.edge.segments', parseInt(e.target.value))}
+                />
+                <input 
+                  type="number" 
+                  min="1" 
+                  max="8" 
+                  step="1" 
+                  value={getSafeValue(edge.segments, 4)} 
+                  onChange={(e) => handleDataUpdate('components.base.edge.segments', parseInt(e.target.value))}
+                  className="number-input"
+                />
+              </div>
+            </>
+          )}
         </div>
         
         {/* Material 部分 */}
@@ -905,37 +934,66 @@ function ChessEditor() {
           <h4>边缘处理</h4>
           
           <div className="editor-item">
-            <label>类型：</label>
-            <select 
-              value={getSafeValue(edge.type, 'smooth')} 
-              onChange={(e) => handleDataUpdate('components.column.edge.type', e.target.value)}
+            <button 
+              className={`edge-toggle-button ${edge.type === 'smooth' ? 'active' : ''}`}
+              onClick={() => handleDataUpdate('components.column.edge.type', edge.type === 'smooth' ? 'none' : 'smooth')}
             >
-              <option value="none">无</option>
-              <option value="chamfer">倒角</option>
-              <option value="smooth">平滑</option>
-            </select>
+              {edge.type === 'smooth' ? '✓ 平滑已启用' : '启用平滑'}
+            </button>
+            <button 
+              className={`edge-toggle-button ${edge.type === 'round' ? 'active' : ''}`}
+              onClick={() => handleDataUpdate('components.column.edge.type', edge.type === 'round' ? 'none' : 'round')}
+              style={{ marginLeft: '10px' }}
+            >
+              {edge.type === 'round' ? '✓ 圆滑已启用' : '启用圆滑'}
+            </button>
           </div>
           
-          <div className="editor-item">
-            <label>深度：</label>
-            <input 
-              type="range" 
-              min="0" 
-              max="1" 
-              step="0.05" 
-              value={getSafeValue(edge.depth, 0.2)} 
-              onChange={(e) => handleDataUpdate('components.column.edge.depth', parseFloat(e.target.value))}
-            />
-            <input 
-              type="number" 
-              min="0" 
-              max="1" 
-              step="0.05" 
-              value={getSafeValue(edge.depth, 0.2)} 
-              onChange={(e) => handleDataUpdate('components.column.edge.depth', parseFloat(e.target.value))}
-              className="number-input"
-            />
-          </div>
+          {(edge.type === 'smooth' || edge.type === 'round') && (
+            <>
+              <div className="editor-item">
+                <label>深度：</label>
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="0.25" 
+                  step="0.01" 
+                  value={getSafeValue(edge.depth, 0.2)} 
+                  onChange={(e) => handleDataUpdate('components.column.edge.depth', parseFloat(e.target.value))}
+                />
+                <input 
+                  type="number" 
+                  min="0" 
+                  max="1" 
+                  step="0.04" 
+                  value={(getSafeValue(edge.depth, 0.2) * 4).toFixed(2)} 
+                  onChange={(e) => handleDataUpdate('components.column.edge.depth', parseFloat(e.target.value) / 4)}
+                  className="number-input"
+                />
+              </div>
+              
+              <div className="editor-item">
+                <label>分段数：</label>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="8" 
+                  step="1" 
+                  value={getSafeValue(edge.segments, 4)} 
+                  onChange={(e) => handleDataUpdate('components.column.edge.segments', parseInt(e.target.value))}
+                />
+                <input 
+                  type="number" 
+                  min="1" 
+                  max="8" 
+                  step="1" 
+                  value={getSafeValue(edge.segments, 4)} 
+                  onChange={(e) => handleDataUpdate('components.column.edge.segments', parseInt(e.target.value))}
+                  className="number-input"
+                />
+              </div>
+            </>
+          )}
         </div>
         
         {/* Material 部分 */}

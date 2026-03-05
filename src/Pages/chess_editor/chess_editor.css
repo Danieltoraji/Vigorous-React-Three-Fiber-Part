@@ -569,6 +569,36 @@ input:checked + .toggle-label:before {
   transform: scale(1.1);
 }
 
+/* 边缘处理按钮样式 */
+.edge-toggle-button {
+  padding: 8px 16px;
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius);
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--fluent-text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--fluent-transition);
+  min-width: 120px;
+  font-weight: 500;
+}
+
+.edge-toggle-button:hover {
+  background: rgba(0, 120, 212, 0.1);
+  border-color: var(--fluent-primary);
+  box-shadow: var(--fluent-shadow-hover);
+}
+
+.edge-toggle-button.active {
+  background: var(--fluent-primary);
+  color: white;
+  border-color: var(--fluent-primary);
+}
+
+.edge-toggle-button.active:hover {
+  background: #0064B0;
+}
+
 .number-input {
   width: 60px !important;
   text-align: center;

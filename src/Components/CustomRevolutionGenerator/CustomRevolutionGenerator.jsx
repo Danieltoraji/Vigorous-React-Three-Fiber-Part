@@ -112,29 +112,34 @@ const SimpleCanvas = ({
     const x = (e.clientX - rect.left) * scaleX;
     const y = (e.clientY - rect.top) * scaleY;
     
-    const lastPoint = points[points.length - 1];
-    if (lastPoint) {
-      // 直接绘制，不依赖外部函数
-      const ctx = canvas.getContext('2d');
-      ctx.strokeStyle = '#4ecdc4';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(lastPoint.x, lastPoint.y);
-      ctx.lineTo(x, y);
-      ctx.stroke();
-    }
-    
-    const newPoint = { x, y };
-    setPoints(prev => [...prev, newPoint]);
-  }, [isDrawing, points]);
+    setPoints(prev => {
+      const lastPoint = prev[prev.length - 1];
+      if (lastPoint) {
+        // 直接绘制，不依赖外部函数
+        const ctx = canvas.getContext('2d');
+        ctx.strokeStyle = '#4ecdc4';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(lastPoint.x, lastPoint.y);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
+      
+      return [...prev, { x, y }];
+    });
+  }, [isDrawing]);
 
   const handleMouseUp = useCallback(() => {
     setIsDrawing(false);
-    // 绘制完成后立即触发回调
-    if (onPointsChange && points.length > 0) {
+  }, []);
+
+  // 新增：独立的函数来处理绘制完成后的数据通知
+  useEffect(() => {
+    if (!isDrawing && points.length > 0 && onPointsChange) {
+      // 只在停止绘制且有点数时触发回调
       onPointsChange(points);
     }
-  }, [onPointsChange, points]);
+  }, [isDrawing, points, onPointsChange]);
 
   const clearCanvas = useCallback(() => {
     const canvas = canvasRef.current;
