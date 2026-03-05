@@ -305,14 +305,14 @@ function ChessEditor() {
                 <input 
                   type="range" 
                   min="0" 
-                  max="20" 
+                  max="30" 
                   value={getSafeValue(shape.size1, 15)} 
                   onChange={(e) => handleDataUpdate('components.base.shape.size1', parseInt(e.target.value))}
                 />
                 <input 
                   type="number" 
                   min="0" 
-                  max="20" 
+                  max="30" 
                   value={getSafeValue(shape.size1, 15)} 
                   onChange={(e) => handleDataUpdate('components.base.shape.size1', parseInt(e.target.value))}
                   className="number-input"
@@ -324,14 +324,14 @@ function ChessEditor() {
                 <input 
                   type="range" 
                   min="0" 
-                  max="20" 
+                  max="30" 
                   value={getSafeValue(shape.size2, 15)} 
                   onChange={(e) => handleDataUpdate('components.base.shape.size2', parseInt(e.target.value))}
                 />
                 <input 
                   type="number" 
                   min="0" 
-                  max="20" 
+                  max="30" 
                   value={getSafeValue(shape.size2, 15)} 
                   onChange={(e) => handleDataUpdate('components.base.shape.size2', parseInt(e.target.value))}
                   className="number-input"
@@ -375,6 +375,7 @@ function ChessEditor() {
               value={getSafeValue(pattern.shape, 'text')} 
               onChange={(e) => handleDataUpdate('components.base.pattern.shape', e.target.value)}
             >
+              <option value="none">无</option>
               <option value="text">文字</option>
               <option value="geometry">几何图形</option>
               <option value="strange">奇异图形</option>
@@ -387,40 +388,66 @@ function ChessEditor() {
               <input 
                 type="text" 
                 value={getSafeValue(pattern.content, '')} 
-                onChange={(e) => handleDataUpdate('components.base.pattern.text', e.target.value)}
+                onChange={(e) => handleDataUpdate('components.base.pattern.content', e.target.value)}
               />
             </div>
           )}
           
           {getSafeValue(pattern.shape, 'text') === 'geometry' && (
-            <div className="editor-item">
-              <label>几何形状：</label>
-              <select 
-                value={getSafeValue(pattern.geometryType, 'square')} 
-                onChange={(e) => handleDataUpdate('components.base.pattern.geometryType', e.target.value)}
-              >
-                <option value="square">正方形</option>
-                <option value="circle">圆形</option>
-                <option value="strange">奇异形状</option>
-              </select>
-            </div>
+            <>
+              <div className="editor-item">
+                <label>几何形状：</label>
+                <select 
+                  value={getSafeValue(pattern.geometryType, 'square')} 
+                  onChange={(e) => handleDataUpdate('components.base.pattern.geometryType', e.target.value)}
+                >
+                  <option value="Cube">矩形</option>
+                  <option value="Circle">圆形</option>
+                  <option value="Polygon">多边形</option>
+                  <option value="strange">奇异形状</option>
+                </select>
+              </div>
+              
+              {getSafeValue(pattern.geometryType, 'Cube') === 'Polygon' && (
+                <div className="editor-item">
+                  <label>边数：</label>
+                  <input 
+                    type="range" 
+                    min="3" 
+                    max="12" 
+                    value={getSafeValue(pattern.sides, 6)} 
+                    onChange={(e) => handleDataUpdate('components.base.pattern.sides', parseInt(e.target.value))}
+                  />
+                  <input 
+                    type="number" 
+                    min="3" 
+                    max="12" 
+                    value={getSafeValue(pattern.sides, 6)} 
+                    onChange={(e) => handleDataUpdate('components.base.pattern.sides', parseInt(e.target.value))}
+                    className="number-input"
+                  />
+                </div>
+              )}
+            </>
           )}
           
           <div className="editor-item">
             <label>尺寸：</label>
             <input 
               type="range" 
-              min="1" 
-              max="30" 
+              min="0" 
+              max="16" 
+              step="0.1"
               value={getSafeValue(pattern.size, 10)} 
-              onChange={(e) => handleDataUpdate('components.base.pattern.size', parseInt(e.target.value))}
+              onChange={(e) => handleDataUpdate('components.base.pattern.size', parseFloat(e.target.value))}
             />
             <input 
               type="number" 
-              min="1" 
-              max="30" 
+              min="0" 
+              max="16" 
+              step="0.1"
               value={getSafeValue(pattern.size, 10)} 
-              onChange={(e) => handleDataUpdate('components.base.pattern.size', parseInt(e.target.value))}
+              onChange={(e) => handleDataUpdate('components.base.pattern.size', parseFloat(e.target.value))}
               className="number-input"
             />
           </div>
@@ -690,14 +717,14 @@ function ChessEditor() {
                 <input 
                   type="range" 
                   min="0" 
-                  max="20" 
+                  max="30" 
                   value={getSafeValue(shape.size1, 10)} 
                   onChange={(e) => handleDataUpdate('components.column.shape.size1', parseInt(e.target.value))}
                 />
                 <input 
                   type="number" 
                   min="0" 
-                  max="20" 
+                  max="30" 
                   value={getSafeValue(shape.size1, 10)} 
                   onChange={(e) => handleDataUpdate('components.column.shape.size1', parseInt(e.target.value))}
                   className="number-input"
@@ -709,14 +736,14 @@ function ChessEditor() {
                 <input 
                   type="range" 
                   min="0" 
-                  max="20" 
+                  max="30" 
                   value={getSafeValue(shape.size2, 10)} 
                   onChange={(e) => handleDataUpdate('components.column.shape.size2', parseInt(e.target.value))}
                 />
                 <input 
                   type="number" 
                   min="0" 
-                  max="20" 
+                  max="30" 
                   value={getSafeValue(shape.size2, 10)} 
                   onChange={(e) => handleDataUpdate('components.column.shape.size2', parseInt(e.target.value))}
                   className="number-input"
@@ -834,7 +861,7 @@ function ChessEditor() {
           <div className="editor-item">
             <label>形状：</label>
             <select 
-              value={getSafeValue(pattern.shape, 'geometry')} 
+              value={getSafeValue(pattern.shape, 'text')} 
               onChange={(e) => handleDataUpdate('components.column.pattern.shape', e.target.value)}
             >
               <option value="none">无</option>
@@ -844,21 +871,72 @@ function ChessEditor() {
             </select>
           </div>
           
+          {getSafeValue(pattern.shape, 'text') === 'text' && (
+            <div className="editor-item">
+              <label>文本内容：</label>
+              <input 
+                type="text" 
+                value={getSafeValue(pattern.content, '')} 
+                onChange={(e) => handleDataUpdate('components.column.pattern.content', e.target.value)}
+              />
+            </div>
+          )}
+          
+          {getSafeValue(pattern.shape, 'text') === 'geometry' && (
+            <>
+              <div className="editor-item">
+                <label>几何形状：</label>
+                <select 
+                  value={getSafeValue(pattern.geometryType, 'square')} 
+                  onChange={(e) => handleDataUpdate('components.column.pattern.geometryType', e.target.value)}
+                >
+                  <option value="Cube">矩形</option>
+                  <option value="Circle">圆形</option>
+                  <option value="Polygon">多边形</option>
+                  <option value="strange">奇异形状</option>
+                </select>
+              </div>
+              
+              {getSafeValue(pattern.geometryType, 'Cube') === 'Polygon' && (
+                <div className="editor-item">
+                  <label>边数：</label>
+                  <input 
+                    type="range" 
+                    min="3" 
+                    max="12" 
+                    value={getSafeValue(pattern.sides, 6)} 
+                    onChange={(e) => handleDataUpdate('components.column.pattern.sides', parseInt(e.target.value))}
+                  />
+                  <input 
+                    type="number" 
+                    min="3" 
+                    max="12" 
+                    value={getSafeValue(pattern.sides, 6)} 
+                    onChange={(e) => handleDataUpdate('components.column.pattern.sides', parseInt(e.target.value))}
+                    className="number-input"
+                  />
+                </div>
+              )}
+            </>
+          )}
+          
           <div className="editor-item">
             <label>尺寸：</label>
             <input 
               type="range" 
-              min="1" 
-              max="20" 
-              value={getSafeValue(pattern.size, 5)} 
-              onChange={(e) => handleDataUpdate('components.column.pattern.size', parseInt(e.target.value))}
+              min="0" 
+              max="16" 
+              step="0.1"
+              value={getSafeValue(pattern.size, 10)} 
+              onChange={(e) => handleDataUpdate('components.column.pattern.size', parseFloat(e.target.value))}
             />
             <input 
               type="number" 
-              min="1" 
-              max="20" 
-              value={getSafeValue(pattern.size, 5)} 
-              onChange={(e) => handleDataUpdate('components.column.pattern.size', parseInt(e.target.value))}
+              min="0" 
+              max="16" 
+              step="0.1"
+              value={getSafeValue(pattern.size, 10)} 
+              onChange={(e) => handleDataUpdate('components.column.pattern.size', parseFloat(e.target.value))}
               className="number-input"
             />
           </div>
@@ -868,17 +946,17 @@ function ChessEditor() {
             <input 
               type="range" 
               min="0" 
-              max="3" 
+              max="5" 
               step="0.1" 
-              value={getSafeValue(pattern.depth, 0.5)} 
+              value={getSafeValue(pattern.depth, 1)} 
               onChange={(e) => handleDataUpdate('components.column.pattern.depth', parseFloat(e.target.value))}
             />
             <input 
               type="number" 
               min="0" 
-              max="3" 
+              max="5" 
               step="0.1" 
-              value={getSafeValue(pattern.depth, 0.5)} 
+              value={getSafeValue(pattern.depth, 1)} 
               onChange={(e) => handleDataUpdate('components.column.pattern.depth', parseFloat(e.target.value))}
               className="number-input"
             />
@@ -891,15 +969,15 @@ function ChessEditor() {
               <label>X：</label>
               <input 
                 type="range" 
-                min="-15" 
-                max="15" 
+                min="-20" 
+                max="20" 
                 value={getSafeValue(pattern.position?.x, 0)} 
                 onChange={(e) => handleDataUpdate('components.column.pattern.position.x', parseInt(e.target.value))}
               />
               <input 
                 type="number" 
-                min="-15" 
-                max="15" 
+                min="-20" 
+                max="20" 
                 value={getSafeValue(pattern.position?.x, 0)} 
                 onChange={(e) => handleDataUpdate('components.column.pattern.position.x', parseInt(e.target.value))}
                 className="number-input"
@@ -909,15 +987,15 @@ function ChessEditor() {
               <label>Z：</label>
               <input 
                 type="range" 
-                min="-15" 
-                max="15" 
+                min="-20" 
+                max="20" 
                 value={getSafeValue(pattern.position?.z, 0)} 
                 onChange={(e) => handleDataUpdate('components.column.pattern.position.z', parseInt(e.target.value))}
               />
               <input 
                 type="number" 
-                min="-15" 
-                max="15" 
+                min="-20" 
+                max="20" 
                 value={getSafeValue(pattern.position?.z, 0)} 
                 onChange={(e) => handleDataUpdate('components.column.pattern.position.z', parseInt(e.target.value))}
                 className="number-input"
@@ -1097,14 +1175,14 @@ function ChessEditor() {
             <input 
               type="range" 
               min="0" 
-              max="20" 
+              max="30" 
               value={getSafeValue(size.size1, 5)} 
               onChange={(e) => handleDataUpdate('components.decoration.size.size1', parseInt(e.target.value))}
             />
             <input 
               type="number" 
               min="0" 
-              max="20" 
+              max="30" 
               value={getSafeValue(size.size1, 5)} 
               onChange={(e) => handleDataUpdate('components.decoration.size.size1', parseInt(e.target.value))}
               className="number-input"
@@ -1116,14 +1194,14 @@ function ChessEditor() {
             <input 
               type="range" 
               min="0" 
-              max="20" 
+              max="30" 
               value={getSafeValue(size.size2, 5)} 
               onChange={(e) => handleDataUpdate('components.decoration.size.size2', parseInt(e.target.value))}
             />
             <input 
               type="number" 
               min="0" 
-              max="20" 
+              max="30" 
               value={getSafeValue(size.size2, 5)} 
               onChange={(e) => handleDataUpdate('components.decoration.size.size2', parseInt(e.target.value))}
               className="number-input"

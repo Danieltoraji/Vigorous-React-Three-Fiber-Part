@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Text, Text3D } from '@react-three/drei';
-import { AxesHelper } from 'three';
+import { AxesHelper, CylinderGeometry } from 'three';
 import { ModelPreview } from '../../../Components/CustomRevolutionGenerator/CustomRevolutionGenerator.jsx';
 function ModelRenderer({ chess }) {
    
@@ -139,6 +139,56 @@ function ModelRenderer({ chess }) {
                     </mesh>
                 );
                 break;
+            case 'geometry':
+                    switch(pattern.geometryType){
+                        case 'Circle':
+                            patternelement = (
+                                <mesh position={[pattern.position?.x || 0, position.y + height + pattern.depth/2, pattern.position?.z || 0]} castShadow receiveShadow>
+                                    <cylinderGeometry args={[pattern.size,pattern.size,pattern.depth,64]} />
+                                    <meshStandardMaterial 
+                                        color="#8B4513" 
+                                        metalness={material.metalness}
+                                        roughness={material.roughness}
+                                        clearcoat={material.clearcoat}
+                                        clearcoatRoughness={material.clearcoatRoughness}
+                                    />
+                                </mesh>
+                            )
+                            break;
+                        case 'Polygon':
+                            patternelement = (
+                                <mesh position={[pattern.position?.x || 0, position.y + height + pattern.depth/2, pattern.position?.z || 0]} castShadow receiveShadow>
+                                    <cylinderGeometry args={[pattern.size,pattern.size,pattern.depth,pattern.sides || 6]} />
+                                    <meshStandardMaterial 
+                                        color="#8B4513" 
+                                        metalness={material.metalness}
+                                        roughness={material.roughness}
+                                        clearcoat={material.clearcoat}
+                                        clearcoatRoughness={material.clearcoatRoughness}
+                                    />
+                                </mesh>
+                            )
+                            break;
+                        case 'Cube':
+                            patternelement = (
+                                <mesh position={[pattern.position?.x || 0, position.y + height + pattern.depth/2, pattern.position?.z || 0]} castShadow receiveShadow>
+                                    <boxGeometry args={[pattern.size,pattern.depth,pattern.size]} />
+                                    <meshStandardMaterial 
+                                        color="#8B4513" 
+                                        metalness={material.metalness}
+                                        roughness={material.roughness}
+                                        clearcoat={material.clearcoat}
+                                        clearcoatRoughness={material.clearcoatRoughness}
+                                    />
+                                </mesh>
+                            )
+                            break;
+                        default:
+                            patternelement = null;
+                            break;
+                    }
+                        
+                break;
             default:
                 patternelement = null;
                 break;
@@ -240,7 +290,10 @@ function ModelRenderer({ chess }) {
         }
             //浮雕部分
         let patternelement = null;
-        switch (pattern.shape){
+        switch (pattern.shape) {
+            case 'none':
+                patternelement = null;
+                break;
             case 'text':
                 patternelement = (
                     <mesh position={[pattern.position?.x || 0, position.y + height, pattern.position?.z || 0]} rotation={[-Math.PI/2,0,0]} castShadow receiveShadow>
@@ -263,9 +316,58 @@ function ModelRenderer({ chess }) {
                 );
                 break;
             case 'geometry':
-                patternelement = null;break;
-            case 'none':
-                patternelement = null;break;
+                    switch(pattern.geometryType){
+                        case 'Circle':
+                            patternelement = (
+                                <mesh position={[pattern.position?.x || 0, position.y + height + pattern.depth/2, pattern.position?.z || 0]} castShadow receiveShadow>
+                                    <cylinderGeometry args={[pattern.size,pattern.size,pattern.depth,64]} />
+                                    <meshStandardMaterial 
+                                        color="#CD853F" 
+                                        metalness={material.metalness}
+                                        roughness={material.roughness}
+                                        clearcoat={material.clearcoat}
+                                        clearcoatRoughness={material.clearcoatRoughness}
+                                    />
+                                </mesh>
+                            )
+                            break;
+                        case 'Polygon':
+                            patternelement = (
+                                <mesh position={[pattern.position?.x || 0, position.y + height + pattern.depth/2, pattern.position?.z || 0]} castShadow receiveShadow>
+                                    <cylinderGeometry args={[pattern.size,pattern.size,pattern.depth,pattern.sides || 6]} />
+                                    <meshStandardMaterial 
+                                        color="#CD853F" 
+                                        metalness={material.metalness}
+                                        roughness={material.roughness}
+                                        clearcoat={material.clearcoat}
+                                        clearcoatRoughness={material.clearcoatRoughness}
+                                    />
+                                </mesh>
+                            )
+                            break;
+                        case 'Cube':
+                            patternelement = (
+                                <mesh position={[pattern.position?.x || 0, position.y + height + pattern.depth/2, pattern.position?.z || 0]} castShadow receiveShadow>
+                                    <boxGeometry args={[pattern.size,pattern.depth,pattern.size]} />
+                                    <meshStandardMaterial 
+                                        color="#CD853F" 
+                                        metalness={material.metalness}
+                                        roughness={material.roughness}
+                                        clearcoat={material.clearcoat}
+                                        clearcoatRoughness={material.clearcoatRoughness}
+                                    />
+                                </mesh>
+                            )
+                            break;
+                        default:
+                            patternelement = null;
+                            break;
+                    }
+                        
+                break;
+            default:
+                patternelement = null;
+                break;
         }
         return (
             <group>

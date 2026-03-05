@@ -28,6 +28,8 @@ export function ChessProvider({ children }) {
           "pattern": {
             "shape": "text",
             "content": "THU",
+            "geometryType": "Circle",
+            "sides": 6,
             "position": { "x": 0, "z": 0 },
             "size": 10,
             "depth": 1
@@ -46,7 +48,9 @@ export function ChessProvider({ children }) {
           "sideTreatment": "none",
           "pattern": {
             "shape": "geometry",
-            "content":"Circle",
+            "sides": 6,
+            "content":"THUEE1",
+            "geometryType": "Circle",
             "position": { "x": 0, "z": 0 },
             "size": 5,
             "depth": 0.5
@@ -81,6 +85,9 @@ export function ChessProvider({ children }) {
           "material": null,
           "pattern": {
             "shape": "geometry",
+            "content":"123",
+            "geometryType": "Cube",
+            "sides": 6,
             "position": { "x": 2, "z": 2 },
             "size": 8,
             "depth": 1.5
@@ -98,7 +105,10 @@ export function ChessProvider({ children }) {
           "position": { "x": 0, "y": 2, "z": 0 },
           "sideTreatment": "groove",
           "pattern": {
-            "shape": "strange",
+            "shape": "geometry",
+            "content":"HENGYOUJINSHEN",
+            "geometryType": "Polygon",
+            "sides": 6,
             "position": { "x": 1, "z": 1 },
             "size": 6,
             "depth": 0.8
@@ -134,6 +144,9 @@ export function ChessProvider({ children }) {
           "material": null,
           "pattern": {
             "shape": "text",
+            "content":"C123456",
+            "geometryType": "Circle",
+            "sides": 6,
             "position": { "x": -2, "z": -2 },
             "size": 12,
             "depth": 0.8
@@ -152,6 +165,9 @@ export function ChessProvider({ children }) {
           "sideTreatment": "none",
           "pattern": {
             "shape": "geometry",
+            "sides": 6,
+            "content":"THU",
+            "geometryType": "Circle",
             "position": { "x": -1, "z": -1 },
             "size": 7,
             "depth": 1.2
