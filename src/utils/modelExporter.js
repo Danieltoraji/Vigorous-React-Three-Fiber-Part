@@ -72,6 +72,7 @@ function createSweepGeometry(profilePoints, pathPoints) {
 
     // 创建扫掠几何体的顶点
     const vertices = [];
+    const uvs = [];
     const profileSteps = profile3D.length;
     const pathSteps = path3D.length;
 
@@ -89,6 +90,11 @@ function createSweepGeometry(profilePoints, pathPoints) {
         const Z = factor * profilePoint.m * pathPoint.z;
 
         vertices.push(new Vector3(X, Y, Z));
+        
+        // 添加 UV 坐标
+        const u = j / (profileSteps - 1);
+        const v = i / (pathSteps - 1);
+        uvs.push(u, v);
       }
     }
 
@@ -117,6 +123,7 @@ function createSweepGeometry(profilePoints, pathPoints) {
 
     const geometry = new BufferGeometry();
     geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
     geometry.setIndex(indices);
     geometry.computeVertexNormals();
 
@@ -190,17 +197,14 @@ function createMaterial(materialData) {
   const { 
     color = '#ffffff', 
     metalness = 0.3, 
-    roughness = 0.4, 
-    clearcoat = 0, 
-    clearcoatRoughness = 0 
+    roughness = 0.4 
   } = materialData || {};
 
+  // 只使用 MeshStandardMaterial 支持的属性
   return new MeshStandardMaterial({
     color,
     metalness,
-    roughness,
-    clearcoat,
-    clearcoatRoughness
+    roughness
   });
 }
 
@@ -216,22 +220,53 @@ export async function exportChessModel(chessData, format = 'stl') {
       throw new Error('无效的棋子数据');
     }
 
-    const geometries = [];
+    // 调试输出：查看实际数据结构
+    console.log('导出棋子数据:', chessData);
+    console.log('部件数据:', chessData.parts);
+
     const meshes = [];
     
-    // 处理所有组件（base, column, decoration）
+    // 支持两种数据结构：新的字符串键名 (base/column/decoration) 和旧的数字键名 (1/2/3)
+    let partsToProcess = {};
+    
+    // 检查是否使用新的数据结构 (base/column/decoration)
+    if (chessData.parts.base || chessData.parts.column || chessData.parts.decoration) {
+      partsToProcess = {
+        base: chessData.parts.base,
+        column: chessData.parts.column,
+        decoration: chessData.parts.decoration
+      };
+      console.log('使用新数据结构：base/column/decoration');
+    } 
+    // 检查是否使用旧的数据结构 (1/2/3/4)
+    else if (chessData.parts['1'] || chessData.parts['2']) {
+      partsToProcess = {
+        base: chessData.parts['1'],
+        column: chessData.parts['2'],
+        decoration: chessData.parts['3']
+      };
+      console.log('使用旧数据结构：1/2/3');
+    } else {
+      // 尝试直接遍历所有 parts
+      partsToProcess = chessData.parts;
+      console.log('使用通用模式：遍历所有 parts');
+    }
+    
+    // 处理所有组件
     const components = ['base', 'column', 'decoration'];
     
     for (const component of components) {
-      const partData = chessData.parts[component];
+      const partData = partsToProcess[component];
       
       if (!partData) {
+        console.log(`跳过组件 ${component}: 数据不存在`);
         continue;
       }
 
       // 检查组件是否可见
       const isVisible = partData.Appear !== 'False';
       if (!isVisible) {
+        console.log(`跳过组件 ${component}: 不可见`);
         continue;
       }
 
@@ -242,7 +277,7 @@ export async function exportChessModel(chessData, format = 'stl') {
       if (component === 'decoration') {
         // 装饰物：简单的球体或其他预设形状
         if (partData.modelId) {
-          // 使用默认装饰模型（球体）
+          // 使用默认装饰模型（圆柱）
           geometry = new CylinderGeometry(2, 2, 2, 32);
         }
         
@@ -260,6 +295,7 @@ export async function exportChessModel(chessData, format = 'stl') {
         const shape = partData.shape;
         
         if (!shape) {
+          console.log(`跳过组件 ${component}: 缺少形状数据`);
           continue;
         }
 
@@ -270,14 +306,19 @@ export async function exportChessModel(chessData, format = 'stl') {
           // 优先尝试扫掠几何（有路径曲线）
           if (customShape.pathPoints && customShape.pathPoints.length >= 3) {
             geometry = createSweepGeometry(customShape.profilePoints, customShape.pathPoints);
+            console.log(`组件 ${component}: 生成扫掠体`);
           } 
           // 否则使用旋转体
           else if (customShape.profilePoints && customShape.profilePoints.length >= 3) {
             geometry = createLatheGeometry(customShape.profilePoints);
+            console.log(`组件 ${component}: 生成旋转体`);
+          } else {
+            console.log(`组件 ${component}: 异形点数不足，跳过`);
           }
         } else {
           // 标准几何体
           geometry = createPrimitiveGeometry(shape);
+          console.log(`组件 ${component}: 生成标准几何体 ${shape.type}`);
         }
 
         // 应用位置变换
@@ -292,6 +333,7 @@ export async function exportChessModel(chessData, format = 'stl') {
       }
 
       if (!geometry) {
+        console.log(`跳过组件 ${component}: 几何体生成失败`);
         continue;
       }
 
@@ -299,15 +341,45 @@ export async function exportChessModel(chessData, format = 'stl') {
       const material = createMaterial(materialData);
       const mesh = new Mesh(geometry, material);
       meshes.push(mesh);
+      console.log(`成功添加组件 ${component} 到导出列表`);
     }
 
     if (meshes.length === 0) {
-      throw new Error('没有可导出的几何体');
+      console.error('没有可导出的几何体，部件数据:', partsToProcess);
+      throw new Error('没有可导出的几何体，请检查模型是否包含可见的组件');
     }
 
     // 方案 1：合并所有几何体为单一网格（推荐用于 STL）
-    const allGeometries = meshes.map(mesh => mesh.geometry);
-    const mergedGeometry = mergeGeometries(allGeometries);
+    const allGeometries = meshes.map((mesh, index) => {
+      const geom = mesh.geometry.clone();
+      
+      // 确保所有几何体都有 UV 属性（如果没有则添加默认 UV）
+      if (!geom.attributes.uv) {
+        const vertexCount = geom.attributes.position.count;
+        const defaultUVs = new Float32BufferAttribute(vertexCount * 2, 2);
+        for (let i = 0; i < vertexCount; i++) {
+          defaultUVs.setXY(i, 0, 0);
+        }
+        geom.setAttribute('uv', defaultUVs);
+        console.log(`为几何体 ${index} 添加默认 UV`);
+      }
+      
+      // 清理可能导致错误的 morphAttributes
+      if (!geom.morphAttributes) {
+        geom.morphAttributes = {};
+      }
+      
+      return geom;
+    });
+    
+    let mergedGeometry;
+    try {
+      mergedGeometry = mergeGeometries(allGeometries);
+      console.log('几何体合并成功');
+    } catch (mergeError) {
+      console.error('几何体合并失败:', mergeError);
+      throw new Error('几何体合并失败：' + mergeError.message);
+    }
     
     // 使用第一个网格的材质作为统一材质
     const unifiedMaterial = meshes[0].material;
@@ -334,6 +406,7 @@ export async function exportChessModel(chessData, format = 'stl') {
       throw new Error(`不支持的导出格式：${format}`);
     }
 
+    console.log(`导出成功！格式：${format}, 网格数量：${meshes.length}`);
     return blob;
   } catch (error) {
     console.error('导出失败:', error);
