@@ -1,24 +1,129 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { CatmullRomCurve3, Vector3, LatheGeometry, TubeGeometry, Shape, ExtrudeGeometry, Vector2, Float32BufferAttribute } from 'three';
+import { CatmullRomCurve3, Vector3, LatheGeometry, TubeGeometry, Shape, ExtrudeGeometry, Vector2, Float32BufferAttribute, QuadraticBezierCurve3, CubicBezierCurve3 } from 'three';
 import * as THREE from 'three';
 
-// 简化的 2D 画布组件
+// 简化的 2D 画布组件 - 支持三种绘制模式
 const SimpleCanvas = ({
   title,
   onPointsChange,
   equationPlaceholder,
   className = "",
-  initialPoints = [] // 新增：接收初始点数据
+  initialPoints = [], // 接收初始点数据
+  enableBezier = true // 是否启用贝塞尔曲线模式
 }) => {
   const canvasRef = useRef(null);
-  const [points, setPoints] = useState(initialPoints); // 使用传入的初始值
-  const [isDrawing, setIsDrawing] = useState(false);
   const [equation, setEquation] = useState('');
-  const isFirstRender = useRef(true); // 记录是否首次渲染
+  
+  // 三种模式的状态完全独立
+  const [drawMode, setDrawMode] = useState('point'); // 'point'（点绘）, 'bezier'（贝塞尔控制点）, 'free'（自由绘制）
+  const [clickPoints, setClickPoints] = useState([]); // 点绘模式的点击点
+  // 贝塞尔模式：使用锚点和手柄结构
+  const [bezierAnchors, setBezierAnchors] = useState([]); // [{x, y, cp1: {x, y}, cp2: {x, y}}]
+  const [selectedAnchorIndex, setSelectedAnchorIndex] = useState(-1);
+  const [freehandPoints, setFreehandPoints] = useState([]); // 自由绘制的连续点
+  
+  // 拖动状态（只记录当前正在拖动的元素）
+  const [dragState, setDragState] = useState({
+    isDragging: false,
+    targetType: null, // 'anchor' | 'handle' | 'freehand' | 'point'
+    targetIndex: -1,
+    handleType: null // 'cp1' | 'cp2'
+  });
+  
+  // 悬停状态检测
+  const [hoveredElement, setHoveredElement] = useState(null); // {type: 'anchor'|'handle', index: number, handleType: 'cp1'|'cp2'}
+  
+  // 检查指定坐标是否悬停在可交互元素上
+  const checkHover = useCallback((x, y) => {
+    if (drawMode !== 'bezier' || !enableBezier) {
+      setHoveredElement(null);
+      return;
+    }
+    
+    let hoverFound = null;
+    
+    // 检查是否悬停在手柄控制点上
+    for (let i = 0; i < bezierAnchors.length; i++) {
+      const anchor = bezierAnchors[i];
+      
+      // 检查左手柄 cp1
+      if (anchor.cp1) {
+        const dist1 = Math.sqrt((x - anchor.cp1.x) ** 2 + (y - anchor.cp1.y) ** 2);
+        if (dist1 < 8) {
+          hoverFound = { type: 'handle', index: i, handleType: 'cp1' };
+          break;
+        }
+      }
+      
+      // 检查右手柄 cp2
+      if (anchor.cp2) {
+        const dist2 = Math.sqrt((x - anchor.cp2.x) ** 2 + (y - anchor.cp2.y) ** 2);
+        if (dist2 < 8) {
+          hoverFound = { type: 'handle', index: i, handleType: 'cp2' };
+          break;
+        }
+      }
+      
+      // 检查锚点本身
+      const distAnchor = Math.sqrt((x - anchor.x) ** 2 + (y - anchor.y) ** 2);
+      if (distAnchor < 8) {
+        hoverFound = { type: 'anchor', index: i };
+        break;
+      }
+    }
+    
+    setHoveredElement(hoverFound);
+  }, [drawMode, enableBezier, bezierAnchors]);
+  
+  // 鼠标在画布上移动（不按按钮）- 用于悬停检测
+  const handleMouseHover = useCallback((e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-  // 当外部 initialPoints 变化时，同步更新内部状态并重新绘制
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+
+    // 存储鼠标位置供其他函数使用
+    document.pointer = { x, y };
+    
+    checkHover(x, y);
+  }, [checkHover]);
+
+  // 鼠标离开画布
+  const handleMouseLeave = useCallback(() => {
+    // 如果在拖动中，保持拖动状态（用户可能拖到画布外）
+    // 如果不在拖动中，清除悬停状态
+    if (!dragState.isDragging) {
+      setHoveredElement(null);
+    }
+  }, [dragState.isDragging]);
+  
+  // 初始化时加载 external points
+  useEffect(() => {
+    if (initialPoints && initialPoints.length > 0) {
+      if (drawMode === 'bezier') {
+        // 将旧格式的控制点转换为锚点格式
+        const anchors = initialPoints.map((pt, idx) => ({
+          x: pt.x,
+          y: pt.y,
+          cp1: { x: pt.x - 20, y: pt.y }, // 默认向左的手柄
+          cp2: { x: pt.x + 20, y: pt.y }  // 默认向右的手柄
+        }));
+        setBezierAnchors(anchors);
+      } else if (drawMode === 'free') {
+        setFreehandPoints(initialPoints);
+      } else {
+        setClickPoints(initialPoints);
+      }
+    }
+  }, []);
+
+  // 当模式切换或 initialPoints 变化时，重新绘制
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -26,17 +131,17 @@ const SimpleCanvas = ({
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (initialPoints && initialPoints.length > 0) {
-      setPoints(initialPoints);
-      // 重新绘制已有的点
-      initialPoints.forEach((point, index) => {
+    // 根据当前模式绘制对应的图形
+    if (drawMode === 'point' && clickPoints.length > 0) {
+      // 点绘模式：绘制折线
+      clickPoints.forEach((point, index) => {
         ctx.fillStyle = '#ff6b6b';
         ctx.beginPath();
         ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
         ctx.fill();
 
         if (index > 0) {
-          const prevPoint = initialPoints[index - 1];
+          const prevPoint = clickPoints[index - 1];
           ctx.strokeStyle = '#4ecdc4';
           ctx.lineWidth = 2;
           ctx.beginPath();
@@ -45,10 +150,35 @@ const SimpleCanvas = ({
           ctx.stroke();
         }
       });
-    } else {
-      setPoints([]);
+      
+      // 实时预览连线（如果正在拖动点）
+      if (dragState.isDragging && dragState.targetType === 'point' && clickPoints.length > 0) {
+        const lastPoint = clickPoints[clickPoints.length - 1];
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (document.pointer || {}).x;
+        const mouseY = (document.pointer || {}).y;
+        
+        if (mouseX !== undefined && mouseY !== undefined) {
+          ctx.strokeStyle = '#4ecdc4';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(lastPoint.x, lastPoint.y);
+          ctx.lineTo(mouseX, mouseY);
+          ctx.stroke();
+        }
+      }
+    } 
+    else if (drawMode === 'bezier' && bezierAnchors.length >= 2) {
+      // 贝塞尔模式：绘制锚点、手柄和三次贝塞尔曲线
+      drawBezierWithHandles(ctx, bezierAnchors);
     }
-  }, [initialPoints]);
+    else if (drawMode === 'free' && freehandPoints.length > 0) {
+      // 自由绘制模式：绘制平滑的手绘曲线
+      drawFreehandCurve(ctx, freehandPoints);
+    }
+  }, [drawMode, clickPoints, bezierAnchors, freehandPoints]);
 
   const drawPoint = useCallback((x, y) => {
     const canvas = canvasRef.current;
@@ -74,68 +204,485 @@ const SimpleCanvas = ({
     ctx.stroke();
   }, []);
 
+  // 绘制自由手绘曲线（使用 Catmull-Rom 样条插值实现平滑）
+  const drawFreehandCurve = useCallback((ctx, pts) => {
+    if (pts.length < 2) return;
+
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    // 使用 Catmull-Rom 样条插值使曲线更平滑
+    const smoothPoints = [];
+    const tension = 0.5; // 张力系数，控制曲线平滑度
+
+    for (let i = 0; i < pts.length; i++) {
+      smoothPoints.push({ ...pts[i] });
+      
+      // 在相邻点之间插入中间点
+      if (i > 0 && i < pts.length - 1) {
+        const p0 = pts[i - 1];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        
+        // 计算切线
+        const t1x = (p2.x - p0.x) * tension;
+        const t1y = (p2.y - p0.y) * tension;
+        
+        // 插入 3 个中间点
+        for (let j = 1; j <= 3; j++) {
+          const t = j / 4;
+          const x = p1.x + t * t1x;
+          const y = p1.y + t * t1y;
+          smoothPoints.push({ x, y });
+        }
+      }
+    }
+
+    // 绘制平滑曲线
+    ctx.strokeStyle = '#4ecdc4';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (smoothPoints.length > 0) {
+      ctx.moveTo(smoothPoints[0].x, smoothPoints[0].y);
+      
+      // 使用二次贝塞尔曲线连接所有点
+      for (let i = 1; i < smoothPoints.length - 1; i++) {
+        const xc = (smoothPoints[i].x + smoothPoints[i + 1].x) / 2;
+        const yc = (smoothPoints[i].y + smoothPoints[i + 1].y) / 2;
+        ctx.quadraticCurveTo(smoothPoints[i].x, smoothPoints[i].y, xc, yc);
+      }
+      
+      // 连接最后一个点
+      if (smoothPoints.length > 1) {
+        ctx.lineTo(smoothPoints[smoothPoints.length - 1].x, smoothPoints[smoothPoints.length - 1].y);
+      }
+    }
+    ctx.stroke();
+
+    // 绘制起点和终点标记
+    if (pts.length > 0) {
+      ctx.fillStyle = '#ff6b6b';
+      ctx.beginPath();
+      ctx.arc(pts[0].x, pts[0].y, 4, 0, Math.PI * 2);
+      ctx.fill();
+      
+      if (pts.length > 1) {
+        ctx.fillStyle = '#ffd93d';
+        ctx.beginPath();
+        ctx.arc(pts[pts.length - 1].x, pts[pts.length - 1].y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    return smoothPoints;
+  }, []);
+
+  // 绘制带手柄的三次贝塞尔曲线（Photoshop 风格）
+  const drawBezierWithHandles = useCallback((ctx, anchors) => {
+    if (anchors.length < 2) return;
+
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    // 设置画布光标样式 - 根据拖动状态和悬停状态
+    const canvas = canvasRef.current;
+    if (canvas) {
+      if (dragState.isDragging) {
+        // 正在拖动中：保持当前拖动类型的光标
+        if (dragState.targetType === 'handle') {
+          canvas.style.cursor = 'crosshair'; // 拖动手柄：十字光标
+        } else if (dragState.targetType === 'anchor') {
+          canvas.style.cursor = 'move'; // 拖动锚点：移动光标
+        } else {
+          canvas.style.cursor = 'default';
+        }
+      } else {
+        // 未拖动：根据悬停元素显示光标
+        if (hoveredElement?.type === 'handle') {
+          canvas.style.cursor = 'crosshair'; // 悬停在手柄：十字光标
+        } else if (hoveredElement?.type === 'anchor') {
+          canvas.style.cursor = 'move'; // 悬停在锚点：移动光标
+        } else {
+          canvas.style.cursor = 'default'; // 空白区域：默认箭头
+        }
+      }
+    }
+
+    // 1. 绘制控制手柄和锚点连线
+    anchors.forEach((anchor, idx) => {
+      // 绘制手柄线（虚线）
+      ctx.strokeStyle = 'rgba(255, 107, 107, 0.4)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      
+      // 左手柄
+      if (anchor.cp1) {
+        ctx.beginPath();
+        ctx.moveTo(anchor.x, anchor.y);
+        ctx.lineTo(anchor.cp1.x, anchor.cp1.y);
+        ctx.stroke();
+        
+        // 手柄控制点
+        ctx.fillStyle = 'rgba(255, 107, 107, 0.6)';
+        ctx.beginPath();
+        ctx.arc(anchor.cp1.x, anchor.cp1.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // 右手柄
+      if (anchor.cp2) {
+        ctx.beginPath();
+        ctx.moveTo(anchor.x, anchor.y);
+        ctx.lineTo(anchor.cp2.x, anchor.cp2.y);
+        ctx.stroke();
+        
+        // 手柄控制点
+        ctx.fillStyle = 'rgba(255, 107, 107, 0.6)';
+        ctx.beginPath();
+        ctx.arc(anchor.cp2.x, anchor.cp2.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      ctx.setLineDash([]);
+    });
+
+    // 2. 绘制三次贝塞尔曲线路径
+    ctx.strokeStyle = '#4ecdc4';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(anchors[0].x, anchors[0].y);
+
+    for (let i = 0; i < anchors.length - 1; i++) {
+      const p0 = anchors[i];
+      const p1 = anchors[i + 1];
+      
+      // 使用三次贝塞尔曲线连接两个锚点
+      // cp2 是起点的出方向，cp1 是终点的入方向
+      ctx.bezierCurveTo(
+        p0.cp2.x, p0.cp2.y,  // 起点控制点（右手柄）
+        p1.cp1.x, p1.cp1.y,  // 终点控制点（左手柄）
+        p1.x, p1.y           // 终点
+      );
+    }
+    ctx.stroke();
+
+    // 3. 绘制锚点（实心圆）
+    anchors.forEach((anchor, idx) => {
+      ctx.fillStyle = idx === selectedAnchorIndex ? '#ffd93d' : '#ff6b6b';
+      ctx.beginPath();
+      ctx.arc(anchor.x, anchor.y, 5, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // 绘制锚点编号
+      ctx.fillStyle = '#fff';
+      ctx.font = '10px Arial';
+      ctx.fillText((idx + 1).toString(), anchor.x + 8, anchor.y - 8);
+    });
+
+    // 4. 显示当前点数提示
+    if (anchors.length >= 2) {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.font = '12px Arial';
+      ctx.fillText(`锚点：${anchors.length}`, 10, 20);
+    }
+  }, [selectedAnchorIndex]);
+
   const handleMouseDown = useCallback((e) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    // 计算缩放比例
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-
     const x = (e.clientX - rect.left) * scaleX;
     const y = (e.clientY - rect.top) * scaleY;
 
-    setIsDrawing(true);
-    const newPoint = { x, y };
-    setPoints([newPoint]);
+    if (drawMode === 'free' && enableBezier) {
+      // 自由绘制模式：开始连续绘制
+      setDragState({
+        isDragging: true,
+        targetType: 'freehand',
+        targetIndex: -1,
+        handleType: null
+      });
+      const newPoint = { x, y };
+      setFreehandPoints([newPoint]);
+      
+      // 绘制起点
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ff6b6b';
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+      
+    } else if (drawMode === 'bezier' && enableBezier) {
+      // 贝塞尔模式：根据悬停元素决定拖动类型
+      if (hoveredElement?.type === 'handle') {
+        // 情况 1: 鼠标在手柄上 - 拖动手柄
+        setDragState({
+          isDragging: true,
+          targetType: 'handle',
+          targetIndex: hoveredElement.index,
+          handleType: hoveredElement.handleType
+        });
+        
+      } else if (hoveredElement?.type === 'anchor') {
+        // 情况 2: 鼠标在锚点上 - 拖动锚点
+        setDragState({
+          isDragging: true,
+          targetType: 'anchor',
+          targetIndex: hoveredElement.index,
+          handleType: null
+        });
+        
+      } else {
+        // 情况 3: 鼠标在空白处 - 添加新锚点
+        const defaultHandleLength = 30;
+        
+        let cp1Offset = { x: -defaultHandleLength, y: 0 };
+        let cp2Offset = { x: defaultHandleLength, y: 0 };
+        
+        if (bezierAnchors.length > 0) {
+          const prevAnchor = bezierAnchors[bezierAnchors.length - 1];
+          const dx = x - prevAnchor.x;
+          const dy = y - prevAnchor.y;
+          const len = Math.sqrt(dx * dx + dy * dy);
+          
+          if (len > 0) {
+            const ux = dx / len;
+            const uy = dy / len;
+            
+            cp1Offset = { x: -ux * defaultHandleLength, y: -uy * defaultHandleLength };
+            cp2Offset = { x: ux * defaultHandleLength, y: uy * defaultHandleLength };
+          }
+        }
+        
+        const newAnchor = {
+          x,
+          y,
+          cp1: { x: x + cp1Offset.x, y: y + cp1Offset.y },
+          cp2: { x: x + cp2Offset.x, y: y + cp2Offset.y }
+        };
+        
+        const newAnchors = [...bezierAnchors, newAnchor];
+        setBezierAnchors(newAnchors);
+        
+        // 立即重绘
+        const ctx = canvas.getContext('2d');
+        drawBezierWithHandles(ctx, newAnchors);
+      }
+      
+    } else {
+      // 点绘模式：添加独立的点
+      setDragState({
+        isDragging: true,
+        targetType: 'point',
+        targetIndex: -1,
+        handleType: null
+      });
+      const newPoint = { x, y };
+      setClickPoints(prev => [...prev, newPoint]);
 
-    // 直接绘制，不依赖外部函数
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ff6b6b';
-    ctx.beginPath();
-    ctx.arc(x, y, 3, 0, Math.PI * 2);
-    ctx.fill();
-  }, []);
+      // 绘制点
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ff6b6b';
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }, [drawMode, enableBezier, bezierAnchors, hoveredElement, drawBezierWithHandles]);
 
   const handleMouseMove = useCallback((e) => {
-    if (!isDrawing) return;
+    if (!dragState.isDragging) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    // 计算缩放比例
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-
     const x = (e.clientX - rect.left) * scaleX;
     const y = (e.clientY - rect.top) * scaleY;
 
-    const lastPoint = points[points.length - 1];
-    if (lastPoint) {
-      // 直接绘制，不依赖外部函数
-      const ctx = canvas.getContext('2d');
-      ctx.strokeStyle = '#4ecdc4';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(lastPoint.x, lastPoint.y);
-      ctx.lineTo(x, y);
-      ctx.stroke();
+    if (drawMode === 'free' && enableBezier) {
+      // 自由绘制模式：连续添加点并实时绘制平滑曲线
+      setFreehandPoints(prev => {
+        const updated = [...prev, { x, y }];
+        const ctx = canvas.getContext('2d');
+        drawFreehandCurve(ctx, updated);
+        return updated;
+      });
+      
+    } else if (drawMode === 'bezier' && enableBezier) {
+      // 贝塞尔模式：根据拖动类型处理
+      if (dragState.targetType === 'handle') {
+        // 拖动手柄：只更新手柄位置
+        const newAnchors = [...bezierAnchors];
+        const anchorIndex = dragState.targetIndex;
+        const handleType = dragState.handleType;
+        
+        if (anchorIndex >= 0 && anchorIndex < newAnchors.length) {
+          // 更新对应手柄的位置
+          newAnchors[anchorIndex][handleType] = { x, y };
+          
+          setBezierAnchors(newAnchors);
+          
+          // 实时重绘
+          const ctx = canvas.getContext('2d');
+          drawBezierWithHandles(ctx, newAnchors);
+        }
+        
+      } else if (dragState.targetType === 'anchor') {
+        // 拖动锚点：移动锚点和两个手柄
+        const newAnchors = [...bezierAnchors];
+        const anchorIndex = dragState.targetIndex;
+        
+        if (anchorIndex >= 0 && anchorIndex < newAnchors.length) {
+          const anchor = newAnchors[anchorIndex];
+          const dx = x - anchor.x;
+          const dy = y - anchor.y;
+          
+          // 移动锚点
+          anchor.x = x;
+          anchor.y = y;
+          
+          // 同步移动两个手柄
+          if (anchor.cp1) {
+            anchor.cp1.x += dx;
+            anchor.cp1.y += dy;
+          }
+          if (anchor.cp2) {
+            anchor.cp2.x += dx;
+            anchor.cp2.y += dy;
+          }
+          
+          setBezierAnchors(newAnchors);
+          
+          // 实时重绘
+          const ctx = canvas.getContext('2d');
+          drawBezierWithHandles(ctx, newAnchors);
+        }
+        
+      }
+      
+    } else {
+      // 点绘模式：实时预览连线
+      const lastPoint = clickPoints[clickPoints.length - 1];
+      if (lastPoint) {
+        // 临时绘制 preview 线（不保存）
+        const ctx = canvas.getContext('2d');
+        ctx.strokeStyle = '#4ecdc4';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(lastPoint.x, lastPoint.y);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
     }
-
-    const newPoint = { x, y };
-    setPoints(prev => [...prev, newPoint]);
-  }, [isDrawing, points]);
+  }, [dragState, clickPoints, drawMode, enableBezier, bezierAnchors, drawBezierWithHandles, drawFreehandCurve]);
 
   const handleMouseUp = useCallback(() => {
-    setIsDrawing(false);
-    // 绘制完成后立即触发回调
-    if (onPointsChange && points.length > 0) {
-      console.log("绘制完成");
-      onPointsChange(points);
+    if (drawMode === 'free' && enableBezier) {
+      // 自由绘制模式：完成绘制，输出所有点
+      if (onPointsChange && freehandPoints.length > 1) {
+        console.log("自由绘制完成，共", freehandPoints.length, "个点");
+        onPointsChange(freehandPoints);
+      }
+      
+    } else if (drawMode === 'bezier' && enableBezier) {
+      // 贝塞尔模式：完成拖动，输出数据
+      if (dragState.isDragging && bezierAnchors.length >= 2) {
+        const curvePoints = generateBezierPointsFromAnchors(bezierAnchors);
+        
+        if (dragState.targetType === 'anchor' || dragState.targetType === 'handle') {
+          // 拖动锚点或手柄后输出
+          console.log("贝塞尔曲线编辑完成");
+          onPointsChange(curvePoints);
+        } else if (dragState.targetType === null && bezierAnchors.length > 0) {
+          // 添加新锚点后输出
+          console.log("贝塞尔曲线绘制完成，共", bezierAnchors.length, "个锚点");
+          onPointsChange(curvePoints);
+        }
+      }
+      
+    } else {
+      // 点绘模式：完成点的添加
+      if (onPointsChange && clickPoints.length > 0) {
+        console.log("点绘完成，共", clickPoints.length, "个点");
+        onPointsChange(clickPoints);
+      }
     }
-  }, [onPointsChange, points]);
+    
+    // 重置拖动状态
+    setDragState({
+      isDragging: false,
+      targetType: null,
+      targetIndex: -1,
+      handleType: null
+    });
+  }, [onPointsChange, drawMode, enableBezier, clickPoints, bezierAnchors, dragState, freehandPoints]);
+
+  // 从贝塞尔锚点生成密集点阵（用于 3D 生成）
+  const generateBezierPointsFromAnchors = useCallback((anchors) => {
+    if (anchors.length < 2) return [];
+    
+    const curvePoints = [];
+    const segmentsPerSpan = 50; // 每两个锚点之间的分段数
+    
+    for (let i = 0; i < anchors.length - 1; i++) {
+      const p0 = anchors[i];
+      const p1 = anchors[i + 1];
+      
+      // 对每一段三次贝塞尔曲线进行采样
+      for (let t = 0; t <= segmentsPerSpan; t++) {
+        const ratio = t / segmentsPerSpan;
+        
+        // 三次贝塞尔曲线公式
+        const invRatio = 1 - ratio;
+        
+        // B(t) = (1-t)³·P0 + 3(1-t)²·t·CP0 + 3(1-t)·t²·CP1 + t³·P1
+        const x = Math.pow(invRatio, 3) * p0.x +
+                  3 * Math.pow(invRatio, 2) * ratio * p0.cp2.x +
+                  3 * invRatio * Math.pow(ratio, 2) * p1.cp1.x +
+                  Math.pow(ratio, 3) * p1.x;
+        
+        const y = Math.pow(invRatio, 3) * p0.y +
+                  3 * Math.pow(invRatio, 2) * ratio * p0.cp2.y +
+                  3 * invRatio * Math.pow(ratio, 2) * p1.cp1.y +
+                  Math.pow(ratio, 3) * p1.y;
+        
+        curvePoints.push({ x, y });
+      }
+    }
+    
+    // 添加最后一个锚点
+    curvePoints.push({ 
+      x: anchors[anchors.length - 1].x, 
+      y: anchors[anchors.length - 1].y 
+    });
+    
+    return curvePoints;
+  }, []);
+
+  // 从控制点生成贝塞尔曲线点（旧版兼容）
+  const generateBezierPoints = useCallback((cps) => {
+    if (cps.length < 2) return [];
+    
+    const curvePoints = [];
+    const segments = 50;
+    
+    for (let i = 0; i < cps.length - 1; i++) {
+      const p0 = cps[i];
+      const p1 = cps[i + 1];
+      
+      // 使用三次贝塞尔曲线
+      for (let t = 0; t <= segments; t++) {
+        const x = (1 - t) * (1 - t) * (1 - t) * p0.x + 3 * (1 - t) * (1 - t) * t * p0.cp2.x + 3 * (1 - t) * t * t * p1.cp1.x + t * t * t * p1.x;
+        const y = (1 - t) * (1 - t) * (1 - t) * p0.y + 3 * (1 - t) * (1 - t) * t * p0.cp2.y + 3 * (1 - t) * t * t * p1.cp1.y + t * t * t * p1.y;
+        curvePoints.push({ x, y });
+      }
+    }
+    
+    return curvePoints;
+  }, []);
 
   const clearCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -143,13 +690,33 @@ const SimpleCanvas = ({
 
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    setPoints([]);
+    
+    // 清空所有模式的点
+    setClickPoints([]);
+    setBezierAnchors([]);
+    setFreehandPoints([]);
+    setSelectedAnchorIndex(-1);
+    setDragState({
+      isDragging: false,
+      targetType: null,
+      targetIndex: -1,
+      handleType: null
+    });
     setEquation('');
 
     if (onPointsChange) {
       onPointsChange([]);
     }
   }, [onPointsChange]);
+
+  const toggleDrawMode = useCallback(() => {
+    // 三种模式循环切换：point -> bezier -> free -> point
+    setDrawMode(prev => {
+      if (prev === 'point') return 'bezier';
+      if (prev === 'bezier') return 'free';
+      return 'point';
+    });
+  }, []);
 
   const generateFromEquation = useCallback(() => {
     if (!equation.trim()) return;
@@ -199,8 +766,30 @@ const SimpleCanvas = ({
     <div className={`simple-canvas-container ${className}`}>
       <div className="canvas-header">
         <h4>{title}</h4>
-        <button className="clear-btn" onClick={clearCanvas}>清空</button>
+        <div className="header-buttons">
+          {enableBezier && (
+            <button 
+              className={`mode-btn ${drawMode === 'free' ? 'active free-mode' : drawMode === 'bezier' ? 'active' : ''}`} 
+              onClick={toggleDrawMode}
+              title="切换绘制模式（点绘 → 贝塞尔 → 自由绘制）"
+            >
+              {drawMode === 'free' ? '🖌️ 自由绘制' : drawMode === 'bezier' ? '🎨 贝塞尔' : '✏️ 点绘'}
+            </button>
+          )}
+          <button className="clear-btn" onClick={clearCanvas}>清空</button>
+        </div>
       </div>
+
+      {enableBezier && drawMode === 'free' && (
+        <div className="bezier-hint">
+          🖌️ 按住鼠标左键并拖动来绘制平滑曲线
+        </div>
+      )}
+      {enableBezier && drawMode === 'bezier' && (
+        <div className="bezier-hint">
+          💡 点击添加锚点，拖拽红色手柄调整曲率，可移动锚点位置
+        </div>
+      )}
 
       <div className="equation-input-small">
         <input
@@ -219,10 +808,24 @@ const SimpleCanvas = ({
           width={280}
           height={150}
           className="simple-canvas"
+          style={{
+            cursor: hoveredElement ? 
+              (hoveredElement.type === 'handle' ? 'pointer' : 'move') : 
+              (drawMode === 'free' ? 'crosshair' : 
+               drawMode === 'bezier' ? 'pointer' : 'default')
+          }}
           onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
+          onMouseMove={(e) => {
+            // 先执行悬停检测（只在非拖动状态下）
+            if (!dragState.isDragging && drawMode === 'bezier') {
+              handleMouseHover(e);
+            }
+            // 再执行绘制/拖动逻辑
+            handleMouseMove(e);
+          }}
+          onMouseEnter={handleMouseHover}
           onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
         />
         {/* 旋转轴标识线（垂直） */}
         <div style={{
@@ -249,7 +852,11 @@ const SimpleCanvas = ({
       </div>
 
       <div className="points-count">
-        点数：{points.length}
+        {enableBezier && drawMode === 'free' 
+          ? `绘制点数：${freehandPoints.length}` 
+          : enableBezier && drawMode === 'bezier'
+            ? `锚点：${bezierAnchors.length}` 
+            : `点数：${clickPoints.length}`}
       </div>
     </div>
   );
@@ -505,7 +1112,7 @@ const CustomRevolutionGenerator = ({ currentChess, selectedComponent, handleData
       <div className="custom-revolution-panel">
         <div className="panel-section">
           <h3>异形生成器</h3>
-          <p className="panel-description">绘制轮廓曲线生成自定义 3D 形状</p>
+          <p className="panel-description">绘制轮廓曲线生成自定义 3D 形状 - 支持点绘和贝塞尔曲线两种模式</p>
         </div>
 
         <div className="canvases-row">
@@ -515,6 +1122,7 @@ const CustomRevolutionGenerator = ({ currentChess, selectedComponent, handleData
             equationPlaceholder="例如：2*Math.sin(x)+1"
             className="profile-canvas"
             initialPoints={profilePoints}
+            enableBezier={true}
           />
 
           <SimpleCanvas
@@ -523,6 +1131,7 @@ const CustomRevolutionGenerator = ({ currentChess, selectedComponent, handleData
             equationPlaceholder="例如：Math.cos(x)"
             className="path-canvas"
             initialPoints={pathPoints}
+            enableBezier={true}
           />
         </div>
       </div>
