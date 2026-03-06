@@ -1106,6 +1106,155 @@ input:checked+.toggle-label:before {
   max-width: 100%;
 }
 
+/* 导出窗口样式 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.export-modal {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  overflow: hidden;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--fluent-text);
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--fluent-text-tertiary);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--fluent-transition);
+}
+
+.close-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--fluent-text);
+}
+
+.modal-content {
+  padding: 30px 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-content p {
+  margin: 0 0 20px 0;
+  font-size: 16px;
+  color: var(--fluent-text);
+  text-align: center;
+}
+
+.export-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.export-option-button {
+  padding: 12px 20px;
+  border: 1px solid var(--fluent-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--fluent-text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--fluent-transition);
+  font-weight: 500;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.export-option-button:hover {
+  background: var(--fluent-primary);
+  color: white;
+  border-color: var(--fluent-primary);
+  box-shadow: var(--fluent-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.export-option-button:active {
+  transform: translateY(0);
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+  .export-modal {
+    width: 95%;
+    max-width: none;
+  }
+  
+  .modal-content {
+    padding: 20px 15px;
+  }
+  
+  .export-option-button {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}
+
 /* 方程输入框样式优化 */
 .equation-input-small {
   display: flex;
@@ -1197,4 +1346,153 @@ input:checked+.toggle-label:before {
 
 .data-panel .simple-canvas-container {
   max-width: 100%;
+}
+
+/* 导出窗口样式 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.export-modal {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  overflow: hidden;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--fluent-text);
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--fluent-text-tertiary);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--fluent-transition);
+}
+
+.close-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--fluent-text);
+}
+
+.modal-content {
+  padding: 30px 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-content p {
+  margin: 0 0 20px 0;
+  font-size: 16px;
+  color: var(--fluent-text);
+  text-align: center;
+}
+
+.export-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.export-option-button {
+  padding: 12px 20px;
+  border: 1px solid var(--fluent-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--fluent-text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--fluent-transition);
+  font-weight: 500;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.export-option-button:hover {
+  background: var(--fluent-primary);
+  color: white;
+  border-color: var(--fluent-primary);
+  box-shadow: var(--fluent-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.export-option-button:active {
+  transform: translateY(0);
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+  .export-modal {
+    width: 95%;
+    max-width: none;
+  }
+  
+  .modal-content {
+    padding: 20px 15px;
+  }
+  
+  .export-option-button {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
 }

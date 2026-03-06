@@ -40,6 +40,7 @@ function ChessEditor() {
   const [rightWidth, setRightWidth] = useState(400); // 右侧面板宽度
   const [isRightPanelCollapsed, setIsRightPanelCollapsed] = useState(false); // 右侧面板收起状态
   const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false); // 左侧面板收起状态
+  const [showExportModal, setShowExportModal] = useState(false); // 导出窗口显示状态
 
   // 引用
   const editorContentRef = useRef(null);
@@ -129,26 +130,33 @@ function ChessEditor() {
   }, []);
 
   // 处理导出
-  const handleExport = async () => {
+  const handleExport = () => {
     if (!currentChess) {
       alert('当前没有可导出的模型');
       return;
     }
+    setShowExportModal(true);
+  };
 
+  // 处理具体的导出操作
+  const handleExportAction = async (format) => {
     try {
-      // 让用户选择导出格式
-      const format = window.confirm('选择导出格式：\n点击"确定"导出 STL 格式（适合 3D 打印）\n点击"取消"导出 OBJ 格式（适合 3D 建模软件）')
-        ? 'stl'
-        : 'obj';
-
       // 显示加载提示
       alert(`正在准备导出${format.toUpperCase()}格式，请稍候...`);
 
-      // 导出模型
-      const blob = await exportChessModel(currentChess, format);
+      let blob;
+      let filename;
 
-      // 生成文件名
-      const filename = generateExportFilename(currentChess.name, format);
+      if (format === 'json') {
+        // 导出 JSON 数据
+        const jsonData = JSON.stringify(currentChess, null, 2);
+        blob = new Blob([jsonData], { type: 'application/json' });
+        filename = generateExportFilename(currentChess.name, 'json');
+      } else {
+        // 导出 STL 或 OBJ 格式
+        blob = await exportChessModel(currentChess, format);
+        filename = generateExportFilename(currentChess.name, format);
+      }
 
       // 创建下载链接
       const url = URL.createObjectURL(blob);
@@ -164,6 +172,8 @@ function ChessEditor() {
     } catch (error) {
       console.error('导出失败:', error);
       alert('导出失败：' + (error.message || '未知错误'));
+    } finally {
+      setShowExportModal(false);
     }
   };
 
@@ -1585,6 +1595,43 @@ function ChessEditor() {
         {selectedComponent === 'column' && renderColumnPanel()}
         {selectedComponent === 'decoration' && renderDecorationPanel()}
       </aside>
+
+      {/* 导出窗口 */}
+      {showExportModal && (
+        <div className="modal-overlay">
+          <div className="export-modal">
+            <div className="modal-header">
+              <h2>导出模型</h2>
+              <button className="close-button" onClick={() => setShowExportModal(false)}>
+                ×
+              </button>
+            </div>
+            <div className="modal-content">
+              <p>请选择导出方式：</p>
+              <div className="export-buttons">
+                <button 
+                  className="export-option-button"
+                  onClick={() => handleExportAction('json')}
+                >
+                  JSON数据
+                </button>
+                <button 
+                  className="export-option-button"
+                  onClick={() => handleExportAction('stl')}
+                >
+                  STL（适合3D打印）
+                </button>
+                <button 
+                  className="export-option-button"
+                  onClick={() => handleExportAction('obj')}
+                >
+                  OBJ（适合3D建模软件）
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
