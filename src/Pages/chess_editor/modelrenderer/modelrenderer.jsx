@@ -1,6 +1,7 @@
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Canvas, useThree } from '@react-three/fiber';
-import { OrbitControls, Text, Environment } from '@react-three/drei';
+import { OrbitControls, Text, Environment, Text3D } from '@react-three/drei';
 import * as THREE from 'three';
 import { ModelPreview } from '../../../Components/CustomRevolutionGenerator/CustomRevolutionGenerator.jsx';
 
@@ -299,6 +300,7 @@ function renderComponent(componentType, shape, size1, size2, height, position, m
 }
 
 function ModelRenderer({ chess }) {
+
     // 添加安全检查，防止 undefined 错误
     if (!chess) {
         return (
@@ -335,34 +337,325 @@ function ModelRenderer({ chess }) {
     const renderBaseShape = () => {
         if (!hasBase) return null;
 
-        // 如果是异形，返回 null，由下方的 CustomShape 组件处理
-        if (isBaseSpecial) {
-            return null;
+        const { type, size1, size2, height } = baseShape;
+        const position = base.position || { x: 0, y: 0, z: 0 };
+        const material = base.material || { metalness: 0.3, roughness: 0.4, clearcoat: 0, clearcoatRoughness: 0 };
+        const pattern = base.pattern || { shape: 'none', position: { x: 0, y: 0, z: 0 } };
+        // 渲染主体元素 
+        let bodyelement = null;
+        switch (type) {
+            case 'circle':
+                bodyelement = (
+                    <mesh position={[position.x, position.y + height / 2, position.z]} castShadow receiveShadow>
+                        <cylinderGeometry args={[size1, size2, height, 64]} />
+                        <meshStandardMaterial
+                            color="#8B4513"
+                            metalness={material.metalness}
+                            roughness={material.roughness}
+                            clearcoat={material.clearcoat}
+                            clearcoatRoughness={material.clearcoatRoughness}
+                        />
+                    </mesh>
+                ); break;
+            case 'polygon':
+                const baseSides = baseShape.sides || 6;
+                bodyelement = (
+                    <mesh position={[position.x, position.y + height / 2, position.z]} castShadow receiveShadow>
+                        <cylinderGeometry args={[size1, size2, height, baseSides]} />
+                        <meshStandardMaterial
+                            color="#8B4513"
+                            metalness={material.metalness}
+                            roughness={material.roughness}
+                            clearcoat={material.clearcoat}
+                            clearcoatRoughness={material.clearcoatRoughness}
+                        />
+                    </mesh>
+                ); break;
+            case 'cube':
+                bodyelement = (
+                    <mesh position={[position.x, position.y + height / 2, position.z]} castShadow receiveShadow>
+                        <boxGeometry args={[size1, height, size2]} />
+                        <meshStandardMaterial
+                            color="#8B4513"
+                            metalness={material.metalness}
+                            roughness={material.roughness}
+                            clearcoat={material.clearcoat}
+                            clearcoatRoughness={material.clearcoatRoughness}
+                        />
+                    </mesh>
+                ); break;
+            case 'special': // 异形类型
+                const baseCustomShape = base.customShape || { profilePoints: [], pathPoints: [] };
+                bodyelement = (
+                    <group position={[position.x, position.y, position.z]}>
+                        <ModelPreview
+                            profilePoints={baseCustomShape.profilePoints}
+                            pathPoints={baseCustomShape.pathPoints}
+                        />
+                    </group>
+                ); break;
+            default:
+                bodyelement = (
+                    <mesh position={[position.x, position.y + height / 2, position.z]} castShadow receiveShadow>
+                        <cylinderGeometry args={[size1, size2, height, 64]} />
+                        <meshStandardMaterial
+                            color="#8B4513"
+                            metalness={material.metalness}
+                            roughness={material.roughness}
+                            clearcoat={material.clearcoat}
+                            clearcoatRoughness={material.clearcoatRoughness}
+                        />
+                    </mesh>
+                ); break;
         }
 
-        // 从 base.edge 读取边缘配置，默认为无边缘
-        const edgeConfig = base.edge || { type: 'none', depth: 0 };
+        //浮雕图案
+        let patternelement = null;
 
-        // 使用边缘处理系统，传递组件类型 'base'
-        return processEdgeGeometry(base, edgeConfig.type, edgeConfig.depth, 'base');
+        switch (pattern.shape) {
+            case 'none':
+                patternelement = null;
+                break;
+            case 'text':
+                patternelement = (
+                    <mesh position={[pattern.position?.x || 0, position.y + height, pattern.position?.z || 0]} rotation={[-Math.PI / 2, 0, 0]} castShadow receiveShadow>
+                        <Text3D
+                            font={"https://threejs.org/examples/fonts/helvetiker_regular.typeface.json"}
+                            size={pattern.size || 5}
+                            height={pattern.depth || 1}
+                            curveSegments={12}
+                        >
+                            {pattern.content}
+                            <meshStandardMaterial
+                                color="#CD853F"
+                                metalness={material.metalness}
+                                roughness={material.roughness}
+                                clearcoat={material.clearcoat}
+                                clearcoatRoughness={material.clearcoatRoughness}
+                            />
+                        </Text3D>
+                    </mesh>
+                );
+                break;
+            case 'geometry':
+                switch (pattern.geometryType) {
+                    case 'Circle':
+                        patternelement = (
+                            <mesh position={[pattern.position?.x || 0, position.y + height + pattern.depth / 2, pattern.position?.z || 0]} castShadow receiveShadow>
+                                <cylinderGeometry args={[pattern.size, pattern.size, pattern.depth, 64]} />
+                                <meshStandardMaterial
+                                    color="#8B4513"
+                                    metalness={material.metalness}
+                                    roughness={material.roughness}
+                                    clearcoat={material.clearcoat}
+                                    clearcoatRoughness={material.clearcoatRoughness}
+                                />
+                            </mesh>
+                        )
+                        break;
+                    case 'Polygon':
+                        patternelement = (
+                            <mesh position={[pattern.position?.x || 0, position.y + height + pattern.depth / 2, pattern.position?.z || 0]} castShadow receiveShadow>
+                                <cylinderGeometry args={[pattern.size, pattern.size, pattern.depth, pattern.sides || 6]} />
+                                <meshStandardMaterial
+                                    color="#8B4513"
+                                    metalness={material.metalness}
+                                    roughness={material.roughness}
+                                    clearcoat={material.clearcoat}
+                                    clearcoatRoughness={material.clearcoatRoughness}
+                                />
+                            </mesh>
+                        )
+                        break;
+                    case 'Cube':
+                        patternelement = (
+                            <mesh position={[pattern.position?.x || 0, position.y + height + pattern.depth / 2, pattern.position?.z || 0]} castShadow receiveShadow>
+                                <boxGeometry args={[pattern.size, pattern.depth, pattern.size]} />
+                                <meshStandardMaterial
+                                    color="#8B4513"
+                                    metalness={material.metalness}
+                                    roughness={material.roughness}
+                                    clearcoat={material.clearcoat}
+                                    clearcoatRoughness={material.clearcoatRoughness}
+                                />
+                            </mesh>
+                        )
+                        break;
+                    default:
+                        patternelement = null;
+                        break;
+                }
+
+                break;
+            default:
+                patternelement = null;
+                break;
+        }
+        return (
+            <group>
+                {bodyelement}
+                {patternelement}
+            </group>
+        );
     };
 
     // 渲染柱体组件（带边缘处理）
     const renderColumnShape = () => {
         if (!hasColumn) return null;
 
-        // 如果是异形，返回 null，由下方的 CustomShape 组件处理
-        if (isColumnSpecial) {
-            return null;
+        const { type, size1, size2, height } = columnShape;
+        const position = column.position || { x: 0, y: 0, z: 0 };
+        const material = column.material || { metalness: 0.3, roughness: 0.4, clearcoat: 0, clearcoatRoughness: 0 };
+        const pattern = column.pattern || { shape: 'none' };
+        const baseheight = base.shape.height || 0;
+        let bodyelement = null;
+        console.log(type);
+        switch (type) {
+            case 'circle':
+                bodyelement = (
+                    <mesh position={[position.x, baseheight + height / 2 + position.y, position.z]} castShadow receiveShadow>
+                        <cylinderGeometry args={[size1, size2, height, 64]} />
+                        <meshStandardMaterial
+                            color="#CD853F"
+                            metalness={material.metalness}
+                            roughness={material.roughness}
+                            clearcoat={material.clearcoat}
+                            clearcoatRoughness={material.clearcoatRoughness}
+                        />
+                    </mesh>
+                );
+                break;
+            case 'polygon':
+                const columnSides = columnShape.sides || 6;
+                bodyelement = (
+                    <mesh position={[position.x, baseheight + height / 2 + position.y, position.z]} castShadow receiveShadow>
+                        <cylinderGeometry args={[size1, size2, height, columnSides]} />
+                        <meshStandardMaterial
+                            color="#CD853F"
+                            metalness={material.metalness}
+                            roughness={material.roughness}
+                            clearcoat={material.clearcoat}
+                            clearcoatRoughness={material.clearcoatRoughness}
+                        />
+                    </mesh>
+                ); break;
+            case 'cube':
+                bodyelement = (
+                    <mesh position={[position.x, baseheight + height / 2 + position.y, position.z]} castShadow receiveShadow>
+                        <boxGeometry args={[size1, height, size2]} />
+                        <meshStandardMaterial
+                            color="#CD853F"
+                            metalness={material.metalness}
+                            roughness={material.roughness}
+                            clearcoat={material.clearcoat}
+                            clearcoatRoughness={material.clearcoatRoughness}
+                        />
+                    </mesh>
+                );
+                break;
+
+            case 'special': // 异形类型
+                const columnCustomShape = column.customShape || { profilePoints: [], pathPoints: [] };
+                bodyelement = (
+                    <group position={[position.x, baseheight + height / 2 + position.y, position.z]}>
+                        <ModelPreview
+                            profilePoints={columnCustomShape.profilePoints}
+                            pathPoints={columnCustomShape.pathPoints}
+                        />
+                    </group>
+                ); break;
+            default:
+                break;
         }
+        //浮雕部分
+        let patternelement = null;
+        let patternheight = baseheight + height + position.y + pattern.depth / 2
+        switch (pattern.shape) {
+            case 'none':
+                patternelement = null;
+                break;
+            case 'text':
+                patternelement = (
+                    <mesh position={[pattern.position?.x || 0, baseheight + height + position.y, pattern.position?.z || 0]} rotation={[-Math.PI / 2, 0, 0]} castShadow receiveShadow>
+                        <Text3D
+                            font={"https://threejs.org/examples/fonts/helvetiker_regular.typeface.json"}
+                            size={pattern.size || 5}
+                            height={pattern.depth || 1}
+                            curveSegments={12}
+                        >
+                            {pattern.content}
+                            <meshStandardMaterial
+                                color="#CD853F"
+                                metalness={material.metalness}
+                                roughness={material.roughness}
+                                clearcoat={material.clearcoat}
+                                clearcoatRoughness={material.clearcoatRoughness}
+                            />
+                        </Text3D>
+                    </mesh>
+                );
+                break;
+            case 'geometry':
+                switch (pattern.geometryType) {
+                    case 'Circle':
+                        patternelement = (
+                            <mesh position={[pattern.position?.x || 0, patternheight, pattern.position?.z || 0]} castShadow receiveShadow>
+                                <cylinderGeometry args={[pattern.size, pattern.size, pattern.depth, 64]} />
+                                <meshStandardMaterial
+                                    color="#CD853F"
+                                    metalness={material.metalness}
+                                    roughness={material.roughness}
+                                    clearcoat={material.clearcoat}
+                                    clearcoatRoughness={material.clearcoatRoughness}
+                                />
+                            </mesh>
+                        )
+                        break;
+                    case 'Polygon':
+                        patternelement = (
+                            <mesh position={[pattern.position?.x || 0, patternheight, pattern.position?.z || 0]} castShadow receiveShadow>
+                                <cylinderGeometry args={[pattern.size, pattern.size, pattern.depth, pattern.sides || 6]} />
+                                <meshStandardMaterial
+                                    color="#CD853F"
+                                    metalness={material.metalness}
+                                    roughness={material.roughness}
+                                    clearcoat={material.clearcoat}
+                                    clearcoatRoughness={material.clearcoatRoughness}
+                                />
+                            </mesh>
+                        )
+                        break;
+                    case 'Cube':
+                        patternelement = (
+                            <mesh position={[pattern.position?.x || 0, patternheight, pattern.position?.z || 0]} castShadow receiveShadow>
+                                <boxGeometry args={[pattern.size, pattern.depth, pattern.size]} />
+                                <meshStandardMaterial
+                                    color="#CD853F"
+                                    metalness={material.metalness}
+                                    roughness={material.roughness}
+                                    clearcoat={material.clearcoat}
+                                    clearcoatRoughness={material.clearcoatRoughness}
+                                />
+                            </mesh>
+                        )
+                        break;
+                    default:
+                        patternelement = null;
+                        break;
+                }
 
-        // 从 column.edge 读取边缘配置，默认为无边缘
-        const edgeConfig = column.edge || { type: 'none', depth: 0 };
-
-        // 使用边缘处理系统，传递组件类型 'column'
-        return processEdgeGeometry(column, edgeConfig.type, edgeConfig.depth, 'column');
+                break;
+            default:
+                patternelement = null;
+                break;
+        }
+        return (
+            <group>
+                {bodyelement}
+                {patternelement}
+            </group>
+        );
     };
-
     // 渲染自定义异形组件
     const renderCustomShape = (componentType) => {
         const component = componentType === 'base' ? base : column;
