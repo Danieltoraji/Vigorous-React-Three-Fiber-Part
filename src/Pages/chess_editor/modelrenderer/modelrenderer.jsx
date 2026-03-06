@@ -230,7 +230,7 @@ function ModelRenderer({ chess }) {
             case 'polygon':
                 const columnSides = columnShape.sides || 6;
                 bodyelement = (
-                    <mesh position={[position.x, position.y + height/2, position.z]} castShadow receiveShadow>
+                    <mesh position={[position.x, baseheight + height/2 + position.y, position.z]} castShadow receiveShadow>
                         <cylinderGeometry args={[size1, size2, height, columnSides]} />
                         <meshStandardMaterial 
                             color="#CD853F" 
@@ -243,7 +243,7 @@ function ModelRenderer({ chess }) {
                 );break;
             case 'cube':
                 bodyelement = (
-                    <mesh position={[position.x, position.y + height/2, position.z]} castShadow receiveShadow>
+                    <mesh position={[position.x, baseheight + height/2 + position.y, position.z]} castShadow receiveShadow>
                         <boxGeometry args={[size1, height, size2]} />
                         <meshStandardMaterial 
                             color="#CD853F" 
@@ -255,10 +255,11 @@ function ModelRenderer({ chess }) {
                     </mesh>
                 );
                 break;
+            
             case 'special': // 异形类型
                 const columnCustomShape = column.customShape || { profilePoints: [], pathPoints: [] };
                 bodyelement = (
-                    <group position={[position.x, position.y, position.z]}>
+                    <group position={[position.x, baseheight + height/2 + position.y, position.z]}>
                         <ModelPreview 
                             profilePoints={columnCustomShape.profilePoints}
                             pathPoints={columnCustomShape.pathPoints}
@@ -270,13 +271,14 @@ function ModelRenderer({ chess }) {
         }
             //浮雕部分
         let patternelement = null;
+        let patternheight =  baseheight + height + position.y + pattern.depth/2
         switch (pattern.shape) {
             case 'none':
                 patternelement = null;
                 break;
             case 'text':
                 patternelement = (
-                    <mesh position={[pattern.position?.x || 0, position.y + height, pattern.position?.z || 0]} rotation={[-Math.PI/2,0,0]} castShadow receiveShadow>
+                    <mesh position={[pattern.position?.x || 0, baseheight + height + position.y , pattern.position?.z || 0]} rotation={[-Math.PI/2,0,0]} castShadow receiveShadow>
                         <Text3D 
                         font={"https://threejs.org/examples/fonts/helvetiker_regular.typeface.json"}
                         size= {pattern.size || 5}
@@ -299,7 +301,7 @@ function ModelRenderer({ chess }) {
                     switch(pattern.geometryType){
                         case 'Circle':
                             patternelement = (
-                                <mesh position={[pattern.position?.x || 0, position.y + height + pattern.depth/2, pattern.position?.z || 0]} castShadow receiveShadow>
+                                <mesh position={[pattern.position?.x || 0, patternheight, pattern.position?.z || 0]} castShadow receiveShadow>
                                     <cylinderGeometry args={[pattern.size,pattern.size,pattern.depth,64]} />
                                     <meshStandardMaterial 
                                         color="#CD853F" 
@@ -313,7 +315,7 @@ function ModelRenderer({ chess }) {
                             break;
                         case 'Polygon':
                             patternelement = (
-                                <mesh position={[pattern.position?.x || 0, position.y + height + pattern.depth/2, pattern.position?.z || 0]} castShadow receiveShadow>
+                                <mesh position={[pattern.position?.x || 0,patternheight, pattern.position?.z || 0]} castShadow receiveShadow>
                                     <cylinderGeometry args={[pattern.size,pattern.size,pattern.depth,pattern.sides || 6]} />
                                     <meshStandardMaterial 
                                         color="#CD853F" 
@@ -327,7 +329,7 @@ function ModelRenderer({ chess }) {
                             break;
                         case 'Cube':
                             patternelement = (
-                                <mesh position={[pattern.position?.x || 0, position.y + height + pattern.depth/2, pattern.position?.z || 0]} castShadow receiveShadow>
+                                <mesh position={[pattern.position?.x || 0,patternheight, pattern.position?.z || 0]} castShadow receiveShadow>
                                     <boxGeometry args={[pattern.size,pattern.depth,pattern.size]} />
                                     <meshStandardMaterial 
                                         color="#CD853F" 
