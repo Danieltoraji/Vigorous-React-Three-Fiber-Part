@@ -257,7 +257,7 @@ function ChessEditor() {
               value={getSafeValue(shape.type, 'cylinder')} 
               onChange={(e) => handleDataUpdate('components.base.shape.type', e.target.value)}
             >
-              <option value="cylinder">圆柱</option>
+              <option value="circle">圆柱</option>
               <option value="polygon">多边形 (3-32 边)</option>
               <option value="special">异形</option>
               <option value="cube">矩形</option>
@@ -669,7 +669,7 @@ function ChessEditor() {
               value={getSafeValue(shape.type, 'cylinder')} 
               onChange={(e) => handleDataUpdate('components.column.shape.type', e.target.value)}
             >
-              <option value="cylinder">圆柱</option>
+              <option value="circle">圆柱</option>
               <option value="polygon">多边形 (3-32 边)</option>
               <option value="special">异形</option>
               <option value="cube">矩形</option>
@@ -800,7 +800,7 @@ function ChessEditor() {
           </div>
           
           <div className="editor-item">
-            <label>Y：</label>
+            <label>Y修正：</label>
             <input 
               type="range" 
               min="-30" 

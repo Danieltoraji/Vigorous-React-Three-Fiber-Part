@@ -19,7 +19,7 @@ export function ChessProvider({ children }) {
       components:{
         "base": {
           "shape": {
-            "type": "cycle",
+            "type": "circle",
             "size1": 15,
             "size2": 15,
             "height": 1
@@ -38,13 +38,13 @@ export function ChessProvider({ children }) {
         },
         "column": {
           "shape": {
-            "type": "cycle",
+            "type": "circle",
             "size1": 10,
             "size2": 10,
             "height": 20
           },
           "material": null,
-          "position": { "x": 0, "y": 1, "z": 0 },
+          "position": { "x": 0, "y": 0, "z": 0 },
           "sideTreatment": "none",
           "pattern": {
             "shape": "geometry",
