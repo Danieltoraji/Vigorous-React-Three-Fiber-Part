@@ -344,7 +344,7 @@ function ModelRenderer({ chess }) {
         // 渲染主体元素 
         let bodyelement = null;
         switch (type) {
-            case 'circle':
+            case 'cycle':
                 bodyelement = (
                     <mesh position={[position.x, position.y + height / 2, position.z]} castShadow receiveShadow>
                         <cylinderGeometry args={[size1, size2, height, 64]} />
@@ -511,7 +511,7 @@ function ModelRenderer({ chess }) {
         let bodyelement = null;
         console.log(type);
         switch (type) {
-            case 'circle':
+            case 'cycle':
                 bodyelement = (
                     <mesh position={[position.x, baseheight + height / 2 + position.y, position.z]} castShadow receiveShadow>
                         <cylinderGeometry args={[size1, size2, height, 64]} />
