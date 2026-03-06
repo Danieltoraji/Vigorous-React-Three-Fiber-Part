@@ -110,6 +110,151 @@
   position: relative;
   padding: 0;
   box-sizing: border-box;
+  width: auto;
+  flex-shrink: 0;
+}
+
+/* 左侧组件选择面板 */
+.part-selector {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+  width: 200px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-right: 1px solid var(--fluent-border);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition: var(--fluent-transition);
+  overflow-y: auto;
+}
+
+.part-selector.collapsed {
+  padding: 0;
+  overflow: hidden;
+  border-right: none !important;
+  border: none !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  width: 0 !important;
+}
+
+/* 确保左侧面板收起时，切换按钮仍然可见 */
+.toggle-left-panel {
+  position: absolute;
+  left: 200px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  width: 24px;
+  height: 60px;
+  background: rgba(65, 65, 65, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: none;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-left-panel:hover {
+  background: rgba(167, 167, 167, 0.5);
+  width: 28px;
+}
+
+.toggle-left-panel.collapsed {
+  left: 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.toggle-left-panel.expanded {
+  left: 200px;
+}
+
+.part-selector h3 {
+  margin: 0 0 15px 0;
+  color: var(--fluent-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.part-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.part-button {
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius);
+  cursor: pointer;
+  font-size: 14px;
+  transition: var(--fluent-transition);
+  color: var(--fluent-text);
+  text-align: left;
+}
+
+.part-button:hover {
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: var(--fluent-shadow-hover);
+}
+
+.part-button.active {
+  background: var(--fluent-primary);
+  color: white;
+  border-color: var(--fluent-primary);
+}
+
+/* 左侧面板切换按钮 */
+.toggle-left-panel {
+  position: absolute;
+  left: 200px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  width: 24px;
+  height: 60px;
+  background: rgba(65, 65, 65, 0);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: none;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-left-panel:hover {
+  background: rgba(167, 167, 167, 0.086);
+  width: 28px;
+}
+
+.toggle-left-panel.collapsed {
+  left: 0;
+}
+
+.toggle-left-panel.expanded {
+  left: 200px;
 }
 
 /* 中间预览区域 */

@@ -39,6 +39,7 @@ function ChessEditor() {
   // 右侧面板固定宽度
   const [rightWidth, setRightWidth] = useState(400); // 右侧面板宽度
   const [isRightPanelCollapsed, setIsRightPanelCollapsed] = useState(false); // 右侧面板收起状态
+  const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false); // 左侧面板收起状态
 
   // 引用
   const editorContentRef = useRef(null);
@@ -120,6 +121,11 @@ function ChessEditor() {
   // 处理右侧面板收起/展开
   const handleToggleRightPanel = useCallback(() => {
     setIsRightPanelCollapsed(prev => !prev);
+  }, []);
+
+  // 处理左侧面板收起/展开
+  const handleToggleLeftPanel = useCallback(() => {
+    setIsLeftPanelCollapsed(prev => !prev);
   }, []);
 
   // 处理导出
@@ -1498,7 +1504,7 @@ function ChessEditor() {
 
       <div className="editor-content" ref={editorContentRef}>
         {/* 左侧组件选择面板 */}
-        <aside className="part-selector" >
+        <aside className={`part-selector ${isLeftPanelCollapsed ? 'collapsed' : ''}`}>
           <h3>组件选择</h3>
           <div className="part-buttons">
             <button
@@ -1546,13 +1552,21 @@ function ChessEditor() {
           </div>
         </aside>
 
+        {/* 左侧面板切换按钮 */}
+        <button
+          className={`toggle-left-panel ${isLeftPanelCollapsed ? 'collapsed' : 'expanded'}`}
+          onClick={handleToggleLeftPanel}
+          title={isLeftPanelCollapsed ? '展开面板' : '收起面板'}
+        >
+          {isLeftPanelCollapsed ? '▶' : '◀'}
+        </button>
+
+        {/* 中间预览区域 */}
+        <main className="preview-area">
+          <ModelRenderer chess={currentChess} />
+        </main>
 
       </div>
-
-      {/* 中间预览区域 */}
-      <main className="preview-area">
-        <ModelRenderer chess={currentChess} />
-      </main>
 
 
 
