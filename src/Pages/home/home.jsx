@@ -21,7 +21,7 @@ function Home() {
         {/* 左侧导航 */}
         <aside className="home-sidebar">
           <nav className="sidebar-nav">
-            <Link to="/" className="nav-item active">
+            <Link to="/menu" className="nav-item active">
               功能菜单
             </Link>
             <Link to="/explorer-project" className="nav-item">
