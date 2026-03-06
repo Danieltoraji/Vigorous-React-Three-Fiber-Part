@@ -46,7 +46,7 @@ function ModelRenderer({ chess }) {
         // 渲染主体元素 
         let bodyelement = null;
         switch (type) {
-            case 'cylinder':
+            case 'circle':
                 bodyelement = (
                     <mesh position={[position.x, position.y + height/2, position.z]} castShadow receiveShadow>
                         <cylinderGeometry args={[size1, size2, height, 64]} />
@@ -209,11 +209,13 @@ function ModelRenderer({ chess }) {
         const position = column.position || { x: 0, y: 0, z: 0 };
         const material = column.material || { metalness: 0.3, roughness: 0.4, clearcoat: 0, clearcoatRoughness: 0 };
         const pattern = column.pattern || { shape: 'none' };
+        const baseheight = base.shape.height || 0;
         let bodyelement = null;
+        console.log(type);
         switch (type) {
-            case 'cylinder':
+            case 'circle':
                 bodyelement = (
-                    <mesh position={[position.x, position.y + height/2, position.z]} castShadow receiveShadow>
+                    <mesh position={[position.x, baseheight + height/2 + position.y, position.z]} castShadow receiveShadow>
                         <cylinderGeometry args={[size1, size2, height, 64]} />
                         <meshStandardMaterial 
                             color="#CD853F" 
@@ -223,7 +225,8 @@ function ModelRenderer({ chess }) {
                             clearcoatRoughness={material.clearcoatRoughness}
                         />
                     </mesh>
-                );break;
+                );
+                break;
             case 'polygon':
                 const columnSides = columnShape.sides || 6;
                 bodyelement = (
@@ -250,20 +253,8 @@ function ModelRenderer({ chess }) {
                             clearcoatRoughness={material.clearcoatRoughness}
                         />
                     </mesh>
-                );break;
-                const baseSides = baseShape.sides || 6;
-                bodyelement = (
-                    <mesh position={[position.x, position.y + height/2, position.z]} castShadow receiveShadow>
-                        <cylinderGeometry args={[size1, size2, height, baseSides]} />
-                        <meshStandardMaterial 
-                            color="#8B4513" 
-                            metalness={material.metalness}
-                            roughness={material.roughness}
-                            clearcoat={material.clearcoat}
-                            clearcoatRoughness={material.clearcoatRoughness}
-                        />
-                    </mesh>
-                );break;
+                );
+                break;
             case 'special': // 异形类型
                 const columnCustomShape = column.customShape || { profilePoints: [], pathPoints: [] };
                 bodyelement = (
@@ -275,18 +266,7 @@ function ModelRenderer({ chess }) {
                     </group>
                 );break;
             default:
-                bodyelement = (
-                    <mesh position={[position.x, position.y + height/2, position.z]} castShadow receiveShadow>
-                        <cylinderGeometry args={[size1, size2, height, 64]} />
-                        <meshStandardMaterial 
-                            color="#CD853F" 
-                            metalness={material.metalness}
-                            roughness={material.roughness}
-                            clearcoat={material.clearcoat}
-                            clearcoatRoughness={material.clearcoatRoughness}
-                        />
-                    </mesh>
-                );
+                break;
         }
             //浮雕部分
         let patternelement = null;
