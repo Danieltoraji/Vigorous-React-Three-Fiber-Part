@@ -5,6 +5,8 @@ import { CatmullRomCurve3, Vector3, LatheGeometry, TubeGeometry, Shape, ExtrudeG
 import * as THREE from 'three';
 import { createPortal } from 'react-dom';
 
+
+
 // 简化的 2D 画布组件 - 支持三种绘制模式
 const SimpleCanvas = ({
   title,
@@ -17,8 +19,8 @@ const SimpleCanvas = ({
   showFullScreen = true // 是否显示全屏按钮
 }) => {
   const canvasRef = useRef(null);
+
   const [points, setPoints] = useState([]); // 完全独立管理状态
-  const [isDrawing, setIsDrawing] = useState(false);
   const [equation, setEquation] = useState('');
 
   // 新增：全屏模态窗口状态
@@ -40,50 +42,115 @@ const SimpleCanvas = ({
     handleType: null // 'cp1' | 'cp2'
   });
 
-  // 悬停状态检测
-  const [hoveredElement, setHoveredElement] = useState(null); // {type: 'anchor'|'handle', index: number, handleType: 'cp1'|'cp2'}
+  // 悬停状态检测 - 支持所有模式
+  const [hoveredElement, setHoveredElement] = useState(null);
+  // {type: 'anchor'|'handle'|'point', index: number, handleType: 'cp1'|'cp2'}
 
-  // 检查指定坐标是否悬停在可交互元素上
+  // 统一的光标样式更新函数
+  const updateCursorStyle = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // 如果正在拖动，保持拖动时的光标状态
+    if (dragState.isDragging) {
+      if (dragState.targetType === 'handle') {
+        canvas.style.cursor = 'crosshair'; // 拖动手柄：十字光标
+      } else if (dragState.targetType === 'anchor' || dragState.targetType === 'point') {
+        canvas.style.cursor = 'move'; // 拖动锚点或点：移动光标
+      } else if (dragState.targetType === 'freehand') {
+        canvas.style.cursor = 'crosshair'; // 自由绘制：十字光标
+      } else {
+        canvas.style.cursor = 'default';
+      }
+      return;
+    }
+
+    // 未拖动时，根据模式和悬停元素显示光标
+    if (drawMode === 'free') {
+      // 自由绘制模式：始终是 crosshair
+      canvas.style.cursor = 'crosshair';
+    } else if (drawMode === 'point') {
+      // 点绘模式：悬停在点上为 move，否则为 crosshair
+      if (hoveredElement?.type === 'point') {
+        canvas.style.cursor = 'move';
+      } else {
+        canvas.style.cursor = 'crosshair';
+      }
+    } else if (drawMode === 'bezier') {
+      // 贝塞尔模式：
+      // - 悬停在手柄上：pointer
+      // - 悬停在锚点上：move
+      // - 其他：crosshair
+      if (hoveredElement?.type === 'handle') {
+        canvas.style.cursor = 'pointer';
+      } else if (hoveredElement?.type === 'anchor') {
+        canvas.style.cursor = 'move';
+      } else {
+        canvas.style.cursor = 'crosshair';
+      }
+    } else {
+      canvas.style.cursor = 'default';
+    }
+  }, [drawMode, hoveredElement, dragState]);
+
+  // 当拖动状态或悬停状态变化时，更新光标
+  useEffect(() => {
+    updateCursorStyle();
+  }, [dragState, hoveredElement, drawMode, updateCursorStyle]);
+
+  // 检查指定坐标是否悬停在可交互元素上 - 支持所有模式
   const checkHover = useCallback((x, y) => {
-    if (drawMode !== 'bezier' || !enableBezier) {
+    if (!enableBezier) {
       setHoveredElement(null);
       return;
     }
 
     let hoverFound = null;
 
-    // 检查是否悬停在手柄控制点上
-    for (let i = 0; i < bezierAnchors.length; i++) {
-      const anchor = bezierAnchors[i];
+    if (drawMode === 'bezier') {
+      // 贝塞尔模式：检查锚点和手柄
+      for (let i = 0; i < bezierAnchors.length; i++) {
+        const anchor = bezierAnchors[i];
 
-      // 检查左手柄 cp1
-      if (anchor.cp1) {
-        const dist1 = Math.sqrt((x - anchor.cp1.x) ** 2 + (y - anchor.cp1.y) ** 2);
-        if (dist1 < 8) {
-          hoverFound = { type: 'handle', index: i, handleType: 'cp1' };
+        // 检查左手柄 cp1
+        if (anchor.cp1) {
+          const dist1 = Math.sqrt((x - anchor.cp1.x) ** 2 + (y - anchor.cp1.y) ** 2);
+          if (dist1 < 8) {
+            hoverFound = { type: 'handle', index: i, handleType: 'cp1' };
+            break;
+          }
+        }
+
+        // 检查右手柄 cp2
+        if (anchor.cp2) {
+          const dist2 = Math.sqrt((x - anchor.cp2.x) ** 2 + (y - anchor.cp2.y) ** 2);
+          if (dist2 < 8) {
+            hoverFound = { type: 'handle', index: i, handleType: 'cp2' };
+            break;
+          }
+        }
+
+        // 检查锚点本身
+        const distAnchor = Math.sqrt((x - anchor.x) ** 2 + (y - anchor.y) ** 2);
+        if (distAnchor < 8) {
+          hoverFound = { type: 'anchor', index: i };
           break;
         }
       }
-
-      // 检查右手柄 cp2
-      if (anchor.cp2) {
-        const dist2 = Math.sqrt((x - anchor.cp2.x) ** 2 + (y - anchor.cp2.y) ** 2);
-        if (dist2 < 8) {
-          hoverFound = { type: 'handle', index: i, handleType: 'cp2' };
+    } else if (drawMode === 'point') {
+      // 点绘模式：检查是否悬停在点上
+      for (let i = 0; i < clickPoints.length; i++) {
+        const point = clickPoints[i];
+        const dist = Math.sqrt((x - point.x) ** 2 + (y - point.y) ** 2);
+        if (dist < 8) {
+          hoverFound = { type: 'point', index: i };
           break;
         }
-      }
-
-      // 检查锚点本身
-      const distAnchor = Math.sqrt((x - anchor.x) ** 2 + (y - anchor.y) ** 2);
-      if (distAnchor < 8) {
-        hoverFound = { type: 'anchor', index: i };
-        break;
       }
     }
 
     setHoveredElement(hoverFound);
-  }, [drawMode, enableBezier, bezierAnchors]);
+  }, [drawMode, enableBezier, bezierAnchors, clickPoints]);
 
   // 鼠标在画布上移动（不按按钮）- 用于悬停检测
   const handleMouseHover = useCallback((e) => {
@@ -99,8 +166,11 @@ const SimpleCanvas = ({
     // 存储鼠标位置供其他函数使用
     document.pointer = { x, y };
 
-    checkHover(x, y);
-  }, [checkHover]);
+    // 只在非拖动状态下检测悬停
+    if (!dragState.isDragging) {
+      checkHover(x, y);
+    }
+  }, [checkHover, dragState.isDragging]);
 
   // 鼠标离开画布
   const handleMouseLeave = useCallback(() => {
@@ -293,25 +363,6 @@ const SimpleCanvas = ({
     // 设置画布光标样式 - 根据拖动状态和悬停状态
     const canvas = canvasRef.current;
     if (canvas) {
-      if (dragState.isDragging) {
-        // 正在拖动中：保持当前拖动类型的光标
-        if (dragState.targetType === 'handle') {
-          canvas.style.cursor = 'crosshair'; // 拖动手柄：十字光标
-        } else if (dragState.targetType === 'anchor') {
-          canvas.style.cursor = 'move'; // 拖动锚点：移动光标
-        } else {
-          canvas.style.cursor = 'default';
-        }
-      } else {
-        // 未拖动：根据悬停元素显示光标
-        if (hoveredElement?.type === 'handle') {
-          canvas.style.cursor = 'crosshair'; // 悬停在手柄：十字光标
-        } else if (hoveredElement?.type === 'anchor') {
-          canvas.style.cursor = 'move'; // 悬停在锚点：移动光标
-        } else {
-          canvas.style.cursor = 'default'; // 空白区域：默认箭头
-        }
-      }
     }
 
     // 1. 绘制控制手柄和锚点连线
@@ -483,23 +534,34 @@ const SimpleCanvas = ({
         drawBezierWithHandles(ctx, newAnchors);
       }
 
-    } else {
-      // 点绘模式：添加独立的点
-      setDragState({
-        isDragging: true,
-        targetType: 'point',
-        targetIndex: -1,
-        handleType: null
-      });
-      const newPoint = { x, y };
-      setClickPoints(prev => [...prev, newPoint]);
+    } else if (drawMode === 'point') {
+      // 点绘模式：检查是否点击在已有点上
+      if (hoveredElement?.type === 'point') {
+        // 情况 1: 鼠标在点上 - 拖动该点
+        setDragState({
+          isDragging: true,
+          targetType: 'point',
+          targetIndex: hoveredElement.index,
+          handleType: null
+        });
+      } else {
+        // 情况 2: 鼠标在空白处 - 添加新点
+        setDragState({
+          isDragging: true,
+          targetType: 'point',
+          targetIndex: -1,
+          handleType: null
+        });
+        const newPoint = { x, y };
+        setClickPoints(prev => [...prev, newPoint]);
 
-      // 绘制点
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#ff6b6b';
-      ctx.beginPath();
-      ctx.arc(x, y, 3, 0, Math.PI * 2);
-      ctx.fill();
+        // 绘制点
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ff6b6b';
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
   }, [drawMode, enableBezier, bezierAnchors, hoveredElement, drawBezierWithHandles]);
 
@@ -576,24 +638,59 @@ const SimpleCanvas = ({
 
       }
 
-    } else {
-      // 点绘模式：实时预览连线
-      const lastPoint = clickPoints[clickPoints.length - 1];
-      if (lastPoint) {
-        // 临时绘制 preview 线（不保存）
-        const ctx = canvas.getContext('2d');
-        ctx.strokeStyle = '#4ecdc4';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(lastPoint.x, lastPoint.y);
-        ctx.lineTo(x, y);
-        ctx.stroke();
+    } else if (drawMode === 'point') {
+      // 点绘模式：拖动已存在的点或预览新点
+      if (dragState.targetIndex >= 0) {
+        // 拖动已存在的点
+        const newPoints = [...clickPoints];
+        const pointIndex = dragState.targetIndex;
+
+        if (pointIndex >= 0 && pointIndex < newPoints.length) {
+          newPoints[pointIndex] = { x, y };
+          setClickPoints(newPoints);
+
+          // 立即重绘
+          const ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // 重新绘制所有点和线
+          newPoints.forEach((point, index) => {
+            ctx.fillStyle = '#ff6b6b';
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (index > 0) {
+              const prevPoint = newPoints[index - 1];
+              ctx.strokeStyle = '#4ecdc4';
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.moveTo(prevPoint.x, prevPoint.y);
+              ctx.lineTo(point.x, point.y);
+              ctx.stroke();
+            }
+          });
+        }
+      } else {
+        // 预览新点（不保存，只绘制临时线）
+        const lastPoint = clickPoints[clickPoints.length - 1];
+        if (lastPoint) {
+          // 临时绘制 preview 线（不保存）
+          const ctx = canvas.getContext('2d');
+          ctx.strokeStyle = '#4ecdc4';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(lastPoint.x, lastPoint.y);
+          ctx.lineTo(x, y);
+          ctx.stroke();
+        }
       }
     }
   }, [dragState, clickPoints, drawMode, enableBezier, bezierAnchors, drawBezierWithHandles, drawFreehandCurve]);
 
   const handleMouseUp = useCallback(() => {
     if (readOnly) return;
+
     if (drawMode === 'free' && enableBezier) {
       // 自由绘制模式：完成绘制，输出所有点
       if (onPointsChange && freehandPoints.length > 1) {
@@ -617,10 +714,16 @@ const SimpleCanvas = ({
         }
       }
 
-    } else {
-      // 点绘模式：完成点的添加
+    } else if (drawMode === 'point') {
+      // 点绘模式：完成点的添加或拖动
       if (onPointsChange && clickPoints.length > 0) {
-        console.log("点绘完成，共", clickPoints.length, "个点");
+        if (dragState.targetIndex >= 0) {
+          // 拖动已存在的点后输出
+          console.log("点位置编辑完成");
+        } else {
+          // 添加新点后输出
+          console.log("点绘完成，共", clickPoints.length, "个点");
+        }
         onPointsChange(clickPoints);
       }
     }
@@ -676,27 +779,6 @@ const SimpleCanvas = ({
     return curvePoints;
   }, []);
 
-  // 从控制点生成贝塞尔曲线点（旧版兼容）
-  const generateBezierPoints = useCallback((cps) => {
-    if (cps.length < 2) return [];
-
-    const curvePoints = [];
-    const segments = 50;
-
-    for (let i = 0; i < cps.length - 1; i++) {
-      const p0 = cps[i];
-      const p1 = cps[i + 1];
-
-      // 使用三次贝塞尔曲线
-      for (let t = 0; t <= segments; t++) {
-        const x = (1 - t) * (1 - t) * (1 - t) * p0.x + 3 * (1 - t) * (1 - t) * t * p0.cp2.x + 3 * (1 - t) * t * t * p1.cp1.x + t * t * t * p1.x;
-        const y = (1 - t) * (1 - t) * (1 - t) * p0.y + 3 * (1 - t) * (1 - t) * t * p0.cp2.y + 3 * (1 - t) * t * t * p1.cp1.y + t * t * t * p1.y;
-        curvePoints.push({ x, y });
-      }
-    }
-
-    return curvePoints;
-  }, []);
 
   const clearCanvas = useCallback(() => {
     if (readOnly) return;
@@ -914,10 +996,7 @@ const SimpleCanvas = ({
                 height={750}
                 className="simple-canvas"
                 style={{
-                  cursor: hoveredElement ?
-                    (hoveredElement.type === 'handle' ? 'pointer' : 'move') :
-                    (drawMode === 'free' ? 'crosshair' :
-                      drawMode === 'bezier' ? 'pointer' : 'default'),
+                  cursor: 'default', // 光标由 useEffect 统一管理
                   maxWidth: '100%',
                   height: 'auto'
                 }}
@@ -1090,10 +1169,7 @@ const SimpleCanvas = ({
           height={150}
           className="simple-canvas"
           style={{
-            cursor: hoveredElement ?
-              (hoveredElement.type === 'handle' ? 'pointer' : 'move') :
-              (drawMode === 'free' ? 'crosshair' :
-                drawMode === 'bezier' ? 'pointer' : 'default')
+            cursor: 'default', // 光标由 useEffect 统一管理
           }}
           onMouseDown={handleMouseDown}
           onMouseMove={(e) => {

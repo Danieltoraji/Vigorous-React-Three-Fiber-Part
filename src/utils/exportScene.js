@@ -110,7 +110,7 @@ export async function exportScene(root, format = "stl") {
             const jsonData = JSON.stringify(root.toJSON(), null, 2);
             return new Blob([jsonData], { type: 'application/json' });
         }
-        else {
+        else if (format === "stl" || format === "obj") {
             return exportSceneDirect(root, format);
         }
 

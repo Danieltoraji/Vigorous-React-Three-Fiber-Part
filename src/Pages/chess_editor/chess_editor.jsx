@@ -12,11 +12,8 @@ function ChessEditor() {
   const location = useLocation();
   const { id: pieceId } = useParams();
   const [currentChess, setCurrentChess] = useState(null);
-  const [customShapeData, setCustomShapeData] = useState({
-    profilePoints: [],
-    pathPoints: []
-  });
-  
+
+
   // Reference to the model root group for export
   const modelRootRef = useRef(null);
 
@@ -142,25 +139,9 @@ function ChessEditor() {
   // 处理具体的导出操作
   const handleExportAction = async (format) => {
     try {
-      // 显示加载提示
-      alert(`正在准备导出${format.toUpperCase()}格式，请稍候...`);
-
       let blob;
       let filename;
-      switch (format) {
-        case 'json':
-          // 导出 JSON 数据
-          const jsonData = JSON.stringify(currentChess, null, 2);
-          blob = new Blob([jsonData], { type: 'application/json' });
-          break;
-        default:
-          // Use modelRootRef for export if available, otherwise fall back to currentChess
-          const modelToExport = modelRootRef.current || currentChess;
-          blob = await exportScene(modelToExport, format);
-
-      }
-
-
+      blob = await exportScene(modelRootRef.current, format);
       filename = generateExportFilename(currentChess.name, format);
       downloadBlob(blob, filename);
 
