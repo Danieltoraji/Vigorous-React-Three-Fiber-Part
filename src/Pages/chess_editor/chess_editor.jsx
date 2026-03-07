@@ -5,9 +5,7 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import ModelRenderer from './modelrenderer/modelrenderer.jsx';
 import CustomRevolutionGenerator from '../../Components/CustomRevolutionGenerator/CustomRevolutionGenerator.jsx';
 
-
-import { exportChessModel, generateExportFilename } from '../../utils/modelExporter.js';
-
+import { exportScene, downloadBlob, generateExportFilename } from '../../utils/exportScene.js';
 function ChessEditor() {
   const { chessData, updateChess, setChessData, getChessById } = useChess();
   const navigate = useNavigate();
@@ -18,6 +16,9 @@ function ChessEditor() {
     profilePoints: [],
     pathPoints: []
   });
+  
+  // Reference to the model root group for export
+  const modelRootRef = useRef(null);
 
   // 初始化 currentChess 状态 - 只在组件挂载时执行一次
   useEffect(() => {
@@ -146,27 +147,22 @@ function ChessEditor() {
 
       let blob;
       let filename;
+      switch (format) {
+        case 'json':
+          // 导出 JSON 数据
+          const jsonData = JSON.stringify(currentChess, null, 2);
+          blob = new Blob([jsonData], { type: 'application/json' });
+          break;
+        default:
+          // Use modelRootRef for export if available, otherwise fall back to currentChess
+          const modelToExport = modelRootRef.current || currentChess;
+          blob = await exportScene(modelToExport, format);
 
-      if (format === 'json') {
-        // 导出 JSON 数据
-        const jsonData = JSON.stringify(currentChess, null, 2);
-        blob = new Blob([jsonData], { type: 'application/json' });
-        filename = generateExportFilename(currentChess.name, 'json');
-      } else {
-        // 导出 STL 或 OBJ 格式
-        blob = await exportChessModel(currentChess, format);
-        filename = generateExportFilename(currentChess.name, format);
       }
 
-      // 创建下载链接
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+
+      filename = generateExportFilename(currentChess.name, format);
+      downloadBlob(blob, filename);
 
       alert(`导出成功！文件已下载：${filename}`);
     } catch (error) {
@@ -182,6 +178,12 @@ function ChessEditor() {
     const projectId = currentChess.project;
     navigate(`/project-editor/${projectId}`);
   };
+
+  // Handle model ready callback - receives the Three.js Group containing the chess model
+  const handleModelReady = useCallback((modelRoot) => {
+    modelRootRef.current = modelRoot;
+    console.log('Model ready for export:', modelRoot);
+  }, []);
 
   // 拖拽处理函数
   const handleMouseDownLeft = useCallback((e) => {
@@ -1573,7 +1575,7 @@ function ChessEditor() {
 
         {/* 中间预览区域 */}
         <main className="preview-area">
-          <ModelRenderer chess={currentChess} />
+          <ModelRenderer chess={currentChess} onModelReady={handleModelReady} />
         </main>
 
       </div>
@@ -1609,19 +1611,19 @@ function ChessEditor() {
             <div className="modal-content">
               <p>请选择导出方式：</p>
               <div className="export-buttons">
-                <button 
+                <button
                   className="export-option-button"
                   onClick={() => handleExportAction('json')}
                 >
                   JSON数据
                 </button>
-                <button 
+                <button
                   className="export-option-button"
                   onClick={() => handleExportAction('stl')}
                 >
                   STL（适合3D打印）
                 </button>
-                <button 
+                <button
                   className="export-option-button"
                   onClick={() => handleExportAction('obj')}
                 >

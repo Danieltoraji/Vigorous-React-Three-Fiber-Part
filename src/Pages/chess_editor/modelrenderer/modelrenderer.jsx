@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Text, Environment, Text3D } from '@react-three/drei';
@@ -299,19 +299,32 @@ function renderComponent(componentType, shape, size1, size2, height, position, m
     }
 }
 
-function ModelRenderer({ chess }) {
+/**
+ * SceneContent component - contains all scene objects and model rendering logic
+ * This component has access to the Three.js scene via useThree() hook
+ */
+function SceneContent({ chess, onModelReady }) {
+    const { scene } = useThree();
+    const modelRootRef = useRef();
+
+    // Notify parent when model is ready
+    useEffect(() => {
+        if (onModelReady && modelRootRef.current) {
+            onModelReady(modelRootRef.current);
+        }
+    }, [onModelReady]);
 
     // 添加安全检查，防止 undefined 错误
     if (!chess) {
         return (
-            <Canvas camera={{ position: [40, 40, 40] }}>
+            <>
                 <OrbitControls />
                 <ambientLight intensity={2.5} />
                 <pointLight position={[10, 10, 10]} />
                 <Text position={[0, 0, 0]} fontSize={1} color="red">
                     Invalid chess data
                 </Text>
-            </Canvas>
+            </>
         );
     }
 
@@ -684,21 +697,7 @@ function ModelRenderer({ chess }) {
     };
 
     return (
-        <Canvas
-            camera={{ position: [40, 40, 40] }}
-            shadows
-            style={{
-                width: '100%',
-                height: '100%',
-                background: 'transparent',
-                display: 'block',
-                margin: 0,
-                padding: 0,
-                outline: 'none',
-                border: 'none'
-            }}
-            gl={{ alpha: true, premultipliedAlpha: false }}
-        >
+        <>
             <OrbitControls />
 
             {/* 基础环境光 */}
@@ -719,25 +718,50 @@ function ModelRenderer({ chess }) {
             <Text position={[0, 30.5, 0]} fontSize={0.8} color="green">Y</Text>
             <Text position={[0, 0, 30.5]} fontSize={0.8} color="blue">Z</Text>
 
-            {/* 渲染底座 */}
-            {renderBaseShape()}
+            {/* Model root group - contains only the chess model meshes */}
+            <group ref={modelRootRef}>
+                {/* 渲染底座 */}
+                {renderBaseShape()}
 
-            {/* 渲染底座的异形 */}
-            {isBaseSpecial && renderCustomShape('base')}
+                {/* 渲染底座的异形 */}
+                {isBaseSpecial && renderCustomShape('base')}
 
-            {/* 渲染柱体 */}
-            {renderColumnShape()}
+                {/* 渲染柱体 */}
+                {renderColumnShape()}
 
-            {/* 渲染柱体的异形 */}
-            {isColumnSpecial && renderCustomShape('column')}
+                {/* 渲染柱体的异形 */}
+                {isColumnSpecial && renderCustomShape('column')}
 
-            {/* 渲染装饰 */}
-            {hasDecoration && decoration.modelId && (
-                <mesh position={[decoration.position?.x || 0, decoration.position?.y || 0, decoration.position?.z || 0]}>
-                    <sphereGeometry args={[2]} />
-                    <meshStandardMaterial color="#FFD700" />
-                </mesh>
-            )}
+                {/* 渲染装饰 */}
+                {hasDecoration && decoration.modelId && (
+                    <mesh position={[decoration.position?.x || 0, decoration.position?.y || 0, decoration.position?.z || 0]}>
+                        <sphereGeometry args={[2]} />
+                        <meshStandardMaterial color="#FFD700" />
+                    </mesh>
+                )}
+            </group>
+        </>
+    );
+}
+
+function ModelRenderer({ chess, onModelReady }) {
+    return (
+        <Canvas
+            camera={{ position: [40, 40, 40] }}
+            shadows
+            style={{
+                width: '100%',
+                height: '100%',
+                background: 'transparent',
+                display: 'block',
+                margin: 0,
+                padding: 0,
+                outline: 'none',
+                border: 'none'
+            }}
+            gl={{ alpha: true, premultipliedAlpha: false }}
+        >
+            <SceneContent chess={chess} onModelReady={onModelReady} />
         </Canvas>
     )
 }
