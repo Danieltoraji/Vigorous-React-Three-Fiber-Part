@@ -695,7 +695,7 @@ function SceneContent({ chess, onModelReady }) {
             </group>
         );
     };
-
+    //渲染装饰层组件
     const renderDecoration = (decoration) => {
         if (!decoration) return null;
 
@@ -732,12 +732,12 @@ function SceneContent({ chess, onModelReady }) {
                             />
                         </mesh>
                         <mesh
-                            position={[size1 * 0.3, size2 - size1 * 0.2, 0]}
-                            rotation={[0, 0, Math.PI / 6]}
+                            position={[size1 * 0.3, size2 - size1 * 0.3, 0]}
+                            rotation={[Math.PI / 2 ,Math.PI / 2 , 0]}
                             castShadow
                             receiveShadow
                         >
-                            <coneGeometry args={[size1 * 0.4, size1 * 0.6, 2]} />
+                            <cylinderGeometry args={[size1 * 0.6, size1 * 0.6, size1 * 0.12, 3]} />
                             <meshStandardMaterial
                                 color="#FF0000"
                                 metalness={mat.metalness}
@@ -800,7 +800,7 @@ function SceneContent({ chess, onModelReady }) {
                 return (
                     <mesh
                         position={[pos.x, pos.y, pos.z]}
-                        rotation={[rotRad.x, rotRad.y, rotRad.z]}
+                        rotation={[rotRad.x, rotRad.y , rotRad.z]}
                         castShadow
                         receiveShadow
                     >

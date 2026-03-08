@@ -1220,11 +1220,12 @@ function ChessEditor() {
               value={getSafeValue(component.modelId, '0')}
               onChange={(e) => handleDataUpdate('parts.decoration.modelId', e.target.value)}
             >
-              <option value="0">无</option>
+              <option value="0">无装饰</option>
               <option value="1">小旗子</option>
               <option value="2">五角星</option>
               <option value="3">圆球</option>
               <option value="4">四棱锥</option>
+              <option value="0">未来会支持更多预设和用户导入...</option>
             </select>
           </div>
           <div className="editor-item">
