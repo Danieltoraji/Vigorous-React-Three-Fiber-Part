@@ -465,6 +465,24 @@ function ChessEditor() {
               />
             </div>
             <div className="editor-item">
+              <label>Y修正：</label>
+              <input
+                type="range"
+                min="-20"
+                max="20"
+                value={getSafeValue(pattern.position?.y, 0)}
+                onChange={(e) => handleDataUpdate('parts.base.pattern.position.y', parseInt(e.target.value))}
+              />
+              <input
+                type="number"
+                min="-20"
+                max="20"
+                value={getSafeValue(pattern.position?.y, 0)}
+                onChange={(e) => handleDataUpdate('parts.base.pattern.position.y', parseInt(e.target.value))}
+                className="number-input"
+              />
+            </div>
+            <div className="editor-item">
               <label>Z：</label>
               <input
                 type="range"
@@ -979,6 +997,24 @@ function ChessEditor() {
                 max="20"
                 value={getSafeValue(pattern.position?.x, 0)}
                 onChange={(e) => handleDataUpdate('parts.column.pattern.position.x', parseInt(e.target.value))}
+                className="number-input"
+              />
+            </div>
+             <div className="editor-item">
+              <label>Y修正：</label>
+              <input
+                type="range"
+                min="-20"
+                max="20"
+                value={getSafeValue(pattern.position?.y, 0)}
+                onChange={(e) => handleDataUpdate('parts.column.pattern.position.y', parseInt(e.target.value))}
+              />
+              <input
+                type="number"
+                min="-20"
+                max="20"
+                value={getSafeValue(pattern.position?.y, 0)}
+                onChange={(e) => handleDataUpdate('parts.column.pattern.position.y', parseInt(e.target.value))}
                 className="number-input"
               />
             </div>

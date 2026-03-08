@@ -119,7 +119,7 @@ export function ChessProvider({ children }) {
             "material": null,
             "pattern": {
               "shape": "text",
-              "position": { "x": 0, "z": 0 },
+              "position": { "x": 0, "y":0, "z": 0 },
               "size": 10,
               "depth": 1
             },
@@ -142,7 +142,7 @@ export function ChessProvider({ children }) {
             "sideTreatment": "none",
             "pattern": {
               "shape": "geometry",
-              "position": { "x": 0, "z": 0 },
+              "position": { "x": 0, "y": 0, "z": 0 },
               "size": 5,
               "depth": 0.5
             },
