@@ -126,7 +126,7 @@
 }
 
 .view-controls {
-  margin-bottom: 24px;
+  margin-bottom: 0px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
