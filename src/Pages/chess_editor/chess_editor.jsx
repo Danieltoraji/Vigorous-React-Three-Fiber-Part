@@ -44,23 +44,22 @@ function ChessEditor() {
   const editorContentRef = useRef(null);
 
   // 当chessData或location.state变化时更新currentChess
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        console.log('正在获取棋子：', pieceId);
-        const fetchedData = await getChessById(pieceId);
-
-        if (fetchedData) {
-          console.log('获取成功：', fetchedData);
-          setCurrentChess(fetchedData);
-        }
-      } catch (error) {
-        console.error('获取失败:', error);
-        alert(error.message);
-        navigate(-1);
+  
+  const fetchData = async () => {
+    try {
+      console.log('正在获取棋子：', pieceId);
+      const fetchedData = await getChessById(pieceId);
+      if (fetchedData) {
+        console.log('获取成功：', fetchedData);
+        setCurrentChess(fetchedData);
       }
-    };
-
+    } catch (error) {
+      console.error('获取失败:', error);
+      alert(error.message);
+      navigate(-1);
+    }
+  };
+  useEffect(() => {
     if (pieceId) {
       fetchData();
     }
@@ -127,7 +126,7 @@ function ChessEditor() {
     setIsLeftPanelCollapsed(prev => !prev);
   }, []);
 
-  // 处理导出
+  // 处理导出：点击导出按键，弹出导出窗口
   const handleExport = () => {
     if (!currentChess) {
       alert('当前没有可导出的模型');
@@ -136,7 +135,7 @@ function ChessEditor() {
     setShowExportModal(true);
   };
 
-  // 处理具体的导出操作
+  // 处理具体的导出操作：在导出窗口选择导出方式之后，进行导出
   const handleExportAction = async (format) => {
     try {
       let blob;
