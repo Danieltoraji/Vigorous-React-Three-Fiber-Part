@@ -126,10 +126,94 @@
 }
 
 .view-controls {
-  margin-bottom: 0px;
+  margin-bottom: 24px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+}
+
+.template-actions-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+/* 模态框样式 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--fluent-acrylic);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-radius: var(--fluent-radius);
+  padding: 32px;
+  box-shadow: var(--fluent-shadow-hover);
+  border: 1px solid var(--fluent-border);
+  min-width: 400px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal-content h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--fluent-text);
+  margin-bottom: 16px;
+}
+
+.modal-content p {
+  color: var(--fluent-text-secondary);
+  margin-bottom: 32px;
+  font-size: 14px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* 拖拽区域样式 */
+.drag-drop-area {
+  border: 2px dashed var(--fluent-border);
+  border-radius: var(--fluent-radius);
+  padding: 32px;
+  margin: 24px 0;
+  text-align: center;
+  transition: var(--fluent-transition);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.drag-drop-area p {
+  margin: 8px 0;
+  color: var(--fluent-text-secondary);
+}
+
+.drag-hint {
+  font-size: 12px !important;
+  color: var(--fluent-text-tertiary) !important;
+}
+
+/* 拖拽激活状态 */
+.modal-content.drag-active {
+  box-shadow: 0 0 0 2px var(--fluent-primary), var(--fluent-shadow-hover);
+}
+
+.modal-content.drag-active .drag-drop-area {
+  border-color: var(--fluent-primary);
+  background: rgba(0, 120, 212, 0.05);
 }
 
 .view-buttons {

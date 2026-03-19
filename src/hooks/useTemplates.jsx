@@ -1,4 +1,5 @@
 import { useState, useContext, createContext, useEffect } from 'react';
+import csrfapi from '../utils/csrfapi.js';
 
 const TemplatesContext = createContext(null);
 
@@ -22,11 +23,9 @@ export function TemplatesProvider({ children }) {
       if (params.search) queryParams.append('search', params.search);
       if (params.ordering) queryParams.append('ordering', params.ordering);
       
-      const url = `/api/presets/${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-      const response = await fetch(url);
-      
-      if (!response.ok) throw new Error('获取模板失败');
-      const data = await response.json();
+      const url = `/presets/${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+      const response = await csrfapi.get(url);
+      const data = response.data;
       
       // 转换数据格式：{ '模板id': { ...模板详情 } }
       const templatesMap = {};
@@ -54,9 +53,8 @@ export function TemplatesProvider({ children }) {
   // 获取单个模板
   const fetchTemplate = async (templateId) => {
     try {
-      const response = await fetch(`/api/presets/${templateId}/`);
-      if (!response.ok) throw new Error('获取模板详情失败');
-      const template = await response.json();
+      const response = await csrfapi.get(`/presets/${templateId}/`);
+      const template = response.data;
       
       // 更新这个模板的数据
       setTemplatesData(prev => ({
@@ -73,14 +71,8 @@ export function TemplatesProvider({ children }) {
   // 创建新模板
   const createTemplate = async (templateData) => {
     try {
-      const response = await fetch('/api/presets/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(templateData)
-      });
-      
-      if (!response.ok) throw new Error('创建模板失败');
-      const newTemplate = await response.json();
+      const response = await csrfapi.post('/presets/', templateData);
+      const newTemplate = response.data;
       
       // 后端返回的新模板应该包含 id
       setTemplatesData(prev => ({
@@ -88,6 +80,82 @@ export function TemplatesProvider({ children }) {
         [newTemplate.id]: newTemplate
       }));
       
+      setLastUpdated(new Date().toISOString());
+      return newTemplate;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  // 从既定的JSON中创建模板
+  const createTemplateFromJson = async (templateJson) => {
+    try {
+      const templateData = {
+        name: '新模板',
+        parts: {
+          "base": templateJson?.parts?.base ? JSON.parse(JSON.stringify(templateJson.parts.base)) : {
+            "shape": {
+              "type": "cycle",
+              "size1": 15,
+              "size2": 15,
+              "height": 1
+            },
+            "customShape": {
+              "profilePoints": [],
+              "pathPoints": []
+            },
+            "material": null,
+            "pattern": {
+              "shape": "text",
+              "position": { "x": 0, "y": 0, "z": 0 },
+              "size": 10,
+              "depth": 1
+            },
+            "edge": { "type": "none", "depth": 0 },
+            "position": { "x": 0, "y": 0, "z": 0 }
+          },
+          "column": templateJson?.parts?.column ? JSON.parse(JSON.stringify(templateJson.parts.column)) : {
+            "shape": {
+              "type": "cycle",
+              "size1": 10,
+              "size2": 10,
+              "height": 20
+            },
+            "customShape": {
+              "profilePoints": [],
+              "pathPoints": []
+            },
+            "material": null,
+            "position": { "x": 0, "y": 0, "z": 0 },
+            "sideTreatment": "none",
+            "pattern": {
+              "shape": "geometry",
+              "geometryType": "Cube",
+              "position": { "x": 0, "y": 0, "z": 0 },
+              "size": 5,
+              "depth": 0.5
+            },
+            "edge": { "type": "smooth", "depth": 0.2 }
+          },
+          "decoration": templateJson?.parts?.decoration ? JSON.parse(JSON.stringify(templateJson.parts.decoration)) : {
+            "modelId": "0",
+            "size": { "size1": 5, "size2": 5, "size3": 5 },
+            "position": { "x": 0, "y": 21, "z": 0 },
+            "rotation": { "x": 0, "y": 0, "z": 0 },
+            "material": null
+          },
+          "image": templateJson?.parts?.image !== undefined ? templateJson.parts.image : ""
+        }
+      };
+
+      const response = await csrfapi.post('/presets/', templateData);
+      const newTemplate = response.data;
+
+      setTemplatesData(prev => ({
+        ...prev,
+        [newTemplate.id]: newTemplate
+      }));
+
       setLastUpdated(new Date().toISOString());
       return newTemplate;
     } catch (err) {
@@ -110,16 +178,10 @@ export function TemplatesProvider({ children }) {
     }));
     
     try {
-      const response = await fetch(`/api/presets/${templateId}/`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedData)
-      });
-      
-      if (!response.ok) throw new Error('更新模板失败');
+      const response = await csrfapi.patch(`/presets/${templateId}/`, updatedData);
       
       // 后端可能返回更新后的完整数据
-      const updatedFromServer = await response.json();
+      const updatedFromServer = response.data;
       
       // 用后端返回的数据再次更新（确保一致）
       setTemplatesData(prev => ({
@@ -154,11 +216,7 @@ export function TemplatesProvider({ children }) {
     });
     
     try {
-      const response = await fetch(`/api/presets/${templateId}/`, {
-        method: 'DELETE'
-      });
-      
-      if (!response.ok) throw new Error('删除模板失败');
+      await csrfapi.delete(`/presets/${templateId}/`);
       
       setLastUpdated(new Date().toISOString());
     } catch (err) {
@@ -189,6 +247,7 @@ export function TemplatesProvider({ children }) {
     
     // 修改方法
     createTemplate,
+    createTemplateFromJson,
     updateTemplate,
     deleteTemplate,
     
