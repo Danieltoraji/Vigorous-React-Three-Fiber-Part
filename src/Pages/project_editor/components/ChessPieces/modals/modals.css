@@ -13,9 +13,7 @@
 }
 
 .modal-content {
-  background: var(--fluent-acrylic);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
+  background: white;
   border: 1px solid var(--fluent-border);
   border-radius: var(--fluent-radius);
   box-shadow: var(--fluent-shadow-hover);
@@ -33,7 +31,7 @@
   align-items: center;
   padding: 16px 20px;
   border-bottom: 1px solid var(--fluent-border-light);
-  background: rgba(255, 255, 255, 0.5);
+  background: white;
   transition: var(--fluent-transition);
 }
 
@@ -214,7 +212,7 @@
   justify-content: flex-end;
   padding: 16px 20px;
   border-top: 1px solid var(--fluent-border-light);
-  background: rgba(255, 255, 255, 0.5);
+  background: white;
   border-radius: 0 0 var(--fluent-radius) var(--fluent-radius);
   transition: var(--fluent-transition);
 }
@@ -222,7 +220,7 @@
 .cancel-button {
   padding: 8px 16px;
   border: 1px solid var(--fluent-border);
-  background: rgba(255, 255, 255, 0.7);
+  background: white;
   color: var(--fluent-text);
   border-radius: var(--fluent-radius);
   cursor: pointer;
@@ -304,6 +302,105 @@
   }
 }
 
+/* 导入模态框样式 */
+.file-upload-area {
+  border: 2px dashed var(--fluent-border);
+  border-radius: var(--fluent-radius);
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+  transition: var(--fluent-transition);
+}
+
+.file-upload-area:hover {
+  border-color: var(--fluent-primary);
+  background-color: rgba(0, 120, 212, 0.05);
+}
+
+.file-upload-area h4 {
+  margin: 0 0 16px 0;
+  color: var(--fluent-text);
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--fluent-transition);
+}
+
+.file-input {
+  display: none;
+}
+
+.upload-hint {
+  margin: 8px 0 16px 0;
+  color: var(--fluent-text-secondary);
+  font-size: 14px;
+  transition: var(--fluent-transition);
+}
+
+.selected-file {
+  margin: 8px 0 16px 0;
+  color: var(--fluent-text);
+  font-size: 14px;
+  font-weight: 500;
+  transition: var(--fluent-transition);
+}
+
+.confirm-button {
+  padding: 8px 16px;
+  border: none;
+  background-color: var(--fluent-primary);
+  color: white;
+  border-radius: var(--fluent-radius);
+  cursor: pointer;
+  font-size: 14px;
+  transition: var(--fluent-transition);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.confirm-button:hover:not(:disabled) {
+  background-color: var(--fluent-primary-hover);
+  box-shadow: var(--fluent-shadow-hover);
+}
+
+.confirm-button:disabled {
+  background-color: var(--fluent-border);
+  cursor: not-allowed;
+  color: var(--fluent-text-tertiary);
+}
+
+.template-import-section {
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+  border-top: 1px solid var(--fluent-border-light);
+  transition: var(--fluent-transition);
+}
+
+.template-import-button {
+  padding: 8px 16px;
+  border: 1px solid var(--fluent-border);
+  background: white;
+  color: var(--fluent-text);
+  border-radius: var(--fluent-radius);
+  cursor: pointer;
+  font-size: 14px;
+  transition: var(--fluent-transition);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.template-import-button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.16);
+  box-shadow: var(--fluent-shadow-hover);
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .modal-content {
@@ -336,8 +433,18 @@
   .add-tag-button,
   .cancel-button,
   .save-button,
-  .delete-button {
+  .delete-button,
+  .confirm-button,
+  .template-import-button {
     padding: 6px 12px;
+    font-size: 14px;
+  }
+  
+  .file-upload-area {
+    padding: 16px;
+  }
+  
+  .file-upload-area h4 {
     font-size: 14px;
   }
 }

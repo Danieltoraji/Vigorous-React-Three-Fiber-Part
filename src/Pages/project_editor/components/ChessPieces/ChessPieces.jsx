@@ -9,10 +9,11 @@ import SortControls from './controls/SortControls';
 import Pagination from './controls/Pagination';
 import EditChessModal from './modals/EditChessModal';
 import DeleteConfirmModal from './modals/DeleteConfirmModal';
+import ImportChessModal from './modals/ImportChessModal';
 import './ChessPieces.css';
 
 const ChessPieces = ({ projectId }) => {
-  const { getPiecesByProject, chessData, updateChess, deleteChess, loading, createChess } = useChess();
+  const { getPiecesByProject, chessData, updateChess, deleteChess, loading, createChess, createChessFromJson } = useChess();
   const navigate = useNavigate();
 
   // 状态管理
@@ -26,6 +27,7 @@ const ChessPieces = ({ projectId }) => {
   const [pageSize, setPageSize] = useState(10);
   const [editingPiece, setEditingPiece] = useState(null);
   const [deletingPiece, setDeletingPiece] = useState(null);
+  const [showImportModal, setShowImportModal] = useState(false);
 
   // 加载棋子数据
   useEffect(() => {
@@ -107,10 +109,14 @@ const ChessPieces = ({ projectId }) => {
     <div className="chess-pieces">
       <div className="chess-pieces-header">
         <h2>棋子管理</h2>
+        
         <div className="chess-pieces-controls">
           <button className="create-button" onClick={() => {
             createChess(projectId);
           }}>+ 创建新棋子</button>
+          <button className="import-button" onClick={() => {
+            setShowImportModal(true);
+          }}>导入...</button>
           <ViewControls
             viewMode={viewMode}
             onViewChange={setViewMode}
@@ -189,6 +195,16 @@ const ChessPieces = ({ projectId }) => {
             piece={deletingPiece}
             onConfirm={handleConfirmDelete}
             onCancel={() => setDeletingPiece(null)}
+          />
+        )
+      }
+
+      {
+        showImportModal && (
+          <ImportChessModal
+            onCancel={() => setShowImportModal(false)}
+            projectId={projectId}
+            createChessFromJson={createChessFromJson}
           />
         )
       }
