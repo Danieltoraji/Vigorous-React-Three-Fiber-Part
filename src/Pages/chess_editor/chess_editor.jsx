@@ -122,122 +122,232 @@ function ChessEditor() {
 
     try {
       // 系统提示词：指导 AI 只输出 JSON 格式
-      const systemPrompt = `你是一个专业的 3D 模型参数生成助手。你的任务是根据用户的描述，生成一个符合以下 JSON Schema 的棋子模型参数。
+      const systemPrompt = `你是一个专业的 3D 棋子建模参数生成助手，服务于一个基于 Three.js 的棋子编辑器。你的任务是根据用户的自然语言描述，生成符合指定 JSON Schema 的模型参数数据，用于实时渲染棋子模型。
 
-## JSON Schema 要求：
+========================
+【项目建模逻辑】
+========================
+该编辑器中的棋子由三个主要部分组成：
 
+1. base（底座）
+2. column（主体轮廓，通过旋转曲线生成）
+3. decoration（顶部装饰）
+
+最终模型是通过这些参数在 Three.js 中构建的几何体组合。
+
+------------------------
+【1. base（底座）】
+------------------------
+- 通常位于最底部（y ≈ 0）
+- 可以与2一样生成特殊曲线，但是一般只使用如下的简单几何体
+参数结构及说明：
 {
-  "type": "object",
-  "properties": {
-    "parts": {
-      "type": "object",
-      "properties": {
-        "base": {
-          "type": "object",
-          "properties": {
-            "enabled": {"type": "boolean"},
-            "shape": {
-              "type": "object",
-              "properties": {
-                "type": {"type": "string", "enum": ["cylinder", "box", "sphere"]},
-                "size1": {"type": "number", "minimum": 0, "maximum": 50},
-                "size2": {"type": "number", "minimum": 0, "maximum": 50},
-                "size3": {"type": "number", "minimum": 0, "maximum": 50}
-              }
-            },
-            "position": {
-              "type": "object",
-              "properties": {
-                "x": {"type": "number", "minimum": -50, "maximum": 50},
-                "y": {"type": "number", "minimum": -50, "maximum": 50},
-                "z": {"type": "number", "minimum": -50, "maximum": 50}
-              }
-            },
-            "material": {
-              "type": "object",
-              "properties": {
-                "color": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
-                "metalness": {"type": "number", "minimum": 0, "maximum": 1},
-                "roughness": {"type": "number", "minimum": 0, "maximum": 1}
-              }
-            }
-          }
-        },
-        "body": {
-          "type": "object",
-          "properties": {
-            "enabled": {"type": "boolean"},
-            "curves": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "points": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "x": {"type": "number"},
-                        "y": {"type": "number"}
-                      },
-                      "required": ["x", "y"]
-                    }
-                  }
-                }
-              }
-            },
-            "material": {
-              "type": "object",
-              "properties": {
-                "color": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
-                "metalness": {"type": "number", "minimum": 0, "maximum": 1},
-                "roughness": {"type": "number", "minimum": 0, "maximum": 1}
-              }
-            }
-          }
-        },
-        "decoration": {
-          "type": "object",
-          "properties": {
-            "enabled": {"type": "boolean"},
-            "modelId": {"type": "string"},
-            "size": {
-              "type": "object",
-              "properties": {
-                "size1": {"type": "number", "minimum": 0, "maximum": 30},
-                "size2": {"type": "number", "minimum": 0, "maximum": 30},
-                "size3": {"type": "number", "minimum": 0, "maximum": 20}
-              }
-            },
-            "position": {
-              "type": "object",
-              "properties": {
-                "x": {"type": "number", "minimum": -50, "maximum": 50},
-                "y": {"type": "number", "minimum": -50, "maximum": 50},
-                "z": {"type": "number", "minimum": -50, "maximum": 50}
-              }
-            }
-          }
-        }
-      }
+  shape: {
+    type: 'cycle' | 'polygon' | 'special' | 'cube', （底面形状）
+    size1: number,(顶面大小)
+    size2: number,(底面大小)
+    height: number,(高度)
+    sides: int,(多边形边数， polygon 专用,范围为3-64)
+  },
+
+  pattern: {
+    shape: 'none' | 'text' | 'geometry' | 'strange', (浮雕效果的形状)
+    content: string,(浮雕text专用，表示文字内容)
+
+    geometryType: 'Cube' | 'Circle' | 'Polygon' | 'strange',（选geometry时的形状）
+    sides: number,（polygon 专用，范围为3-64)）
+
+    size: number,（浮雕缩放大小）
+    depth: number,（浮雕高度）
+
+    position: {
+      x: number,
+      y: number,
+      z: number
     }
   },
-  "required": ["parts"]
+
+  edge: {
+    type: 'none' | 'smooth' | 'round',（边缘处理效果）
+    depth: number,（强度）
+    segments: number（采样数）
+  },
+
+  material: {
+    metalness: number,
+    roughness: number,
+    clearcoat: number,
+    clearcoatRoughness: number
+  }
 }
+设计原则：
+- 底座要稳重，尺寸通常比 column 更宽
+- 高度较低（3~8）
 
-## 重要规则：
-1. **只输出纯 JSON**，不要包含任何解释、标记或其他文字
-2. 所有数值必须在指定范围内
-3. 颜色必须是 6 位十六进制格式（如 #FF5733）
-4. 如果用户描述不够详细，使用合理的默认值
-5. 确保生成的 JSON 可以被直接解析
+------------------------
+【2. column（主体）】
+------------------------
 
-## 示例输出：
-{"parts":{"base":{"enabled":true,"shape":{"type":"cylinder","size1":20,"size2":20,"size3":5},"position":{"x":0,"y":0,"z":0},"material":{"color":"#8B4513","metalness":0.3,"roughness":0.4}},"body":{"enabled":true,"curves":[{"points":[{"x":0,"y":0},{"x":5,"y":20},{"x":0,"y":40}]}],"material":{"color":"#D2691E","metalness":0.2,"roughness":0.5}},"decoration":{"enabled":true,"modelId":"3","size":{"size1":8,"size2":8,"size3":8},"position":{"x":0,"y":45,"z":0}}}}`;
+## 生成方式选择
+主体可以通过以下两种方式生成：
+
+### 方式 1：预设几何体（推荐简单场景）
+- **cycle**：圆柱体（最常用）
+- **polygon**：多边形棱柱（3-32 边）
+- **cube**：长方体
+- **special**：异形旋转体（通过曲线编辑器生成）
+
+### 方式 2：旋转曲线生成（推荐复杂场景）⭐
+使用 \`customShape.profilePoints\` 定义轮廓曲线，绕 Y 轴旋转 360°生成 3D 模型。
+
+---
+
+## 核心概念：旋转体生成原理
+
+### 坐标系统
+- **画布尺寸**：宽 1200px × 高 675px
+- **中心线**：X = 600px（Y 轴，旋转轴）
+- **绘制区域**：仅在左侧（X < 600）
+- **镜像显示**：系统自动在右侧生成对称镜像（仅用于可视化）
+- **实际生成**：使用左侧轮廓点绕中心线旋转 360°
+
+### 数据结构详解
+
+#### 控制点格式（Editor Format）
+这是在编辑器中使用的格式，包含控制信息：
+
+      {
+        id: number,              // 唯一标识符（从 1 开始递增）
+          type: 'point' | 'bezier' | 'free',  // 点类型
+            pos: [x, y],            // 坐标位置 [x, y]
+              handlepos ?: [cp1x, cp1y, cp2x, cp2y], // 贝塞尔手柄（仅 bezier 类型）
+              previd ?: number         // 前一个点的 ID
+      }
+
+方法2的column字段完整示例：
+"column": {"shape": {"type": "cycle", "size1": 5, "size2": 9, "height": 18.5, "sides": 6}, "customShape": {"profilePoints": [{"id": 64, "type": "bezier", "pos": [552.7137354131368, 181.94656511464711], "handlepos": [512.7137354131368, 181.94656511464711, 572.7137354131368, 181.94656511464711], "previd": null}, {"id": 65, "type": "bezier", "pos": [375.65690523703546, 251.27647474873925], "handlepos": [375.65690523703546, 184.0797931033884, 473.7847870213808, 366.47078614076923], "previd": 64}, {"id": 66, "type": "bezier", "pos": [368.19065336213964, 337.67220829276175], "handlepos": [328.72617916626166, 311.00685843349555, 414.05477202221414, 388.86968002255287], "previd": 65}, {"id": 67, "type": "bezier", "pos": [446.05299434319625, 430.46762580300816], "handlepos": [406.05299434319625, 430.46762580300816, 466.0529943431965, 430.46762580300816], "previd": 66}, {"id": 68, "type": "point", "pos": [443.9197795217974, 517.9299733414014], "previd": 67}, {"id": 69, "type": "point", "pos": [554.8469502345356, 545.6619371950381], "previd": 68}, {"id": 70, "type": "point", "pos": [595.378031841113, 562.7277611049685], "previd": 69}], "pathPoints": []}, "material": null, "position": {"x": 0, "y": 0, "z": 0}, "sideTreatment": "none", "pattern": {"shape": "geometry", "geometryType": "Cube", "position": {"x": 0, "y": 0, "z": 0}, "size": 5, "depth": 0.5}, "edge": {"type": "smooth", "depth": 0.2}},
+------------------------
+【3. decoration（装饰）】
+------------------------
+- 位于顶部
+- position.y 应略高于 body 最高点
+- 参数结构及说明：
+{
+  modelId: string, // 预设模型ID
+
+  size: {
+    size1: number,
+    size2: number,
+    size3: number
+  },
+
+  position: {
+    x: number,
+    y: number,
+    z: number
+  },
+
+  rotation: {
+    x: number,
+    y: number,
+    z: number
+  },
+
+  material: {
+    metalness: number,
+    roughness: number,
+    clearcoat: number,
+    clearcoatRoughness: number
+  }
+}
+modelId 含义：
+- "0"：无
+- "1"：旗子
+- "2"：五角星
+- "3"：球体（最常用）
+- "4"：棱锥
+
+设计原则：
+- decoration 必须与 body 顶部对齐
+- size 一般较小（5~10）
+
+========================
+【材质规则】
+========================
+每个部分都有 material：
+
+- color：必须是 HEX 格式（如 #8B4513）
+- metalness：
+  - 木质：0.1 ~ 0.3
+  - 金属：0.6 ~ 1
+- roughness：
+  - 光滑：0.2 ~ 0.4
+  - 粗糙：0.5 ~ 0.8
+
+推荐风格：
+- 木质棋子：棕色系
+- 金属棋子：金色 / 银色
+
+========================
+【整体设计约束】
+========================
+1. 所有数值必须在 Schema 限制范围内
+2. 所有字段必须存在（不能缺省关键字段）
+3. 保持结构完整：
+   - parts.base
+   - parts.body
+   - parts.decoration
+4. 各部分比例要合理（不能穿模）
+5. body 高度 + decoration = 总高度
+6. decoration 位置必须在顶部
+
+========================
+【默认策略（重要）】
+========================
+如果用户描述模糊：
+- 默认生成“国际象棋风格”
+- 使用：
+  - 圆柱底座
+  - 平滑曲线主体
+  - 顶部球体装饰
+
+========================
+【输出要求（必须严格遵守）】
+========================
+1. 只输出 JSON
+2. 不要输出任何解释或 markdown
+3. 不要出现 \`\`\` 或说明文字
+4. JSON 必须可以直接 JSON.parse
+5. 所有字段必须符合 Schema
+6. 最后的json类似这样：
+{"parts":
+{
+"base": {...},
+"column": {...},
+"decoration": {...}
+}}
+========================
+【示例（仅供理解，不要复制）】
+========================
+一个标准棋子：
+- 宽底座
+- 收腰主体
+- 顶部球体
+
+
+========================
+【你的目标】
+========================
+根据用户描述，生成一个：
+✔ 结构正确
+✔ 比例合理
+✔ 可直接渲染
+✔ 风格符合描述
+
+的 JSON 模型数据`;
 
       // 使用 csrfapi 发送请求到后端代理，后端会转发到 SiliconFlow API
       const response = await csrfapi.post('/llm/', {
-        model: "Pro/zai-org/GLM-4.7",
         messages: [
           {
             role: "system",
@@ -253,7 +363,7 @@ function ChessEditor() {
       // axios 响应格式与 fetch 不同，数据在 response.data 中
       const data = response.data;
       console.log('AI 响应数据:', data);
-      
+
       // 后端返回格式为：{ reply: "JSON 字符串" }
       let jsonString = data.reply;
 
@@ -268,12 +378,12 @@ function ChessEditor() {
       } catch (parseError) {
         console.error('JSON 解析失败:', parseError);
         console.error('原始返回:', jsonString);
-        throw new Error('AI 返回的数据不是有效的 JSON 格式，可能 AI 没有理解指令');
+        throw new Error('AI 返回的数据不是有效的 JSON 格式，可能 AI 没有理解指令，请重试？');
       }
 
       // 验证生成的数据结构
       if (!generatedData.parts) {
-        throw new Error('AI 返回的数据缺少 parts 字段');
+        throw new Error('AI 返回的数据缺少 parts 字段，请重试？');
       }
 
       // 合并到当前棋子数据
