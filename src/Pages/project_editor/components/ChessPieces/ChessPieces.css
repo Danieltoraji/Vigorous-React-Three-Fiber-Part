@@ -52,6 +52,21 @@
   background-color: #008a24;
 }
 
+.import-button {
+  background-color: var(--fluent-primary);
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  color: white;
+  transition: all 0.2s;
+}
+
+.import-button:hover {
+  background-color: var(--fluent-primary-hover);
+}
+
 .filter-button {
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--fluent-border);
